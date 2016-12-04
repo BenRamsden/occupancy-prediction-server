@@ -4,10 +4,18 @@
 
 var express = require('express');
 var router = express.Router();
+var mysqlpool = require('../mysqlpool');
 
 /* GET hotspots listing. */
 router.get('/', function(req, res, next) {
-    res.send('hotspots api');
+
+    mysqlpool.getConnection(function(err, con) {
+        con.query('select * from hotspots', function(err, result) {
+            con.release();
+            res.send(result);
+        });
+    });
+
 });
 
 module.exports = router;
