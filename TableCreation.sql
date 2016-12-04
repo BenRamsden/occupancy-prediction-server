@@ -1,0 +1,114 @@
+/* RESETS NavigationDB */
+DROP DATABASE NavigationDB;
+CREATE DATABASE NavigationDB;
+USE NavigationDB;
+
+
+/*	
+	Users table
+	Stores user authentication information for login
+	Requires user personal details in order for user to register
+*/
+CREATE TABLE Users (
+	idUser INT(32) UNSIGNED NOT NULL AUTO_INCREMENT,
+    
+    username VARCHAR(32) NOT NULL,
+    password VARCHAR(32) NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
+    email_address VARCHAR(255) NOT NULL,
+    register_date DATETIME NOT NULL,
+    
+    PRIMARY KEY (idUser)
+);
+
+
+/*
+	Hotspots table
+	Each time a new hotspot (of new mac) is observed it is inserted
+    Referenced any time data is collected in relation to a hotspot    
+*/
+CREATE TABLE Hotspots (
+	idHotspot INT(32) UNSIGNED NOT NULL AUTO_INCREMENT,
+    
+    ssid VARCHAR(32) NOT NULL,
+    mac CHAR(12) NOT NULL,
+    channel INT(8) NOT NULL,
+    frequency DECIMAL(1,1) NOT NULL,
+	register_date DATETIME NOT NULL,
+    
+    PRIMARY KEY (idHotspot)
+);
+
+
+/*
+	HotspotObservations table
+    Logs the position and number of people connected when the app collects hotspot data
+	Combined lat and lng can be used to map the area a specific hotspot covers
+    MAX(observation_date) can be used to stop users submitting locations too frequently
+*/
+CREATE TABLE HotspotObservations (
+	idHotspotObservation INT(32) UNSIGNED NOT NULL AUTO_INCREMENT,
+    idHotspot INT(32) UNSIGNED NOT NULL,
+    idUser INT(32) UNSIGNED NOT NULL,
+    
+	lat FLOAT(10, 6) NOT NULL,
+	lng FLOAT(10, 6) NOT NULL,
+    
+	number_connected INT(32) UNSIGNED NOT NULL,
+    observation_date DATETIME NOT NULL,
+    
+    PRIMARY KEY (idHotspotObservation),
+    
+    INDEX (idHotspot),
+	FOREIGN KEY (idHotspot) REFERENCES Hotspots(idHotspot) ON DELETE CASCADE,
+        
+    INDEX (idUser),
+	FOREIGN KEY (idUser) REFERENCES Users(idUser) ON DELETE CASCADE
+);
+
+
+/*
+	AudioObservations table
+    Logs the audio information and position when the app collects audio data
+    
+    HISTOGRAM STRUCTURE
+    {{"lo":"0","hi":"499","vl":"45.9"},{"lo":"500","hi":"999","vl":"34.3"}}audioobservations
+*/
+CREATE TABLE AudioObservations (
+	idAudioObservation INT(32) UNSIGNED NOT NULL AUTO_INCREMENT,
+	idUser INT(32) UNSIGNED NOT NULL,
+
+	lat FLOAT(10, 6) NOT NULL,
+	lng FLOAT(10, 6) NOT NULL,
+    
+    histogram JSON NOT NULL,
+    observation_date DATETIME NOT NULL,
+    
+	PRIMARY KEY (idAudioObservation),
+    
+	INDEX (idUser),
+	FOREIGN KEY (idUser) REFERENCES Users(idUser) ON DELETE CASCADE
+);
+
+/*
+	CrowdObservations table
+    Logs the user input when a user is prompted for an approximate number of people
+    at the current venue they are in
+*/
+
+CREATE TABLE CrowdObservations (
+	idCrowdObservation INT(32) UNSIGNED NOT NULL AUTO_INCREMENT,
+    idUser INT(32) UNSIGNED NOT NULL,
+    
+	lat FLOAT(10, 6) NOT NULL,
+	lng FLOAT(10, 6) NOT NULL,
+    
+    occupancy_estimate INT(32) UNSIGNED NOT NULL,
+    observation_date DATETIME NOT NULL,
+    
+    PRIMARY KEY (idCrowdObservation),
+
+	INDEX (idUser),
+   	FOREIGN KEY (idUser) REFERENCES Users(idUser) ON DELETE CASCADE
+);
+
