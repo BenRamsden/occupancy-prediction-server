@@ -1,5 +1,5 @@
 /* RESETS NavigationDB */
-DROP DATABASE NavigationDB;
+DROP DATABASE IF EXISTS NavigationDB;
 CREATE DATABASE NavigationDB;
 USE NavigationDB;
 
@@ -17,10 +17,12 @@ CREATE TABLE Users (
     full_name VARCHAR(255) NOT NULL,
     email_address VARCHAR(255) NOT NULL,
     register_date DATETIME NOT NULL,
+    api_token VARCHAR(101) NOT NULL,
     
     PRIMARY KEY (idUser)
 );
 
+INSERT INTO Users (username, password, full_name, email_address, register_date, api_token) VALUES ('benadmin','benadminpass','Ben Dissertation','ben@dissertation.com',NOW(),'koH6a1UC71rTDM1LKppXeKYJ54cjc8nIfuJAKPly1GDYpjMMLLCuK5LBp3fXAEkCcID1jCh5pCQp9D8DmCWhJHQlLcUcy4gD68Qy');
 
 /*
 	Hotspots table
