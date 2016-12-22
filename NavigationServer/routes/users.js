@@ -5,11 +5,10 @@ var async = require("async");
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
+    apitoken = req.query.apitoken;
 
     async.series([
         function(callback) {
-            apitoken = req.query.apitoken;
-
             /* Check if client included apitoken query paramater */
             if(!apitoken) return callback(new Error("Incorrect query parameters"));
 
@@ -18,10 +17,12 @@ router.get('/', function(req, res, next) {
         /* First check if the user exists with that api token */
         function(callback) {
             mysqlpool.getConnection(function(err, con) {
+                if(err) return callback(err);
+
                 con.query('SELECT idUser from Users WHERE api_token = ?', [apitoken], function(err, results) {
                     con.release();
 
-                    if(err) return callback(new Error("Connection error occurred"));
+                    if(err) return callback(err);
 
                     if(results.length == 0) return callback(new Error("Api Token not valid"));
 
@@ -33,8 +34,12 @@ router.get('/', function(req, res, next) {
         /* Secondly return the user data on record for that user */
         function(callback) {
             mysqlpool.getConnection(function(err, con) {
+                if(err) return callback(err);
+
                 con.query('select * from users WHERE idUser = ?', [idUser], function(err, result) {
                     con.release();
+
+                    if(err) return callback(err);
 
                     res.json(result);
                     callback();
