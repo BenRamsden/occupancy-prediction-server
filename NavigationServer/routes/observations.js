@@ -6,7 +6,7 @@ var router = express.Router();
 var errorHandler = require('../errorHandler');
 var database = require('../database');
 
-observation_types = ['audio','hotspot','crowd'];
+observation_types = ['hotspot','audio','crowd','bluetooth','accelerometer'];
 
 /* GET observations by user. */
 router.get('/:obtype', function(req, res, next) {
@@ -32,7 +32,7 @@ router.get('/:obtype', function(req, res, next) {
 
     /* TODO: Insert observation of type obtype into table, with id of user with apitoken */
 
-    res.json({error: "not implemented"});
+    res.json({error: "To be implemented: "+obtype+" insertion"});
 });
 
 module.exports = router;

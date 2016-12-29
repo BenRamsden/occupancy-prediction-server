@@ -83,7 +83,7 @@ CREATE TABLE AudioObservations (
 	lat FLOAT(10, 6) NOT NULL,
 	lng FLOAT(10, 6) NOT NULL,
     
-    audio_histogram JSON NOT NULL,
+    histogram JSON NOT NULL,
     observation_date DATETIME NOT NULL,
     
 	PRIMARY KEY (idAudioObservation),
@@ -114,48 +114,3 @@ CREATE TABLE CrowdObservations (
    	FOREIGN KEY (idUser) REFERENCES Users(idUser) ON DELETE CASCADE
 );
 
-
-/*
-	BluetoothObservations table
-    Logs the data provided by the client device counting bluetooth
-    devices in the local area
-*/
-
-CREATE TABLE BluetoothObservations (
-	idBluetoothObservation INT(32) UNSIGNED NOT NULL AUTO_INCREMENT,
-    idUser INT(32) UNSIGNED NOT NULL,
-    
-	lat FLOAT(10, 6) NOT NULL,
-	lng FLOAT(10, 6) NOT NULL,
-    
-    bluetooth_count INT(32) UNSIGNED NOT NULL,
-    observation_date DATETIME NOT NULL,
-    
-    PRIMARY KEY (idBluetoothObservation),
-
-	INDEX (idUser),
-   	FOREIGN KEY (idUser) REFERENCES Users(idUser) ON DELETE CASCADE
-);
-
-
-/*
-	AccelerometerObservations table
-    Logs the data provided by the client device counting bluetooth
-    devices in the local area
-*/
-
-CREATE TABLE AccelerometerObservations (
-	idAccelerometerObservation INT(32) UNSIGNED NOT NULL AUTO_INCREMENT,
-    idUser INT(32) UNSIGNED NOT NULL,
-    
-	lat FLOAT(10, 6) NOT NULL,
-	lng FLOAT(10, 6) NOT NULL,
-    
-    acceleration_timeline JSON NOT NULL,
-    observation_date DATETIME NOT NULL,
-    
-    PRIMARY KEY (idAccelerometerObservation),
-
-	INDEX (idUser),
-   	FOREIGN KEY (idUser) REFERENCES Users(idUser) ON DELETE CASCADE
-);
