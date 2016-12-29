@@ -42,7 +42,7 @@ router.get('/:obtype', function(req, res, next) {
 
     obtype = getValidObservationTypeOrThrow(req.params.obtype);
 
-    /* TODO VERIF OBTYPE */
+    /* TODO: Insert observation of type obtype into table, with id of user with apitoken */
 
     res.send("Hey from POST");
 });
