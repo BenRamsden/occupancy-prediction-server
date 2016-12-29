@@ -4,16 +4,17 @@
 
 var express = require('express');
 var router = express.Router();
-var mysqlpool = require('../mysqlpool');
+
+var errorHandler = require('../errorHandler');
+var database = require('../database');
 
 /* GET hotspots listing. */
 router.get('/', function(req, res, next) {
 
-    mysqlpool.getConnection(function(err, con) {
-        con.query('select * from hotspots', function(err, result) {
-            con.release();
-            res.send(result);
-        });
+    database.prototype.getHotspots(function(err, hotspots) {
+        if(errorHandler.prototype.handleError(err, res)) return;
+
+        res.json({hotspots: hotspots});
     });
 
 });
