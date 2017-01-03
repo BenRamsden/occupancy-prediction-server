@@ -11,4 +11,4 @@ echo "Killing All Processes with 'meteor' in name"
 
 #kill -9 `cat ./gada/meteor_save_pid.txt`
 
-pkill -f meteor
+pkill -f node

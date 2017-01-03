@@ -1,0 +1,10 @@
+
+> navigationserver@0.0.0 start /home/ubuntu/navigation-server/NavigationServer
+> node ./bin/www
+
+[0mGET / [36m304 [0m293.670 ms - -[0m
+[0mGET /stylesheets/style.css [36m304 [0m2.743 ms - -[0m
+[0mGET /favicon.ico [32m200 [0m2.786 ms - 318[0m
+[0mGET / [36m304 [0m32.211 ms - -[0m
+[0mGET /stylesheets/style.css [36m304 [0m0.383 ms - -[0m
+[0mGET /users?apitoken=koH6a1UC71rTDM1LKppXeKYJ54cjc8nIfuJAKPly1GDYpjMMLLCuK5LBp3fXAEkCcID1jCh5pCQp9D8DmCWhJHQlLcUcy4gD68Qy [32m200 [0m1.080 ms - 27[0m
