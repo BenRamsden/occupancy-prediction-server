@@ -29,6 +29,11 @@
     sudo apt-get install nodejs
     sudo apt-get install npm
     sudo apt-get install nodejs-legacy
+    sudo apt-get install mysql-server
 
+###Login to MYSQL Server
+    mysql -u root -p
+    (enter password when prompted)
+    
 ###Running the server
     DEBUG=navigationserver:* npm start
