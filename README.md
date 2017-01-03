@@ -8,7 +8,7 @@
     SQL root:gibsonXC40
     SQL navuser:finestMJ76
 
-###Initial server setup
+###Windows: Initial server setup
 #####Programs to install
     Node.js
     MySQL Server
@@ -24,3 +24,11 @@
     cd NavigationServer
     SET DEBUG=navigationserver:* & npm start
     
+###Linux: Initial server setup
+#####Packages to install
+    sudo apt-get install nodejs
+    sudo apt-get install npm
+    sudo apt-get install nodejs-legacy
+
+###Running the server
+    DEBUG=navigationserver:* npm start
