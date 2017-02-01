@@ -10,7 +10,7 @@ var mysqlpool = mysql.createPool({
     port: '3306',
     user: 'root',
     password: 'gibsonXC40',
-    database: 'navigationdb'
+    database: 'NavigationDB'
 });
 
 var database = function() {};
