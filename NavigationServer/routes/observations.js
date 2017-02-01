@@ -15,7 +15,7 @@ router.get('/:obtype', function(req, res, next) {
     database.prototype.getUserId(apitoken, function(err, idUser) {
         if(errorHandler.prototype.handleError(err, res)) return;
 
-        var tablename = obtype+'observations';
+        var tablename = obtype+'Observations';
 
         database.prototype.getObservations(idUser, tablename, function(err, observations) {
             if(errorHandler.prototype.handleError(err, res)) return;

@@ -29,7 +29,8 @@ errorHandler.prototype.getValidObservationTypeOrThrow = function (obtype) {
     }
 
     if(observation_types.indexOf(obtype) >= 0) {
-        return obtype;
+        /* Make first letter of table name uppercase, conform with linux case sensitivity */
+        return obtype.charAt(0).toUpperCase() + obtype.slice(1);
     } else {
         throw new Error(obtype + " not valid observation type");
     }

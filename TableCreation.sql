@@ -1,6 +1,6 @@
 /* RESETS NavigationDB */
 DROP DATABASE IF EXISTS NavigationDB;
-CREATE DATABASE NavigationDB CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE DATABASE NavigationDB;
 USE NavigationDB;
 
 
