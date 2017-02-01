@@ -18,7 +18,6 @@ var database = function() {};
 database.prototype.getObservations = function(idUser, obtype, callback) {
     mysqlpool.getConnection(function(err, connection) {
         if(err) {
-            connection.release();
             return callback(err);
         }
 
@@ -35,7 +34,6 @@ database.prototype.getObservations = function(idUser, obtype, callback) {
 database.prototype.getUserId = function(apitoken, callback) {
     mysqlpool.getConnection(function(err, connection) {
         if(err) {
-            connection.release();
             return callback(err);
         }
 
@@ -54,7 +52,6 @@ database.prototype.getUserId = function(apitoken, callback) {
 database.prototype.getHotspots = function(callback) {
     mysqlpool.getConnection(function(err, connection) {
         if (err) {
-            connection.release();
             return callback(err);
         }
 
@@ -72,7 +69,6 @@ database.prototype.getHotspots = function(callback) {
 var makeInsertQueryWithCallback = function(query, vals, callback) {
     mysqlpool.getConnection(function(err, connection) {
         if (err) {
-            connection.release();
             return callback(err);
         }
 
