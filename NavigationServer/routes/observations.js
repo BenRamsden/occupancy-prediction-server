@@ -20,7 +20,7 @@ router.get('/:obtype', function(req, res, next) {
         database.prototype.getObservations(idUser, tablename, function(err, observations) {
             if(errorHandler.prototype.handleError(err, res)) return;
 
-            res.json({my_observations: observations, idUser: idUser});
+            res.json({tablename:tablename, my_observations: observations, idUser: idUser});
         });
 
     });
