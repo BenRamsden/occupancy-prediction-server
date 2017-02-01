@@ -55,11 +55,11 @@ Or use .sh files provided
     ./start.sh
 
 ###Connect to server inside VM
-Create a host only network adapter to the VM,
+Make the first network adapter to the VM a bridged connection,
 then run this command on the server
 
     sudo ifconfig
     
-Find out the IP address of the VM server, connect to it in the host
+Find out the IP address of the VM server, connect to it on the host
     
     http://IPHERE:3000
