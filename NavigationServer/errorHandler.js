@@ -9,6 +9,7 @@ var observation_types = ['hotspot','audio','crowd','bluetooth','accelerometer'];
 errorHandler.prototype.handleError = function(err, res) {
     if(err) {
         res.json({error: err.message});
+        console.log(err.message);
     }
     return err;
 };
