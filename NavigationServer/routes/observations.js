@@ -57,7 +57,6 @@ router.get('/:obtype', function(req, res, next) {
                 processAccelerometerObservation(idUser, req, processCallback);
                 break;
             default:
-                res.json({success:false,reason:"obtype provided not valid"});
                 break;
         }
 
