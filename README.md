@@ -31,9 +31,14 @@
     sudo apt-get install nodejs-legacy
     sudo apt-get install mysql-server
 
-###Login to MYSQL Server
+###Login to MySQL Server
     mysql -u root -p
     (enter password when prompted)
+    
+###Initialize MySQL Database
+In the mysql shell call
+
+    source TableCreation.sql    
     
 ###Running the server
     DEBUG=navigationserver:* npm start
