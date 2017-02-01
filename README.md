@@ -30,6 +30,13 @@
     sudo apt-get install npm
     sudo apt-get install nodejs-legacy
     sudo apt-get install mysql-server
+    
+###Git pull from this repo
+    git clone http://.....
+    
+###Download npm dependancies
+    cd navigation-server
+    npm install
 
 ###Login to MySQL Server
     mysql -u root -p
@@ -42,3 +49,17 @@ In the mysql shell call
     
 ###Running the server
     DEBUG=navigationserver:* npm start
+    
+Or use .sh files provided
+    
+    ./start.sh
+
+###Connect to server inside VM
+Create a host only network adapter to the VM,
+then run this command on the server
+
+    sudo ifconfig
+    
+Find out the IP address of the VM server, connect to it in the host
+    
+    http://IPHERE:3000
