@@ -37,7 +37,7 @@ database.prototype.getUserId = function(apitoken, callback) {
             return callback(err);
         }
 
-        connection.query('select idUser from users WHERE api_token = ?', [apitoken], function(err, results) {
+        connection.query('select idUser from Users WHERE api_token = ?', [apitoken], function(err, results) {
             connection.release();
 
             if(err) return callback(err);
@@ -55,7 +55,7 @@ database.prototype.getHotspots = function(callback) {
             return callback(err);
         }
 
-        connection.query('select * from hotspots', function(err, results) {
+        connection.query('select * from Hotspots', function(err, results) {
             connection.release();
 
             if(err) return callback(err);
