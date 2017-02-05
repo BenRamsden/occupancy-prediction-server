@@ -112,6 +112,7 @@ function getParamsOrCallback(req, required_params, callback) {
             params_out[i] = req.body[required_params[i]];
         } else {
             callback(MISSING_PARAM_+required_params[i]);
+            return false;
         }
     }
     return params_out;
@@ -121,6 +122,8 @@ var processHotspotObservation = function(idUser, req, callback) {
     var required_params = ['lat','lng','number_connected','observation_date'];
 
     var params = getParamsOrCallback(req, required_params, callback);
+
+    if(!params) { return; }
 
     console.log("idUser " + idUser + " did POST HotspotObservation Params: "+JSON.stringify(params));
 
