@@ -109,7 +109,7 @@ function getParamsOrCallback(req, required_params, callback) {
     var params_out = {};
     for(var i=0; i<required_params.length; i++) {
         if(req.body[required_params[i]]) {
-            params_out[i] = req.body[required_params[i]];
+            params_out[required_params[i]] = req.body[required_params[i]];
         } else {
             callback(MISSING_PARAM_+required_params[i]);
             return false;
@@ -133,7 +133,9 @@ var processHotspotObservation = function(idUser, req, callback) {
 var processAudioObservation = function(idUser, req, callback) {
     var required_params = ['lat','lng','audio_histogram','observation_date'];
 
-    var params = errorHandler.prototype.getQueryParams(req, required_params);
+    var params = getParamsOrCallback(req, required_params, callback);
+
+    if(!params) { return; }
 
     console.log("idUser " + idUser + " did POST AudioObservation Params: "+JSON.stringify(params));
 
@@ -143,7 +145,9 @@ var processAudioObservation = function(idUser, req, callback) {
 var processCrowdObservation = function(idUser, req, callback) {
     var required_params = ['lat','lng','occupancy_estimate','observation_date'];
 
-    var params = errorHandler.prototype.getQueryParams(req, required_params);
+    var params = getParamsOrCallback(req, required_params, callback);
+
+    if(!params) { return; }
 
     console.log("idUser " + idUser + " did POST CrowdObservation Params: "+JSON.stringify(params));
 
@@ -153,7 +157,9 @@ var processCrowdObservation = function(idUser, req, callback) {
 var processBluetoothObservation = function(idUser, req, callback) {
     var required_params = ['lat','lng','bluetooth_count','observation_date'];
 
-    var params = errorHandler.prototype.getQueryParams(req, required_params);
+    var params = getParamsOrCallback(req, required_params, callback);
+
+    if(!params) { return; }
 
     console.log("idUser " + idUser + " did POST BluetoothObservation Params: "+JSON.stringify(params));
 
@@ -163,7 +169,9 @@ var processBluetoothObservation = function(idUser, req, callback) {
 var processAccelerometerObservation = function(idUser, req, callback) {
     var required_params = ['lat','lng','acceleration_timeline','observation_date'];
 
-    var params = errorHandler.prototype.getQueryParams(req, required_params);
+    var params = getParamsOrCallback(req, required_params, callback);
+
+    if(!params) { return; }
 
     console.log("idUser " + idUser + " did POST AccelerometerObservation Params: "+JSON.stringify(params));
 
