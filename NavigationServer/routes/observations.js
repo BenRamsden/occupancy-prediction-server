@@ -57,6 +57,7 @@ router.get('/:obtype', function(req, res, next) {
                 processAccelerometerObservation(idUser, req, processCallback);
                 break;
             default:
+                console.log("Hit default with obtype: "+obtype);
                 break;
         }
 
