@@ -41,19 +41,19 @@ router.get('/:obtype', function(req, res, next) {
         if(errorHandler.prototype.handleError(err, res)) return;
 
         switch(obtype) {
-            case 'hotspot':
+            case 'Hotspot':
                 processHotspotObservation(idUser, req, processCallback);
                 break;
-            case 'audio':
+            case 'Audio':
                 processAudioObservation(idUser, req, processCallback);
                 break;
-            case 'crowd':
+            case 'Crowd':
                 processCrowdObservation(idUser, req, processCallback);
                 break;
-            case 'bluetooth':
+            case 'Bluetooth':
                 processBluetoothObservation(idUser, req, processCallback);
                 break;
-            case 'accelerometer':
+            case 'Accelerometer':
                 processAccelerometerObservation(idUser, req, processCallback);
                 break;
             default:
