@@ -3,22 +3,43 @@
  */
 var express = require('express');
 var router = express.Router();
-var errorHandler = require('../errorHandler');
+
+var handleError = require('../handleError');
 var database = require('../database');
+
+var observation_types = ['hotspot','audio','crowd','bluetooth','accelerometer'];
+
+var NO_API_TOKEN = "NO_API_TOKEN";
+var NO_OBTYPE = "NO_OBTYPE";
+var ERR_DB_GET_USER_ID = "ERR_DB_GET_USER_ID";
+var ERR_DB_GET_OBSERVATIONS = "ERR_DB_GET_OBSERVATIONS";
+var ERR_DB_INSERT_OBSERVATION = "ERR_DB_INSERT_OBSERVATION";
 
 /* GET observations by user. */
 router.get('/:obtype', function(req, res, next) {
-    var apitoken = errorHandler.prototype.getApiTokenOrThrow(req.query.apitoken);
+    var apitoken = req.query.apitoken;
 
-    var obtype = errorHandler.prototype.getValidObservationTypeOrThrow(req.params.obtype);
+    if(!apitoken) {
+        return handleError(res, NO_API_TOKEN);
+    }
+
+    var obtype = req.params.obtype;
+
+    if(!obtype) {
+        return handleError(res, NO_OBTYPE);
+    }
 
     database.prototype.getUserId(apitoken, function(err, idUser) {
-        if(errorHandler.prototype.handleError(err, res)) return;
+        if(err) {
+            return handleError(res, ERR_DB_GET_USER_ID);
+        }
 
         var tablename = obtype+'Observations';
 
         database.prototype.getObservations(idUser, tablename, function(err, observations) {
-            if(errorHandler.prototype.handleError(err, res)) return;
+            if(err) {
+                return handleError(res, ERR_DB_GET_OBSERVATIONS);
+            }
 
             res.json({tablename:tablename, my_observations: observations, idUser: idUser});
         });
@@ -26,19 +47,31 @@ router.get('/:obtype', function(req, res, next) {
     });
 
 }).post('/:obtype', function(req, res, next) {
-    var apitoken = errorHandler.prototype.getApiTokenOrThrow(req.query.apitoken);
+    var apitoken = req.query.apitoken;
 
-    var obtype = errorHandler.prototype.getValidObservationTypeOrThrow(req.params.obtype);
+    if(!apitoken) {
+        return handleError(res, NO_API_TOKEN);
+    }
+
+    var obtype = req.params.obtype;
+
+    if(!obtype) {
+        return handleError(res, NO_OBTYPE);
+    }
 
     /* Insert observation of type obtype into table, with id of user with apitoken */
-    var processCallback = function(err) {
-        if(errorHandler.prototype.handleError(err, res)) return;
+    var processCallback = function(err_code) {
+        if(err_code) {
+            return handleError(res, err_code);
+        }
 
         res.json({success:true});
     };
 
     database.prototype.getUserId(apitoken, function(err, idUser) {
-        if(errorHandler.prototype.handleError(err, res)) return;
+        if(err) {
+            return handleError(res, ERR_DB_GET_USER_ID);
+        }
 
         switch(obtype) {
             case 'Hotspot':
@@ -65,10 +98,39 @@ router.get('/:obtype', function(req, res, next) {
 });
 
 
+var NO_LAT = "NO_LAT";
+var NO_LNG = "NO_LNG";
+var NO_NUMBER_CONNECTED = "NO_NUMBER_CONNECTED";
+var NO_OBSERVATION_DATE = "NO_OBSERVATION_DATE";
+
 var processHotspotObservation = function(idUser, req, callback) {
     var required_params = ['lat','lng','number_connected','observation_date'];
 
-    var params = errorHandler.prototype.getQueryParams(req, required_params);
+    var params = {};
+
+    params.lat = req.body.lat;
+
+    if(!params.lat) {
+        return callback(NO_LAT);
+    }
+
+    params.lng = req.body.lng;
+
+    if(!params.lng) {
+        return callback(NO_LNG);
+    }
+
+    params.number_connected = req.body.number_connected;
+
+    if(!params.number_connected) {
+        return callback(NO_NUMBER_CONNECTED);
+    }
+
+    params.observation_date = req.body.observation_date;
+
+    if(!params.observation_date) {
+        return callback(NO_OBSERVATION_DATE);
+    }
 
     console.log("idUser " + idUser + " did POST HotspotObservation Params: "+JSON.stringify(params));
 
