@@ -37,7 +37,7 @@ database.prototype.getUserId = function(apitoken, callback) {
             return callback(err);
         }
 
-        connection.query('select idUser from Users WHERE api_token = ?', [apitoken], function(err, results) {
+        connection.query('select idUser from users WHERE api_token = ?', [apitoken], function(err, results) {
             connection.release();
 
             if(err) return callback(err);
@@ -55,7 +55,7 @@ database.prototype.getHotspots = function(callback) {
             return callback(err);
         }
 
-        connection.query('select * from Hotspots', function(err, results) {
+        connection.query('select * from hotspots', function(err, results) {
             connection.release();
 
             if(err) return callback(err);
@@ -85,12 +85,12 @@ var makeInsertQueryWithCallback = function(query, vals, callback) {
 
 database.prototype.insertHotspotObservation = function(idUser, params, callback) {
 
-    callback(new Error("Hotspot insert not implemented"));
+    callback(new Error("hotspot_observations insert not implemented"));
 };
 
 database.prototype.insertAudioObservation = function(idUser, params, callback) {
 
-    var query = "INSERT INTO AudioObservations" +
+    var query = "INSERT INTO audio_observations" +
                 " (idAudioObservation,idUser,lat,lng,audio_histogram,observation_date)" +
                 " VALUES (DEFAULT, ?, ?, ?, ?, ?)";
 
@@ -102,7 +102,7 @@ database.prototype.insertAudioObservation = function(idUser, params, callback) {
 
 database.prototype.insertCrowdObservation = function(idUser, params, callback) {
 
-    var query = "INSERT INTO CrowdObservations" +
+    var query = "INSERT INTO crowd_observations" +
                 " (idCrowdObservation,idUser,lat,lng,occupancy_estimate,observation_date)" +
                 " VALUES (DEFAULT, ?, ?, ?, ?, ?)";
 
@@ -114,7 +114,7 @@ database.prototype.insertCrowdObservation = function(idUser, params, callback) {
 
 database.prototype.insertBluetoothObservation = function(idUser, params, callback) {
 
-    var query = "INSERT INTO BluetoothObservations" +
+    var query = "INSERT INTO bluetooth_observations" +
                 " (idBluetoothObservation,idUser,lat,lng,bluetooth_count,observation_date)" +
                 " VALUES (DEFAULT, ?, ?, ?, ?, ?)";
 
@@ -126,7 +126,7 @@ database.prototype.insertBluetoothObservation = function(idUser, params, callbac
 
 database.prototype.insertAccelerometerObservation = function(idUser, params, callback) {
 
-    var query = "INSERT INTO AccelerometerObservations" +
+    var query = "INSERT INTO accelerometer_observations" +
                 " (idAccelerometerObservation,idUser,lat,lng,acceleration_timeline,observation_date)" +
                 " VALUES (DEFAULT, ?, ?, ?, ?, ?)";
 

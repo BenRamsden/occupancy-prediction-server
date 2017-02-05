@@ -39,7 +39,7 @@ router.get('/:obtype', function(req, res, next) {
             return handleError(res, ERR_DB_GET_USER_ID);
         }
 
-        var tablename = obtype+'Observations';
+        var tablename = obtype+'_observations';
 
         database.prototype.getObservations(idUser, tablename, function(err, observations) {
             if(err) {
@@ -79,19 +79,19 @@ router.get('/:obtype', function(req, res, next) {
         }
 
         switch(obtype) {
-            case 'Hotspot':
+            case 'hotspot':
                 processHotspotObservation(idUser, req, processCallback);
                 break;
-            case 'Audio':
+            case 'audio':
                 processAudioObservation(idUser, req, processCallback);
                 break;
-            case 'Crowd':
+            case 'crowd':
                 processCrowdObservation(idUser, req, processCallback);
                 break;
-            case 'Bluetooth':
+            case 'bluetooth':
                 processBluetoothObservation(idUser, req, processCallback);
                 break;
-            case 'Accelerometer':
+            case 'accelerometer':
                 processAccelerometerObservation(idUser, req, processCallback);
                 break;
             default:
@@ -125,7 +125,7 @@ var processHotspotObservation = function(idUser, req, callback) {
 
     if(!params) { return; }
 
-    console.log("idUser " + idUser + " did POST HotspotObservation Params: "+JSON.stringify(params));
+    console.log("idUser " + idUser + " did POST Hotspot Observation Params: "+JSON.stringify(params));
 
     database.prototype.insertHotspotObservation(idUser, params, callback);
 };
@@ -137,7 +137,7 @@ var processAudioObservation = function(idUser, req, callback) {
 
     if(!params) { return; }
 
-    console.log("idUser " + idUser + " did POST AudioObservation Params: "+JSON.stringify(params));
+    console.log("idUser " + idUser + " did POST Audio Observation Params: "+JSON.stringify(params));
 
     database.prototype.insertAudioObservation(idUser, params, callback);
 };
@@ -149,7 +149,7 @@ var processCrowdObservation = function(idUser, req, callback) {
 
     if(!params) { return; }
 
-    console.log("idUser " + idUser + " did POST CrowdObservation Params: "+JSON.stringify(params));
+    console.log("idUser " + idUser + " did POST Crowd Observation Params: "+JSON.stringify(params));
 
     database.prototype.insertCrowdObservation(idUser, params, callback);
 };
@@ -161,7 +161,7 @@ var processBluetoothObservation = function(idUser, req, callback) {
 
     if(!params) { return; }
 
-    console.log("idUser " + idUser + " did POST BluetoothObservation Params: "+JSON.stringify(params));
+    console.log("idUser " + idUser + " did POST Bluetooth Observation Params: "+JSON.stringify(params));
 
     database.prototype.insertBluetoothObservation(idUser, params, callback);
 };
@@ -173,7 +173,7 @@ var processAccelerometerObservation = function(idUser, req, callback) {
 
     if(!params) { return; }
 
-    console.log("idUser " + idUser + " did POST AccelerometerObservation Params: "+JSON.stringify(params));
+    console.log("idUser " + idUser + " did POST Accelerometer Observation Params: "+JSON.stringify(params));
 
     database.prototype.insertAccelerometerObservation(idUser, params, callback);
 };

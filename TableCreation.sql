@@ -5,11 +5,11 @@ USE NavigationDB;
 
 
 /*	
-	Users table
+	users table
 	Stores user authentication information for login
 	Requires user personal details in order for user to register
 */
-CREATE TABLE Users (
+CREATE TABLE users (
 	idUser INT(32) UNSIGNED NOT NULL AUTO_INCREMENT,
     
     username VARCHAR(32) NOT NULL,
@@ -22,14 +22,14 @@ CREATE TABLE Users (
     PRIMARY KEY (idUser)
 );
 
-INSERT INTO Users (username, password, full_name, email_address, register_date, api_token) VALUES ('benadmin','benadminpass','Ben Dissertation','ben@dissertation.com',NOW(),'koH6a1UC71rTDM1LKppXeKYJ54cjc8nIfuJAKPly1GDYpjMMLLCuK5LBp3fXAEkCcID1jCh5pCQp9D8DmCWhJHQlLcUcy4gD68Qy');
+INSERT INTO users (username, password, full_name, email_address, register_date, api_token) VALUES ('benadmin','benadminpass','Ben Dissertation','ben@dissertation.com',NOW(),'koH6a1UC71rTDM1LKppXeKYJ54cjc8nIfuJAKPly1GDYpjMMLLCuK5LBp3fXAEkCcID1jCh5pCQp9D8DmCWhJHQlLcUcy4gD68Qy');
 
 /*
-	Hotspots table
+	hotspots table
 	Each time a new hotspot (of new mac) is observed it is inserted
     Referenced any time data is collected in relation to a hotspot    
 */
-CREATE TABLE Hotspots (
+CREATE TABLE hotspots (
 	idHotspot INT(32) UNSIGNED NOT NULL AUTO_INCREMENT,
     
     ssid VARCHAR(32) NOT NULL,
@@ -43,12 +43,12 @@ CREATE TABLE Hotspots (
 
 
 /*
-	HotspotObservations table
+	hotspot_observations table
     Logs the position and number of people connected when the app collects hotspot data
 	Combined lat and lng can be used to map the area a specific hotspot covers
     MAX(observation_date) can be used to stop users submitting locations too frequently
 */
-CREATE TABLE HotspotObservations (
+CREATE TABLE hotspot_observations (
 	idHotspotObservation INT(32) UNSIGNED NOT NULL AUTO_INCREMENT,
     idHotspot INT(32) UNSIGNED NOT NULL,
     idUser INT(32) UNSIGNED NOT NULL,
@@ -62,21 +62,21 @@ CREATE TABLE HotspotObservations (
     PRIMARY KEY (idHotspotObservation),
     
     INDEX (idHotspot),
-	FOREIGN KEY (idHotspot) REFERENCES Hotspots(idHotspot) ON DELETE CASCADE,
+	FOREIGN KEY (idHotspot) REFERENCES hotspots(idHotspot) ON DELETE CASCADE,
         
     INDEX (idUser),
-	FOREIGN KEY (idUser) REFERENCES Users(idUser) ON DELETE CASCADE
+	FOREIGN KEY (idUser) REFERENCES users(idUser) ON DELETE CASCADE
 );
 
 
 /*
-	AudioObservations table
+	audio_observations table
     Logs the audio information and position when the app collects audio data
     
     HISTOGRAM STRUCTURE
-    {{"lo":"0","hi":"499","vl":"45.9"},{"lo":"500","hi":"999","vl":"34.3"}}audioobservations
+    {{"lo":"0","hi":"499","vl":"45.9"},{"lo":"500","hi":"999","vl":"34.3"}}audio_observations
 */
-CREATE TABLE AudioObservations (
+CREATE TABLE audio_observations (
 	idAudioObservation INT(32) UNSIGNED NOT NULL AUTO_INCREMENT,
 	idUser INT(32) UNSIGNED NOT NULL,
 
@@ -89,16 +89,16 @@ CREATE TABLE AudioObservations (
 	PRIMARY KEY (idAudioObservation),
     
 	INDEX (idUser),
-	FOREIGN KEY (idUser) REFERENCES Users(idUser) ON DELETE CASCADE
+	FOREIGN KEY (idUser) REFERENCES users(idUser) ON DELETE CASCADE
 );
 
 /*
-	CrowdObservations table
+	crowd_observations table
     Logs the user input when a user is prompted for an approximate number of people
     at the current venue they are in
 */
 
-CREATE TABLE CrowdObservations (
+CREATE TABLE crowd_observations (
 	idCrowdObservation INT(32) UNSIGNED NOT NULL AUTO_INCREMENT,
     idUser INT(32) UNSIGNED NOT NULL,
     
@@ -111,17 +111,17 @@ CREATE TABLE CrowdObservations (
     PRIMARY KEY (idCrowdObservation),
 
 	INDEX (idUser),
-   	FOREIGN KEY (idUser) REFERENCES Users(idUser) ON DELETE CASCADE
+   	FOREIGN KEY (idUser) REFERENCES users(idUser) ON DELETE CASCADE
 );
 
 
 /*
-	BluetoothObservations table
+	bluetooth_observations table
     Logs the data provided by the client device counting bluetooth
     devices in the local area
 */
 
-CREATE TABLE BluetoothObservations (
+CREATE TABLE bluetooth_observations (
 	idBluetoothObservation INT(32) UNSIGNED NOT NULL AUTO_INCREMENT,
     idUser INT(32) UNSIGNED NOT NULL,
     
@@ -134,17 +134,17 @@ CREATE TABLE BluetoothObservations (
     PRIMARY KEY (idBluetoothObservation),
 
 	INDEX (idUser),
-   	FOREIGN KEY (idUser) REFERENCES Users(idUser) ON DELETE CASCADE
+   	FOREIGN KEY (idUser) REFERENCES users(idUser) ON DELETE CASCADE
 );
 
 
 /*
-	AccelerometerObservations table
+	accelerometer_observations table
     Logs the data provided by the client device counting bluetooth
     devices in the local area
 */
 
-CREATE TABLE AccelerometerObservations (
+CREATE TABLE accelerometer_observations (
 	idAccelerometerObservation INT(32) UNSIGNED NOT NULL AUTO_INCREMENT,
     idUser INT(32) UNSIGNED NOT NULL,
     
@@ -157,5 +157,5 @@ CREATE TABLE AccelerometerObservations (
     PRIMARY KEY (idAccelerometerObservation),
 
 	INDEX (idUser),
-   	FOREIGN KEY (idUser) REFERENCES Users(idUser) ON DELETE CASCADE
+   	FOREIGN KEY (idUser) REFERENCES users(idUser) ON DELETE CASCADE
 );
