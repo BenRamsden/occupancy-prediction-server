@@ -94,7 +94,7 @@ database.prototype.insertAudioObservation = function(idUser, params, callback) {
                 " (idAudioObservation,idUser,lat,lng,audio_histogram,observation_date)" +
                 " VALUES (DEFAULT, ?, ?, ?, ?, ?)";
 
-    var vals = [idUser, params.lat, params.lng, params.audio_histogram, params.observation_date];
+    var vals = [idUser, params.lat, params.lng, JSON.stringify(params.audio_histogram), params.observation_date];
 
     makeInsertQueryWithCallback(query, vals, callback);
 
@@ -130,7 +130,7 @@ database.prototype.insertAccelerometerObservation = function(idUser, params, cal
                 " (idAccelerometerObservation,idUser,lat,lng,acceleration_timeline,observation_date)" +
                 " VALUES (DEFAULT, ?, ?, ?, ?, ?)";
 
-    var vals = [idUser, params.lat, params.lng, params.acceleration_timeline, params.observation_date];
+    var vals = [idUser, params.lat, params.lng, JSON.stringify(params.acceleration_timeline), params.observation_date];
 
     makeInsertQueryWithCallback(query, vals, callback);
 
