@@ -14,6 +14,11 @@ var NO_OBTYPE = "NO_OBTYPE";
 var ERR_DB_GET_USER_ID = "ERR_DB_GET_USER_ID";
 var ERR_DB_GET_OBSERVATIONS = "ERR_DB_GET_OBSERVATIONS";
 var ERR_DB_INSERT_OBSERVATION = "ERR_DB_INSERT_OBSERVATION";
+var OBTYPE_NOT_SUPPORTED = "OBTYPE_NOT_SUPPORTED";
+var NO_LAT = "NO_LAT";
+var NO_LNG = "NO_LNG";
+var NO_NUMBER_CONNECTED = "NO_NUMBER_CONNECTED";
+var NO_OBSERVATION_DATE = "NO_OBSERVATION_DATE";
 
 /* GET observations by user. */
 router.get('/:obtype', function(req, res, next) {
@@ -91,46 +96,31 @@ router.get('/:obtype', function(req, res, next) {
                 break;
             default:
                 console.log("Hit default with obtype: "+obtype);
+                return handleError(res, OBTYPE_NOT_SUPPORTED);
                 break;
         }
 
     });
 });
 
+var MISSING_PARAM_ = "MISSING_PARAM_";
 
-var NO_LAT = "NO_LAT";
-var NO_LNG = "NO_LNG";
-var NO_NUMBER_CONNECTED = "NO_NUMBER_CONNECTED";
-var NO_OBSERVATION_DATE = "NO_OBSERVATION_DATE";
+function getParamsOrCallback(req, required_params, callback) {
+    var params_out = {};
+    for(var i=0; i<required_params.length; i++) {
+        if(req.body[required_params[i]]) {
+            params_out[i] = req.body[required_params[i]];
+        } else {
+            callback(MISSING_PARAM_+required_params[i]);
+        }
+    }
+    return params_out;
+}
 
 var processHotspotObservation = function(idUser, req, callback) {
     var required_params = ['lat','lng','number_connected','observation_date'];
 
-    var params = {};
-
-    params.lat = req.body.lat;
-
-    if(!params.lat) {
-        return callback(NO_LAT);
-    }
-
-    params.lng = req.body.lng;
-
-    if(!params.lng) {
-        return callback(NO_LNG);
-    }
-
-    params.number_connected = req.body.number_connected;
-
-    if(!params.number_connected) {
-        return callback(NO_NUMBER_CONNECTED);
-    }
-
-    params.observation_date = req.body.observation_date;
-
-    if(!params.observation_date) {
-        return callback(NO_OBSERVATION_DATE);
-    }
+    var params = getParamsOrCallback(req, required_params, callback);
 
     console.log("idUser " + idUser + " did POST HotspotObservation Params: "+JSON.stringify(params));
 
