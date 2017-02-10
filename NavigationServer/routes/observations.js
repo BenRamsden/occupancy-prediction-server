@@ -108,7 +108,7 @@ var MISSING_PARAM_ = "MISSING_PARAM_";
 function getParamsOrCallback(req, required_params, callback) {
     var params_out = {};
     for(var i=0; i<required_params.length; i++) {
-        if(req.body[required_params[i]]) {
+        if(typeof req.body[required_params[i]] !== "undefined") {
             params_out[required_params[i]] = req.body[required_params[i]];
         } else {
             callback(MISSING_PARAM_+required_params[i]);
