@@ -22,6 +22,23 @@ router.get('/', function(req, res, next) {
         res.json({hotspots: hotspots});
     });
 
+}).post('/', function(req, res, next) {
+
+    var ssid = req.body.ssid;
+    var mac = req.body.mac;
+    var signal_level = req.body.signal_level;
+    var frequency = req.body.frequency;
+    var register_date = req.body.register_date;
+
+    console.log("Received a post to hotspots"
+                + "\nssid: " + ssid
+                + "\nmac: " + mac
+                + "\nsignal_level: " + signal_level
+                + "\nfrequency: " + frequency
+                + "\nregister_date: " + register_date);
+
+    res.json({});
+
 });
 
 module.exports = router;
