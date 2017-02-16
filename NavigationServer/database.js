@@ -77,7 +77,7 @@ var makeInsertQueryWithCallback = function(query, vals, callback) {
 
             if(err) return callback(err);
 
-            return callback(null);
+            return callback(null, results);
         });
 
     });
@@ -85,7 +85,30 @@ var makeInsertQueryWithCallback = function(query, vals, callback) {
 
 database.prototype.insertHotspotObservation = function(idUser, params, callback) {
 
-    callback(new Error("hotspot_observations insert not implemented"));
+    var query_1 = "INSERT INTO hotspots" +
+        " (idHotspot,ssid,mac,frequency)" +
+        " VALUES (DEFAULT, ?, ?, ?)";
+
+    var vals_1 = [params.ssid, params.mac, params.frequency];
+
+    makeInsertQueryWithCallback(query_2, vals_2, function(err, results) {
+        if(err) {
+            return callback(err);
+        }
+
+        console.log("Insert hotspots got results:" + results);
+
+        var query_2 = "INSERT INTO hotspot_observations" +
+            " (idHotspotObservation,idHotspot,idUser,lat,lng,signal_level,observation_date)" +
+            " VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)";
+
+        var idHotspot = 0;
+
+        var vals_2 = [idHotspot,idUser, params.lat, params.lng, params.signal_level, params.observation_date];
+
+        makeInsertQueryWithCallback(query_2, vals_2, callback);
+    });
+
 };
 
 database.prototype.insertAudioObservation = function(idUser, params, callback) {

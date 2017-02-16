@@ -119,7 +119,8 @@ function getParamsOrCallback(req, required_params, callback) {
 }
 
 var processHotspotObservation = function(idUser, req, callback) {
-    var required_params = ['lat','lng','number_connected','observation_date'];
+    var required_params = ['ssid','mac','frequency',
+                           'lat','lng','signal_level','observation_date'];
 
     var params = getParamsOrCallback(req, required_params, callback);
 

@@ -34,10 +34,8 @@ CREATE TABLE hotspots (
     
     ssid VARCHAR(32) NOT NULL,
     mac CHAR(12) NOT NULL,
-    signal_level INT(32) NOT NULL,
     frequency DECIMAL(1,1) NOT NULL,
-	register_date DATETIME NOT NULL,
-    
+
     PRIMARY KEY (idHotspot)
 );
 
@@ -56,7 +54,7 @@ CREATE TABLE hotspot_observations (
 	lat FLOAT(10, 6) NOT NULL,
 	lng FLOAT(10, 6) NOT NULL,
     
-	number_connected INT(32) UNSIGNED NOT NULL,
+    signal_level INT(32) NOT NULL,
     observation_date DATETIME NOT NULL,
     
     PRIMARY KEY (idHotspotObservation),
