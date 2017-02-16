@@ -96,7 +96,7 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
             return callback(err);
         }
 
-        console.log("Insert hotspots got results:" + results.idHotspot);
+        console.log("Insert hotspots got results:" + results.insertId);
 
         return callback(null);
 
