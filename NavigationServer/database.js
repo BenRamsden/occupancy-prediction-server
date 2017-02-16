@@ -96,7 +96,9 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
             return callback(err);
         }
 
-        console.log("Insert hotspots got results:" + results);
+        console.log("Insert hotspots got results:" + results.idHotspot);
+
+        return callback(null);
 
         var query_2 = "INSERT INTO hotspot_observations" +
             " (idHotspotObservation,idHotspot,idUser,lat,lng,signal_level,observation_date)" +
