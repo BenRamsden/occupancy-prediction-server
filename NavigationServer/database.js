@@ -91,7 +91,7 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
 
     var vals_1 = [params.ssid, params.mac, params.frequency];
 
-    makeInsertQueryWithCallback(query_2, vals_2, function(err, results) {
+    makeInsertQueryWithCallback(query_1, vals_1, function(err, results) {
         if(err) {
             return callback(err);
         }
