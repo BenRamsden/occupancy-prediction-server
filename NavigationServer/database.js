@@ -98,13 +98,15 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
 
         console.log("Insert hotspots got results:" + results.insertId);
 
-        return callback(null);
+        if(typeof results.insertId == "undefined") {
+            return callback(new Error("Could not do hotspot_observations insert because insert into hotspots did not return insertId"));
+        }
 
         var query_2 = "INSERT INTO hotspot_observations" +
             " (idHotspotObservation,idHotspot,idUser,lat,lng,signal_level,observation_date)" +
             " VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)";
 
-        var idHotspot = 0;
+        var idHotspot = results.insertId;
 
         var vals_2 = [idHotspot,idUser, params.lat, params.lng, params.signal_level, params.observation_date];
 
