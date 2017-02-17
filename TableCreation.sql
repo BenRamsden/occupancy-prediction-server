@@ -34,7 +34,7 @@ CREATE TABLE hotspots (
     
     ssid VARCHAR(32) UNIQUE NOT NULL,
     mac VARCHAR(32) UNIQUE NOT NULL,
-    frequency INT(32) UNIQUE NOT NULL,
+    frequency INT(32) NOT NULL,
 
     PRIMARY KEY (idHotspot)
 );
