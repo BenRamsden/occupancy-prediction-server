@@ -109,7 +109,7 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
 
         if(results.length > 0) {
 
-            console.log("Hotspot: Matched existing hotspot with idHotspot " + results.idHotspot);
+            console.log("Hotspot: Matched existing hotspot with idHotspot " + results[0].idHotspot);
 
             /* Use existing idHotspot, this hotspot has been seen before */
             insertHotspotObservation(idUser, results[0].idHotspot, params, callback);
@@ -128,7 +128,7 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
                     return callback(err);
                 }
 
-                console.log("Hotspot: Inserted new hotspot with idHotspot " + results.idHotspot);
+                console.log("Hotspot: Inserted new hotspot with idHotspot " + results.insertId);
 
                 if(typeof results.insertId == "undefined") {
                     return callback(new Error("Could not do hotspot_observations insert because insert into hotspots did not return insertId"));
