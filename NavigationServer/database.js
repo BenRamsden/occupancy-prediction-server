@@ -91,6 +91,8 @@ var insertHotspotObservation = function(idUser, idHotspot, params, callback) {
     var vals = [idHotspot, idUser, params.lat, params.lng, params.signal_level, params.observation_date];
 
     makeQueryWithCallback(query, vals, callback);
+
+    console.log("HotspotObservations: Inserted new hotspot observation with idHotspot " + idHotspot);
 };
 
 database.prototype.insertHotspotObservation = function(idUser, params, callback) {
@@ -106,6 +108,8 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
         }
 
         if(results.length > 0) {
+
+            console.log("Hotspot: Matched existing hotspot with idHotspot " + results.idHotspot);
 
             /* Use existing idHotspot, this hotspot has been seen before */
             insertHotspotObservation(idUser, results[0].idHotspot, params, callback);
@@ -124,7 +128,7 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
                     return callback(err);
                 }
 
-                console.log("Insert hotspots got results:" + results.insertId);
+                console.log("Hotspot: Inserted new hotspot with idHotspot " + results.idHotspot);
 
                 if(typeof results.insertId == "undefined") {
                     return callback(new Error("Could not do hotspot_observations insert because insert into hotspots did not return insertId"));
