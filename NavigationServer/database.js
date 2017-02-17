@@ -86,7 +86,7 @@ var makeInsertQueryWithCallback = function(query, vals, callback) {
 database.prototype.insertHotspotObservation = function(idUser, params, callback) {
 
     var query_0 = "SELECT idHotspot FROM hotspots" +
-        " WHERE ssid=? AND mac=? AND frequency=?";
+        " WHERE ssid=? AND mac=?";
 
     var vals_0 = [params.ssid, params.mac, params.frequency];
 
