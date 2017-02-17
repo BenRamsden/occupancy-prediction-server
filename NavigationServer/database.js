@@ -66,7 +66,7 @@ database.prototype.getHotspots = function(callback) {
     });
 };
 
-var makeInsertQueryWithCallback = function(query, vals, callback) {
+var makeQueryWithCallback = function(query, vals, callback) {
     mysqlpool.getConnection(function(err, connection) {
         if (err) {
             return callback(err);
@@ -83,6 +83,16 @@ var makeInsertQueryWithCallback = function(query, vals, callback) {
     });
 };
 
+var insertHotspotObservation = function(idUser, idHotspot, params, callback) {
+    var query = "INSERT INTO hotspot_observations" +
+        " (idHotspotObservation,idHotspot,idUser,lat,lng,signal_level,observation_date)" +
+        " VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)";
+
+    var vals = [idHotspot, idUser, params.lat, params.lng, params.signal_level, params.observation_date];
+
+    makeQueryWithCallback(query, vals, callback);
+};
+
 database.prototype.insertHotspotObservation = function(idUser, params, callback) {
 
     var query_0 = "SELECT idHotspot FROM hotspots" +
@@ -90,32 +100,26 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
 
     var vals_0 = [params.ssid, params.mac, params.frequency];
 
-    makeInsertQueryWithCallback(query_0, vals_0, function(err, results) {
+    makeQueryWithCallback(query_0, vals_0, function(err, results) {
         if(err) {
             return callback(err);
         }
 
         if(results.length > 0) {
 
-            var query_3 = "INSERT INTO hotspot_observations" +
-                " (idHotspotObservation,idHotspot,idUser,lat,lng,signal_level,observation_date)" +
-                " VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)";
-
-            var idHotspot = results[0].idHotspot;
-
-            var vals_3 = [idHotspot,idUser, params.lat, params.lng, params.signal_level, params.observation_date];
-
-            makeInsertQueryWithCallback(query_3, vals_3, callback);
+            /* Use existing idHotspot, this hotspot has been seen before */
+            insertHotspotObservation(idUser, results[0].idHotspot, params, callback);
 
         } else {
 
+            /* Make a new entry into hotspots, this router has not been seen before */
             var query_1 = "INSERT INTO hotspots" +
                 " (idHotspot,ssid,mac,frequency)" +
                 " VALUES (DEFAULT, ?, ?, ?)";
 
             var vals_1 = [params.ssid, params.mac, params.frequency];
 
-            makeInsertQueryWithCallback(query_1, vals_1, function(err, results) {
+            makeQueryWithCallback(query_1, vals_1, function(err, results) {
                 if(err) {
                     return callback(err);
                 }
@@ -126,25 +130,13 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
                     return callback(new Error("Could not do hotspot_observations insert because insert into hotspots did not return insertId"));
                 }
 
-                var query_2 = "INSERT INTO hotspot_observations" +
-                    " (idHotspotObservation,idHotspot,idUser,lat,lng,signal_level,observation_date)" +
-                    " VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)";
+                insertHotspotObservation(idUser, results.insertId, params, callback);
 
-                var idHotspot = results.insertId;
-
-                var vals_2 = [idHotspot,idUser, params.lat, params.lng, params.signal_level, params.observation_date];
-
-                makeInsertQueryWithCallback(query_2, vals_2, callback);
             });
 
         }
 
     });
-
-
-
-
-
 
 };
 
@@ -156,7 +148,7 @@ database.prototype.insertAudioObservation = function(idUser, params, callback) {
 
     var vals = [idUser, params.lat, params.lng, JSON.stringify(params.audio_histogram), params.observation_date];
 
-    makeInsertQueryWithCallback(query, vals, callback);
+    makeQueryWithCallback(query, vals, callback);
 
 };
 
@@ -168,7 +160,7 @@ database.prototype.insertCrowdObservation = function(idUser, params, callback) {
 
     var vals = [idUser, params.lat, params.lng, params.occupancy_estimate, params.observation_date];
 
-    makeInsertQueryWithCallback(query, vals, callback);
+    makeQueryWithCallback(query, vals, callback);
 
 };
 
@@ -180,7 +172,7 @@ database.prototype.insertBluetoothObservation = function(idUser, params, callbac
 
     var vals = [idUser, params.lat, params.lng, params.bluetooth_count, params.observation_date];
 
-    makeInsertQueryWithCallback(query, vals, callback);
+    makeQueryWithCallback(query, vals, callback);
 
 };
 
@@ -192,7 +184,7 @@ database.prototype.insertAccelerometerObservation = function(idUser, params, cal
 
     var vals = [idUser, params.lat, params.lng, JSON.stringify(params.acceleration_timeline), params.observation_date];
 
-    makeInsertQueryWithCallback(query, vals, callback);
+    makeQueryWithCallback(query, vals, callback);
 
 };
 
