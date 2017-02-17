@@ -85,33 +85,66 @@ var makeInsertQueryWithCallback = function(query, vals, callback) {
 
 database.prototype.insertHotspotObservation = function(idUser, params, callback) {
 
-    var query_1 = "INSERT INTO hotspots" +
-        " (idHotspot,ssid,mac,frequency)" +
-        " VALUES (DEFAULT, ?, ?, ?)";
+    var query_0 = "SELECT idHotspot FROM hotspots" +
+        "WHERE ssid=? AND mac=? AND frequency=?";
 
-    var vals_1 = [params.ssid, params.mac, params.frequency];
+    var vals_0 = [params.ssid, params.mac, params.frequency];
 
-    makeInsertQueryWithCallback(query_1, vals_1, function(err, results) {
+    makeInsertQueryWithCallback(query_0, vals_0, function(err, results) {
         if(err) {
             return callback(err);
         }
 
-        console.log("Insert hotspots got results:" + results.insertId);
+        if(results.length > 0) {
 
-        if(typeof results.insertId == "undefined") {
-            return callback(new Error("Could not do hotspot_observations insert because insert into hotspots did not return insertId"));
+            var query_3 = "INSERT INTO hotspot_observations" +
+                " (idHotspotObservation,idHotspot,idUser,lat,lng,signal_level,observation_date)" +
+                " VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)";
+
+            var idHotspot = results[0].idHotspot;
+
+            var vals_3 = [idHotspot,idUser, params.lat, params.lng, params.signal_level, params.observation_date];
+
+            makeInsertQueryWithCallback(query_3, vals_3, callback);
+
+        } else {
+
+            var query_1 = "INSERT INTO hotspots" +
+                " (idHotspot,ssid,mac,frequency)" +
+                " VALUES (DEFAULT, ?, ?, ?)";
+
+            var vals_1 = [params.ssid, params.mac, params.frequency];
+
+            makeInsertQueryWithCallback(query_1, vals_1, function(err, results) {
+                if(err) {
+                    return callback(err);
+                }
+
+                console.log("Insert hotspots got results:" + results.insertId);
+
+                if(typeof results.insertId == "undefined") {
+                    return callback(new Error("Could not do hotspot_observations insert because insert into hotspots did not return insertId"));
+                }
+
+                var query_2 = "INSERT INTO hotspot_observations" +
+                    " (idHotspotObservation,idHotspot,idUser,lat,lng,signal_level,observation_date)" +
+                    " VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)";
+
+                var idHotspot = results.insertId;
+
+                var vals_2 = [idHotspot,idUser, params.lat, params.lng, params.signal_level, params.observation_date];
+
+                makeInsertQueryWithCallback(query_2, vals_2, callback);
+            });
+
         }
 
-        var query_2 = "INSERT INTO hotspot_observations" +
-            " (idHotspotObservation,idHotspot,idUser,lat,lng,signal_level,observation_date)" +
-            " VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)";
-
-        var idHotspot = results.insertId;
-
-        var vals_2 = [idHotspot,idUser, params.lat, params.lng, params.signal_level, params.observation_date];
-
-        makeInsertQueryWithCallback(query_2, vals_2, callback);
     });
+
+
+
+
+
 
 };
 
