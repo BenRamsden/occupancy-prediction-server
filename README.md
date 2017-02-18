@@ -63,3 +63,13 @@ then run this command on the server
 Find out the IP address of the VM server, connect to it on the host
     
     http://IPHERE:3000
+    
+###Reroute to port 80
+    
+To reroute the traffic to 8080 to 80 i ran the command
+
+    sudo iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080
+
+Check the status of the preroute
+
+    sudo iptables -L -vt nat
