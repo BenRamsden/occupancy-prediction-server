@@ -144,6 +144,10 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
 
 };
 
+database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callback) {
+    callback(null, 0);
+};
+
 database.prototype.insertAudioObservation = function(idUser, params, callback) {
 
     var query = "INSERT INTO audio_observations" +

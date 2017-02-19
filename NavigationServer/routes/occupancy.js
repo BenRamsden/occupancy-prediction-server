@@ -29,7 +29,13 @@ router.post('', function(req, res, next) {
         return handleError(res, NO_LNG);
     }
 
-    res.json({success: true});
+    database.prototype.getOccupancyEstimation(apitoken, lat, lng, function(err, results) {
+        if(err) {
+            handleError(res, err);
+        }
+
+        res.json({success: true, results: results});
+    });
 
 });
 
