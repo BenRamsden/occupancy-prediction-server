@@ -145,11 +145,13 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
 };
 
 database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callback) {
-    var results = {};
+    var results_collection = {};
 
-    var query_0 = "SELECT * FROM hotspot_observations";
+    //var example = "SELECT id, ( 3959 * acos( cos( radians(37) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(-122) ) + sin( radians(37) ) * sin( radians( lat ) ) ) ) AS distance FROM markers HAVING distance < 25 ORDER BY distance LIMIT 0 , 20;";
 
-    var vals_0 = [];
+    var query_0 = "SELECT idHotspotObservation, ( 3959 * acos( cos( radians( ? ) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians( ? ) ) + sin( radians( ? ) ) * sin( radians( lat ) ) ) ) AS distance FROM hotspot_observations;";
+
+    var vals_0 = [lat, lng, lat];
 
     makeQueryWithCallback(query_0, vals_0, function(err, results) {
         if (err) {
