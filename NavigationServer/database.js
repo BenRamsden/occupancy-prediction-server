@@ -158,18 +158,24 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     {
         /* Count individual hotspots within 0.1 miles */
-        var query = "SELECT idHotspot, AVG(distance)" +
-            " FROM (" +
-            "SELECT idHotspot, " + distance_subquery +
+
+        var query_0 =
+            "SELECT idHotspot" +
+            " FROM (";
+
+        var sub_query =
+            " SELECT * , " + distance_subquery +
             " FROM hotspot_observations NATURAL JOIN hotspots" +
             " HAVING distance < 0.1" +
-            " ORDER BY distance ASC" +
+            " ORDER BY distance ASC";
+
+        var query_1 =
             ") AS t1 " +
             " GROUP BY idHotspot";
 
         var vals = [lat, lng, lat];
 
-        makeQueryWithCallback(query, vals, function(err, results) {
+        makeQueryWithCallback(query_0+sub_query+query_1, vals, function(err, results) {
             if (err) {
                 return callback(err);
             }
@@ -180,20 +186,25 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     {
         /* Average bluetooth count within 0.1 miles */
-        var query = "SELECT AVG(distance)" +
-            " FROM (" +
-                " SELECT idBluetoothObservation, " + distance_subquery +
-                " FROM bluetooth_observations" +
+        var query_0 =
+            "SELECT AVG(bluetooth_count)" +
+            " FROM (";
+
+        var sub_query =
+            " SELECT * , " + distance_subquery +
+            " FROM bluetooth_observations";
+
+        var query_1 =
             ") AS t1";
 
         var vals = [lat, lng, lat];
 
-        makeQueryWithCallback(query, vals, function(err, results) {
+        makeQueryWithCallback(query_0+sub_query+query_1, vals, function(err, results) {
             if (err) {
                 return callback(err);
             }
 
-            callback(null, "bluetooth_count", results.length);
+            callback(null, "bluetooth_count", results);
         });
     }
 
