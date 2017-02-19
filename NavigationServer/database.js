@@ -210,19 +210,64 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
         });
     }
 
+
     {
         /* Get number of readings from user devices back */
+        countObservationsFromLatLng(lat, lng, "hotspot_observations", function(err, results) {
+            if (err) {
+                return callback(err);
+            }
 
+            return callback(null, "number_of_hotspot_observations", results);
+        });
+    }
 
+    {
+        /* Get number of readings from user devices back */
         countObservationsFromLatLng(lat, lng, "audio_observations", function(err, results) {
             if (err) {
                 return callback(err);
             }
 
-            return callback(null, "audio_observations_count", results);
+            return callback(null, "number_of_audio_observations", results);
         });
 
     }
+
+    {
+        /* Get number of readings from user devices back */
+        countObservationsFromLatLng(lat, lng, "crowd_observations", function(err, results) {
+            if (err) {
+                return callback(err);
+            }
+
+            return callback(null, "number_of_crowd_observations", results);
+        });
+    }
+
+
+    {
+        /* Get number of readings from user devices back */
+        countObservationsFromLatLng(lat, lng, "bluetooth_observations", function(err, results) {
+            if (err) {
+                return callback(err);
+            }
+
+            return callback(null, "number_of_bluetooth_observations", results);
+        });
+    }
+
+    {
+        /* Get number of readings from user devices back */
+        countObservationsFromLatLng(lat, lng, "accelerometer_observations", function(err, results) {
+            if (err) {
+                return callback(err);
+            }
+
+            return callback(null, "number_of_accelerometer_observations", results);
+        });
+    }
+
 };
 
 function countObservationsFromLatLng(lat, lng, table_name, callback) {
