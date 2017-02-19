@@ -245,7 +245,7 @@ function countObservationsFromLatLng(lat, lng, table_name, callback) {
             return callback(err);
         }
 
-        return callback(null, "reading_count", results);
+        return callback(null, results);
     });
 }
 
