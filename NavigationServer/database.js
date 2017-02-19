@@ -149,7 +149,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     //var example = "SELECT id, ( 3959 * acos( cos( radians(37) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(-122) ) + sin( radians(37) ) * sin( radians( lat ) ) ) ) AS distance FROM markers HAVING distance < 25 ORDER BY distance LIMIT 0 , 20;";
 
-    var query_0 = "SELECT * ," +
+    var query_0 = "SELECT idHotspot ," +
         " ( 3959" +
         " * acos( cos( radians( ? ) )" +
         " * cos( radians( lat ) )" +
@@ -158,9 +158,8 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
         " + sin( radians( ? ) )" +
         " * sin( radians( lat ) ) ) )" +
         " AS distance FROM hotspot_observations NATURAL JOIN hotspots" +
-        " HAVING distance < 1" +
-        " ORDER BY distance ASC" +
-        " LIMIT 10";
+        " HAVING distance < 0.1" +
+        " ORDER BY distance ASC";
 
     var vals_0 = [lat, lng, lat];
 
