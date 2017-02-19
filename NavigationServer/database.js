@@ -213,7 +213,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
     {
         /* Get number of readings from user devices back */
         var query_0_0 =
-            "SELECT COUNT(*) AS hotspot_observation_count" +
+            "SELECT COUNT(idHotspotObservation)" +
             " FROM (";
 
         var query_0_1 =
@@ -227,7 +227,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
         var union_0 = " UNION ";
 
         var query_1_0 =
-            "SELECT COUNT(*) AS audio_observation_count" +
+            "SELECT COUNT(idAudioObservation)" +
             " FROM (";
 
         var query_1_1 =
