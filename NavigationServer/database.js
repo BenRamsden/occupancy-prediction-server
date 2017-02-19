@@ -171,7 +171,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             return callback(err);
         }
 
-        return callback(null, "max_bluetooth_count", results["MAX(bluetooth_count)"]);
+        return callback(null, "max_bluetooth_count", results[0]["MAX(bluetooth_count)"]);
     });
 
 
@@ -181,7 +181,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             return callback(err);
         }
 
-        return callback(null, "number_of_hotspot_observations", results["COUNT(*)"]);
+        return callback(null, "number_of_hotspot_observations", results[0]["COUNT(*)"]);
     });
 
     /* Get number of readings from user devices back */
@@ -190,7 +190,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             return callback(err);
         }
 
-        return callback(null, "number_of_audio_observations", results["COUNT(*)"]);
+        return callback(null, "number_of_audio_observations", results[0]["COUNT(*)"]);
     });
 
     /* Get number of readings from user devices back */
@@ -199,7 +199,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             return callback(err);
         }
 
-        return callback(null, "number_of_crowd_observations", results["COUNT(*)"]);
+        return callback(null, "number_of_crowd_observations", results[0]["COUNT(*)"]);
     });
 
     /* Get number of readings from user devices back */
@@ -208,7 +208,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             return callback(err);
         }
 
-        return callback(null, "number_of_bluetooth_observations", results["COUNT(*)"]);
+        return callback(null, "number_of_bluetooth_observations", results[0]["COUNT(*)"]);
     });
 
     /* Get number of readings from user devices back */
@@ -217,7 +217,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             return callback(err);
         }
 
-        return callback(null, "number_of_accelerometer_observations", results["COUNT(*)"]);
+        return callback(null, "number_of_accelerometer_observations", results[0]["COUNT(*)"]);
     });
 
     /* TODO: Gather audio histogram statistics for prediction */
