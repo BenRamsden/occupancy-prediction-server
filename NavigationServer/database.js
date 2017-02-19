@@ -206,7 +206,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
                 return callback(err);
             }
 
-            return callback(null, "average_bluetooth_count", results[0]["MAX(bluetooth_count)"]);
+            return callback(null, "max_bluetooth_count", results[0]["MAX(bluetooth_count)"]);
         });
     }
 
