@@ -181,7 +181,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
                 return callback(err);
             }
 
-            return callback(null, "hotspot_count", results.length);
+            return callback(null, "total_hotspots", results.length);
         });
     }
 
@@ -206,7 +206,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
                 return callback(err);
             }
 
-            return callback(null, "bluetooth_count", results[0]["AVG(bluetooth_count)"]);
+            return callback(null, "average_bluetooth_count", results[0]["AVG(bluetooth_count)"]);
         });
     }
 
