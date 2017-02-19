@@ -161,7 +161,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
         " HAVING distance < 0.1" +
         " ORDER BY distance ASC";
 
-    var query = "SELECT COUNT(*)" +
+    var query = "SELECT idHotspot, AVG(distance)" +
         " FROM (" +
         sub_query +
         ") AS t1 " +
