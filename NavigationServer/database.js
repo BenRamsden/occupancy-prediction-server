@@ -144,19 +144,19 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
 
 };
 
+const distance_subquery =
+    " ( 3959" +
+    " * acos( cos( radians( ? ) )" +
+    " * cos( radians( lat ) )" +
+    " * cos( radians( lng )" +
+    " - radians( ? ) )" +
+    " + sin( radians( ? ) )" +
+    " * sin( radians( lat ) ) ) )" +
+    " AS distance ";
+
 database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callback) {
 
     const NO_DATA_AVAILABLE = "NO_DATA_AVAILABLE";
-
-    const distance_subquery =
-        " ( 3959" +
-        " * acos( cos( radians( ? ) )" +
-        " * cos( radians( lat ) )" +
-        " * cos( radians( lng )" +
-        " - radians( ? ) )" +
-        " + sin( radians( ? ) )" +
-        " * sin( radians( lat ) ) ) )" +
-        " AS distance ";
 
     {
         /* Count individual hotspots within 0.1 miles */
@@ -211,50 +211,41 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
     }
 
     {
-        var query_start = "SELECT "
-
         /* Get number of readings from user devices back */
-        var query_0_0 =
-            "(SELECT COUNT(idHotspotObservation)" +
-            " FROM (";
-
-        var query_0_1 =
-            " SELECT idHotspotObservation, " + distance_subquery +
-            " FROM hotspot_observations " +
-            " HAVING distance < 0.1 ";
-
-        var query_0_2 =
-            ") AS t1) AS hotspot_observation_count ";
-
-        var seperation_0 = ",";
-
-        var query_1_0 =
-            "(SELECT COUNT(idAudioObservation)" +
-            " FROM (";
-
-        var query_1_1 =
-            " SELECT idAudioObservation, " + distance_subquery +
-            " FROM audio_observations " +
-            " HAVING distance < 0.1 ";
-
-        var query_1_2 =
-            ") AS t2) AS audio_observation_count";
 
 
-        var vals =
-            [lat, lng, lat,
-            lat, lng, lat];
-
-        makeQueryWithCallback(query_start+query_0_0+query_0_1+query_0_2+seperation_0+query_1_0+query_1_1+query_1_2, vals, function(err, results) {
+        countObservationsFromLatLng(lat, lng, "audio_observations", function(err, results) {
             if (err) {
                 return callback(err);
             }
 
-            return callback(null, "reading_count", results);
+            return callback(null, "audio_observations_count", results);
         });
 
     }
 };
+
+function countObservationsFromLatLng(lat, lng, table_name, callback) {
+    var query_1 =
+        "SELECT COUNT(*)" +
+        " FROM (";
+
+    var query_2 =
+        " SELECT " + distance_subquery +
+        " FROM " + table_name +
+        " HAVING distance < 0.1 ";
+
+    var query_3 =
+        ") AS t2";
+
+    makeQueryWithCallback(query_1+query_2+query_3, vals, function(err, results) {
+        if (err) {
+            return callback(err);
+        }
+
+        return callback(null, "reading_count", results);
+    });
+}
 
 database.prototype.insertAudioObservation = function(idUser, params, callback) {
 
