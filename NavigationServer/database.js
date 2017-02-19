@@ -268,6 +268,21 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
         });
     }
 
+    {
+        /* Gather audio histogram statistics for prediction */
+
+    }
+
+    {
+        /* Gather crowd statistics for prediction */
+
+    }
+
+    {
+        /* Gather accelerometer statistics for prediction */
+
+    }
+
 };
 
 function countObservationsFromLatLng(lat, lng, table_name, callback) {
