@@ -1,8 +1,9 @@
 #!/bin/bash
 
-echo "###"
-echo "If the only process is 'grep node' and 'grep npm', server is offline"
-echo "###"
-
-ps aux | grep node
-ps aux | grep npm
+ps cax | grep node > /dev/null
+if [ $? -eq 0 ]; then
+  echo "CHECK: Process is running."
+  ps cax | grep node
+else
+  echo "Process is not running."
+fi

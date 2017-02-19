@@ -1,14 +1,10 @@
 #!/bin/bash
 
-echo "Killing All Processes with 'meteor' in name"
+ps cax | grep node > /dev/null
+if [ $? -eq 0 ]; then
+  pkill -f node
+  echo "KILL: node was running, killed"
+else
+  echo "KILL: node is not running."
+fi
 
-# Alternate method killing process by PID saved in file
-#
-#if [ ! -f "meteor_save_pid.txt" ]; then
-#    echo "Err: gada/meteor_save_pid.txt not found"
-#    exit
-#fi
-
-#kill -9 `cat ./gada/meteor_save_pid.txt`
-
-pkill -f node
