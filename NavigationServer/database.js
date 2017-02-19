@@ -206,16 +206,33 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
                 return callback(err);
             }
 
-            if(results.length == 0) {
-                return callback(null, "bluetooth_count", NO_DATA_AVAILABLE);
-            }
-
             return callback(null, "bluetooth_count", results[0]["AVG(bluetooth_count)"]);
         });
     }
 
     {
         /* Get number of readings from user devices back */
+        var query_0 =
+            "SELECT COUNT(*)" +
+            " FROM (";
+
+        var sub_query_1 =
+            " SELECT idHotspotObservation, " + distance_subquery +
+            " FROM hotspot_observations " +
+            " HAVING distance < 0.1 ";
+
+        var query_2 =
+            ") AS t1";
+
+        var vals = [lat, lng, lat];
+
+        makeQueryWithCallback(query_0+sub_query_1+query_2, vals, function(err, results) {
+            if (err) {
+                return callback(err);
+            }
+
+            return callback(null, "reading_count", results);
+        });
 
     }
 };

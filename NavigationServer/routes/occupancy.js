@@ -41,7 +41,7 @@ router.post('', function(req, res, next) {
 
         callback_count++;
 
-        if(callback_count == 2) {
+        if(callback_count == 3) {
             res.json({success: true, results: callback_results});
         }
     });
