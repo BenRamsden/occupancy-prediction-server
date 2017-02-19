@@ -238,6 +238,8 @@ function countObservationsFromLatLng(lat, lng, table_name, callback) {
     var query_3 =
         ") AS t2";
 
+    var vals = [lat, lng, lat];
+
     makeQueryWithCallback(query_1+query_2+query_3, vals, function(err, results) {
         if (err) {
             return callback(err);
