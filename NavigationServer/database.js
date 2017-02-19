@@ -174,7 +174,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             return callback(err);
         }
 
-        callback(null, results);
+        callback(null, results.length);
     });
 
 };
