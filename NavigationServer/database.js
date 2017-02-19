@@ -199,12 +199,12 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
         var vals = [lat, lng, lat];
 
-        makeQueryWithCallback(sub_query, vals, function(err, results) {
+        makeQueryWithCallback(query_0+sub_query+query_1, vals, function(err, results) {
             if (err) {
                 return callback(err);
             }
 
-            callback(null, "bluetooth_count", results);
+            callback(null, "bluetooth_count", results); //["AVG(bluetooth_count)"]
         });
     }
 
