@@ -157,7 +157,7 @@ const distance_subquery =
 database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callback) {
 
     /* Count individual hotspots within 0.1 miles */
-    queryObservationsFromLatLng(lat, lng, "idHotspot", "hotspot_observations NATURAL JOIN hotspots", function(err, results) {
+    queryObservationsFromLatLng(lat, lng, "DISTINCT idHotspot", "hotspot_observations NATURAL JOIN hotspots", function(err, results) {
         if (err) {
             return callback(err);
         }
