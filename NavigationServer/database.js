@@ -160,29 +160,14 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     {
         /* Count individual hotspots within 0.1 miles */
-
-        var query_0 =
-            "SELECT idHotspot" +
-            " FROM (";
-
-        var sub_query =
-            " SELECT * , " + distance_subquery +
-            " FROM hotspot_observations NATURAL JOIN hotspots" +
-            " HAVING distance < 0.1";
-
-        var query_1 =
-            ") AS t1 " +
-            " GROUP BY idHotspot";
-
-        var vals = [lat, lng, lat];
-
-        makeQueryWithCallback(query_0+sub_query+query_1, vals, function(err, results) {
+        queryObservationsFromLatLng(lat, lng, "idHotspot", "hotspot_observations NATURAL JOIN hotspots", function(err, results) {
             if (err) {
                 return callback(err);
             }
 
             return callback(null, "total_hotspots", results.length);
         });
+
     }
 
     {
@@ -200,7 +185,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     {
         /* Get number of readings from user devices back */
-        countObservationsFromLatLng(lat, lng, "hotspot_observations", function(err, results) {
+        queryObservationsFromLatLng(lat, lng, "COUNT(*)", "hotspot_observations", function(err, results) {
             if (err) {
                 return callback(err);
             }
@@ -211,7 +196,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     {
         /* Get number of readings from user devices back */
-        countObservationsFromLatLng(lat, lng, "audio_observations", function(err, results) {
+        queryObservationsFromLatLng(lat, lng, "COUNT(*)", "audio_observations", function(err, results) {
             if (err) {
                 return callback(err);
             }
@@ -223,7 +208,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     {
         /* Get number of readings from user devices back */
-        countObservationsFromLatLng(lat, lng, "crowd_observations", function(err, results) {
+        queryObservationsFromLatLng(lat, lng, "COUNT(*)", "crowd_observations", function(err, results) {
             if (err) {
                 return callback(err);
             }
@@ -235,7 +220,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     {
         /* Get number of readings from user devices back */
-        countObservationsFromLatLng(lat, lng, "bluetooth_observations", function(err, results) {
+        queryObservationsFromLatLng(lat, lng, "COUNT(*)", "bluetooth_observations", function(err, results) {
             if (err) {
                 return callback(err);
             }
@@ -246,7 +231,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     {
         /* Get number of readings from user devices back */
-        countObservationsFromLatLng(lat, lng, "accelerometer_observations", function(err, results) {
+        queryObservationsFromLatLng(lat, lng, "COUNT(*)", "accelerometer_observations", function(err, results) {
             if (err) {
                 return callback(err);
             }
@@ -270,30 +255,6 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     }
 
-};
-
-function countObservationsFromLatLng(lat, lng, table_name, callback) {
-    var query_1 =
-        "SELECT COUNT(*)" +
-        " FROM (";
-
-    var query_2 =
-        " SELECT " + distance_subquery +
-        " FROM " + table_name +
-        " HAVING distance < 0.1 ";
-
-    var query_3 =
-        ") AS t2";
-
-    var vals = [lat, lng, lat];
-
-    makeQueryWithCallback(query_1+query_2+query_3, vals, function(err, results) {
-        if (err) {
-            return callback(err);
-        }
-
-        return callback(null, results[0]["COUNT(*)"]);
-    });
 };
 
 function queryObservationsFromLatLng(lat, lng, field_name, table_name, callback) {
