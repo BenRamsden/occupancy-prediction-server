@@ -179,7 +179,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
                 return callback(err);
             }
 
-            callback(null, "hotspot_count", results.length);
+            return callback(null, "hotspot_count", results.length);
         });
     }
 
@@ -205,10 +205,10 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             }
 
             if(results.length = 0) {
-                callback(null, "bluetooth_count", "NO_DATA_AVAILABLE");
+                return callback(null, "bluetooth_count", "NO_DATA_AVAILABLE");
             }
 
-            callback(null, "bluetooth_count", results[0]["AVG(bluetooth_count)"]);
+            return callback(null, "bluetooth_count", results[0]["AVG(bluetooth_count)"]);
         });
     }
 
