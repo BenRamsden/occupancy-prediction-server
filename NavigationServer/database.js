@@ -204,7 +204,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
                 return callback(err);
             }
 
-            if(results.length = 0) {
+            if(results.length == 0) {
                 return callback(null, "bluetooth_count", "NO_DATA_AVAILABLE");
             }
 
