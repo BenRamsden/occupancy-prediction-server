@@ -224,7 +224,9 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             " HAVING distance < 0.1 ";
 
         var query_0_2 =
-            ") AS t1) AS hotspot_observation_count, ";
+            ") AS t1) AS hotspot_observation_count ";
+
+        var seperation_0 = ",";
 
         var query_1_0 =
             "(SELECT COUNT(idAudioObservation)" +
@@ -243,7 +245,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             [lat, lng, lat,
             lat, lng, lat];
 
-        makeQueryWithCallback(query_start+query_0_0+query_0_1+query_0_2+query_1_0+query_1_1+query_1_2, vals, function(err, results) {
+        makeQueryWithCallback(query_start+query_0_0+query_0_1+query_0_2+seperation_0+query_1_0+query_1_1+query_1_2, vals, function(err, results) {
             if (err) {
                 return callback(err);
             }
