@@ -146,6 +146,8 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
 
 database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callback) {
 
+    const NO_DATA_AVAILABLE = "NO_DATA_AVAILABLE";
+
     const distance_subquery =
         " ( 3959" +
         " * acos( cos( radians( ? ) )" +
@@ -205,7 +207,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             }
 
             if(results.length == 0) {
-                return callback(null, "bluetooth_count", "NO_DATA_AVAILABLE");
+                return callback(null, "bluetooth_count", NO_DATA_AVAILABLE);
             }
 
             return callback(null, "bluetooth_count", results[0]["AVG(bluetooth_count)"]);
