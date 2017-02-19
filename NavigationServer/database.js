@@ -166,8 +166,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
         var sub_query =
             " SELECT * , " + distance_subquery +
             " FROM hotspot_observations NATURAL JOIN hotspots" +
-            " HAVING distance < 0.1" +
-            " ORDER BY distance ASC";
+            " HAVING distance < 0.1";
 
         var query_1 =
             ") AS t1 " +
@@ -192,7 +191,8 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
         var sub_query =
             " SELECT * , " + distance_subquery +
-            " FROM bluetooth_observations";
+            " FROM bluetooth_observations " +
+            " HAVING distance < 0.1";
 
         var query_1 =
             ") AS t1";
@@ -204,10 +204,14 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
                 return callback(err);
             }
 
-            callback(null, "bluetooth_count", results);
+            callback(null, "bluetooth_count", results["AVG(bluetooth_count)"]);
         });
     }
 
+    {
+        /* Get number of readings from user devices back */
+
+    }
 };
 
 database.prototype.insertAudioObservation = function(idUser, params, callback) {
