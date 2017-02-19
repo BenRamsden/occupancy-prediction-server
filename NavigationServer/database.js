@@ -145,11 +145,8 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
 };
 
 database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callback) {
-    var results_collection = {};
 
-    //var example = "SELECT id, ( 3959 * acos( cos( radians(37) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(-122) ) + sin( radians(37) ) * sin( radians( lat ) ) ) ) AS distance FROM markers HAVING distance < 25 ORDER BY distance LIMIT 0 , 20;";
-
-    var sub_query = "SELECT idHotspot ," +
+    const distance_subquery =
         " ( 3959" +
         " * acos( cos( radians( ? ) )" +
         " * cos( radians( lat ) )" +
@@ -157,25 +154,47 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
         " - radians( ? ) )" +
         " + sin( radians( ? ) )" +
         " * sin( radians( lat ) ) ) )" +
-        " AS distance FROM hotspot_observations NATURAL JOIN hotspots" +
-        " HAVING distance < 0.1" +
-        " ORDER BY distance ASC";
+        " AS distance ";
 
-    var query = "SELECT idHotspot, AVG(distance)" +
-        " FROM (" +
-        sub_query +
-        ") AS t1 " +
-        " GROUP BY idHotspot";
+    {
+        /* Count individual hotspots within 0.1 miles */
+        var query = "SELECT idHotspot, AVG(distance)" +
+            " FROM (" +
+            "SELECT idHotspot ," +
+            distance_subquery +
+            " FROM hotspot_observations NATURAL JOIN hotspots" +
+            " HAVING distance < 0.1" +
+            ") AS t1 " +
+            " GROUP BY idHotspot";
 
-    var vals = [lat, lng, lat];
+        var vals = [lat, lng, lat];
 
-    makeQueryWithCallback(query, vals, function(err, results) {
-        if (err) {
-            return callback(err);
-        }
+        makeQueryWithCallback(query, vals, function(err, results) {
+            if (err) {
+                return callback(err);
+            }
 
-        callback(null, "hotspot_count", results.length);
-    });
+            callback(null, "hotspot_count", results.length);
+        });
+    }
+
+    {
+        /* Average bluetooth count within 0.1 miles */
+        var query = "SELECT idBluetoothObservation ," +
+            distance_subquery +
+            " FROM bluetooth_observations " +
+            " HAVING distance < 0.1";
+
+        var vals = [lat, lng, lat];
+
+        makeQueryWithCallback(query, vals, function(err, results) {
+            if (err) {
+                return callback(err);
+            }
+
+            callback(null, "bluetooth_count", results.length);
+        });
+    }
 
 };
 
