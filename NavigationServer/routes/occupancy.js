@@ -29,12 +29,21 @@ router.post('', function(req, res, next) {
         return handleError(res, NO_LNG);
     }
 
-    database.prototype.getOccupancyEstimation(apitoken, lat, lng, function(err, results) {
+    var callback_count = 0;
+    var callback_results = {};
+
+    database.prototype.getOccupancyEstimation(apitoken, lat, lng, function(err, type, results) {
         if(err) {
             handleError(res, err);
         }
 
-        res.json({success: true, results: results});
+        callback_results[type] = results;
+
+        callback_count++;
+
+        if(callback_count == 1) {
+            res.json({success: true, results: callback_results});
+        }
     });
 
 });

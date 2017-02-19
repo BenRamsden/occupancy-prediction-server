@@ -174,7 +174,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             return callback(err);
         }
 
-        callback(null, results.length);
+        callback(null, "hotspot_count", results.length);
     });
 
 };
