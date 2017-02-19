@@ -180,9 +180,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     {
         /* Average bluetooth count within 0.1 miles */
-        var query = "SELECT idBluetoothObservation, AVG(bluetooth_count), " + distance_subquery +
-            " FROM bluetooth_observations " +
-            " HAVING distance < 0.1";
+        var query = "SELECT idBluetoothObservation FROM bluetooth_observations";
 
         var vals = [lat, lng, lat];
 
