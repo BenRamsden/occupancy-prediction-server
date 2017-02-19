@@ -188,7 +188,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
     {
         /* Average bluetooth count within 0.1 miles */
         var query_0 =
-            "SELECT AVG(bluetooth_count)" +
+            "SELECT MAX(bluetooth_count)" +
             " FROM (";
 
         var sub_query =
@@ -206,7 +206,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
                 return callback(err);
             }
 
-            return callback(null, "average_bluetooth_count", results[0]["AVG(bluetooth_count)"]);
+            return callback(null, "average_bluetooth_count", results[0]["MAX(bluetooth_count)"]);
         });
     }
 
