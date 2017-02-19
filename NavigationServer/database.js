@@ -145,7 +145,20 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
 };
 
 database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callback) {
-    callback(null, 0);
+    var results = {};
+
+    var query_0 = "SELECT * FROM hotspot_observations";
+
+    var vals_0 = [];
+
+    makeQueryWithCallback(query_0, vals_0, function(err, results) {
+        if (err) {
+            return callback(err);
+        }
+
+        callback(null, results);
+    });
+
 };
 
 database.prototype.insertAudioObservation = function(idUser, params, callback) {
