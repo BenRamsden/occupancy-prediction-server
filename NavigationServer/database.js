@@ -187,27 +187,14 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     {
         /* Average bluetooth count within 0.1 miles */
-        var query_0 =
-            "SELECT MAX(bluetooth_count)" +
-            " FROM (";
-
-        var sub_query =
-            " SELECT * , " + distance_subquery +
-            " FROM bluetooth_observations " +
-            " HAVING distance < 0.1";
-
-        var query_1 =
-            ") AS t1";
-
-        var vals = [lat, lng, lat];
-
-        makeQueryWithCallback(query_0+sub_query+query_1, vals, function(err, results) {
+        queryObservationsFromLatLng(lat, lng, "MAX(bluetooth_count)", "bluetooth_observations", function(err, results) {
             if (err) {
                 return callback(err);
             }
 
-            return callback(null, "max_bluetooth_count", results[0]["MAX(bluetooth_count)"]);
+            return callback(null, "max_bluetooth_count", results);
         });
+
     }
 
 
@@ -306,6 +293,30 @@ function countObservationsFromLatLng(lat, lng, table_name, callback) {
         }
 
         return callback(null, results[0]["COUNT(*)"]);
+    });
+};
+
+function queryObservationsFromLatLng(lat, lng, field_name, table_name, callback) {
+    var query_1 =
+        "SELECT " + field_name +
+        " FROM (";
+
+    var query_2 =
+        " SELECT " + distance_subquery +
+        " FROM " + table_name +
+        " HAVING distance < 0.1 ";
+
+    var query_3 =
+        ") AS t2";
+
+    var vals = [lat, lng, lat];
+
+    makeQueryWithCallback(query_1+query_2+query_3, vals, function(err, results) {
+        if (err) {
+            return callback(err);
+        }
+
+        return callback(null, results[0][field_name]);
     });
 }
 
