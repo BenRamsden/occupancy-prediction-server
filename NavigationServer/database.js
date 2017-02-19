@@ -192,7 +192,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
                 return callback(err);
             }
 
-            callback(null, "bluetooth_count", results.length);
+            callback(null, "bluetooth_count", results);
         });
     }
 
