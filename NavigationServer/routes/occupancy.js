@@ -17,13 +17,13 @@ router.post('', function(req, res, next) {
         return handleError(res, NO_API_TOKEN);
     }
 
-    var lat = req.params.lat;
+    var lat = req.body.lat;
 
     if(!lat) {
         return handleError(res, NO_LAT);
     }
 
-    var lng = req.params.lng;
+    var lng = req.body.lng;
 
     if(!lng) {
         return handleError(res, NO_LNG);
