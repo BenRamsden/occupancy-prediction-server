@@ -302,7 +302,7 @@ function queryObservationsFromLatLng(lat, lng, field_name, table_name, callback)
         " FROM (";
 
     var query_2 =
-        " SELECT " + distance_subquery +
+        " SELECT *, " + distance_subquery +
         " FROM " + table_name +
         " HAVING distance < 0.1 ";
 
