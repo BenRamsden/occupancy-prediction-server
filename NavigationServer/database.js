@@ -249,7 +249,7 @@ function queryObservationsFromLatLng(lat, lng, field_name, table_name, callback)
             return callback(err);
         }
 
-        return callback(null, results[0][field_name]);
+        return callback(null, results);
     });
 }
 
