@@ -156,104 +156,76 @@ const distance_subquery =
 
 database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callback) {
 
-    const NO_DATA_AVAILABLE = "NO_DATA_AVAILABLE";
+    /* Count individual hotspots within 0.1 miles */
+    queryObservationsFromLatLng(lat, lng, "idHotspot", "hotspot_observations NATURAL JOIN hotspots", function(err, results) {
+        if (err) {
+            return callback(err);
+        }
 
-    {
-        /* Count individual hotspots within 0.1 miles */
-        queryObservationsFromLatLng(lat, lng, "idHotspot", "hotspot_observations NATURAL JOIN hotspots", function(err, results) {
-            if (err) {
-                return callback(err);
-            }
+        return callback(null, "total_hotspots", results.length);
+    });
 
-            return callback(null, "total_hotspots", results.length);
-        });
+    /* Average bluetooth count within 0.1 miles */
+    queryObservationsFromLatLng(lat, lng, "MAX(bluetooth_count)", "bluetooth_observations", function(err, results) {
+        if (err) {
+            return callback(err);
+        }
 
-    }
-
-    {
-        /* Average bluetooth count within 0.1 miles */
-        queryObservationsFromLatLng(lat, lng, "MAX(bluetooth_count)", "bluetooth_observations", function(err, results) {
-            if (err) {
-                return callback(err);
-            }
-
-            return callback(null, "max_bluetooth_count", results);
-        });
-
-    }
+        return callback(null, "max_bluetooth_count", results);
+    });
 
 
-    {
-        /* Get number of readings from user devices back */
-        queryObservationsFromLatLng(lat, lng, "COUNT(*)", "hotspot_observations", function(err, results) {
-            if (err) {
-                return callback(err);
-            }
+    /* Get number of readings from user devices back */
+    queryObservationsFromLatLng(lat, lng, "COUNT(*)", "hotspot_observations", function(err, results) {
+        if (err) {
+            return callback(err);
+        }
 
-            return callback(null, "number_of_hotspot_observations", results);
-        });
-    }
+        return callback(null, "number_of_hotspot_observations", results);
+    });
 
-    {
-        /* Get number of readings from user devices back */
-        queryObservationsFromLatLng(lat, lng, "COUNT(*)", "audio_observations", function(err, results) {
-            if (err) {
-                return callback(err);
-            }
+    /* Get number of readings from user devices back */
+    queryObservationsFromLatLng(lat, lng, "COUNT(*)", "audio_observations", function(err, results) {
+        if (err) {
+            return callback(err);
+        }
 
-            return callback(null, "number_of_audio_observations", results);
-        });
+        return callback(null, "number_of_audio_observations", results);
+    });
 
-    }
+    /* Get number of readings from user devices back */
+    queryObservationsFromLatLng(lat, lng, "COUNT(*)", "crowd_observations", function(err, results) {
+        if (err) {
+            return callback(err);
+        }
 
-    {
-        /* Get number of readings from user devices back */
-        queryObservationsFromLatLng(lat, lng, "COUNT(*)", "crowd_observations", function(err, results) {
-            if (err) {
-                return callback(err);
-            }
+        return callback(null, "number_of_crowd_observations", results);
+    });
 
-            return callback(null, "number_of_crowd_observations", results);
-        });
-    }
+    /* Get number of readings from user devices back */
+    queryObservationsFromLatLng(lat, lng, "COUNT(*)", "bluetooth_observations", function(err, results) {
+        if (err) {
+            return callback(err);
+        }
 
+        return callback(null, "number_of_bluetooth_observations", results);
+    });
 
-    {
-        /* Get number of readings from user devices back */
-        queryObservationsFromLatLng(lat, lng, "COUNT(*)", "bluetooth_observations", function(err, results) {
-            if (err) {
-                return callback(err);
-            }
+    /* Get number of readings from user devices back */
+    queryObservationsFromLatLng(lat, lng, "COUNT(*)", "accelerometer_observations", function(err, results) {
+        if (err) {
+            return callback(err);
+        }
 
-            return callback(null, "number_of_bluetooth_observations", results);
-        });
-    }
+        return callback(null, "number_of_accelerometer_observations", results);
+    });
 
-    {
-        /* Get number of readings from user devices back */
-        queryObservationsFromLatLng(lat, lng, "COUNT(*)", "accelerometer_observations", function(err, results) {
-            if (err) {
-                return callback(err);
-            }
+    /* TODO: Gather audio histogram statistics for prediction */
 
-            return callback(null, "number_of_accelerometer_observations", results);
-        });
-    }
+    /* TODO: Gather crowd statistics for prediction */
 
-    {
-        /* Gather audio histogram statistics for prediction */
+    /* TODO: Gather accelerometer statistics for prediction */
 
-    }
-
-    {
-        /* Gather crowd statistics for prediction */
-
-    }
-
-    {
-        /* Gather accelerometer statistics for prediction */
-
-    }
 
 };
 
