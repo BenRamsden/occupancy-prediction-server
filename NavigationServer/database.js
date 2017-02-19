@@ -158,13 +158,12 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     {
         /* Count individual hotspots within 0.1 miles */
-        var query =
-            "SELECT idHotspot" +
+        var query = "SELECT idHotspot, AVG(distance)" +
             " FROM (" +
-                "SELECT idHotspot, " +
-                distance_subquery +
-                " FROM hotspot_observations NATURAL JOIN hotspots" +
-                " HAVING distance < 0.1" +
+            "SELECT idHotspot, " + distance_subquery +
+            " FROM hotspot_observations NATURAL JOIN hotspots" +
+            " HAVING distance < 0.1" +
+            " ORDER BY distance ASC" +
             ") AS t1 " +
             " GROUP BY idHotspot";
 
@@ -181,9 +180,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     {
         /* Average bluetooth count within 0.1 miles */
-        var query =
-            "SELECT AVG(bluetooth_count), " +
-            distance_subquery +
+        var query = "SELECT idBluetoothObservation, AVG(bluetooth_count), " + distance_subquery +
             " FROM bluetooth_observations " +
             " HAVING distance < 0.1";
 
@@ -194,7 +191,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
                 return callback(err);
             }
 
-            callback(null, "bluetooth_count", results);
+            callback(null, "bluetooth_count", results.length);
         });
     }
 
