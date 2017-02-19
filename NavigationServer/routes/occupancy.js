@@ -7,18 +7,27 @@ var router = express.Router();
 var handleError = require('../handleError');
 var database = require('../database');
 
-router.get('', function(req, res, next) {
+var NO_LAT = "NO_LAT";
+var NO_LNG = "NO_LNG";
+
+router.post('', function(req, res, next) {
     var apitoken = req.query.apitoken;
 
     if(!apitoken) {
         return handleError(res, NO_API_TOKEN);
     }
 
-    // var obtype = req.params.obtype;
-    //
-    // if(!obtype) {
-    //     return handleError(res, NO_OBTYPE);
-    // }
+    var lat = req.params.lat;
+
+    if(!lat) {
+        return handleError(res, NO_LAT);
+    }
+
+    var lng = req.params.lng;
+
+    if(!lng) {
+        return handleError(res, NO_LNG);
+    }
 
     res.json({success: true});
 
