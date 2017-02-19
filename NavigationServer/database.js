@@ -163,13 +163,15 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     var vals_0 = [lat, lng, lat];
 
-    var query_1 = "SELECT idHotspot, AVG(lat), AVG(lng)" +
-        " FROM hotspot_observations" +
+    var query_1 = "SELECT idHotspot, COUNT(idHotspot)" +
+        " FROM (" +
+        query_0 +
+        ") " +
         " GROUP BY idHotspot";
 
     var vals_1 = [];
 
-    makeQueryWithCallback(query_1, vals_1, function(err, results) {
+    makeQueryWithCallback(query_1, vals_0, function(err, results) {
         if (err) {
             return callback(err);
         }
