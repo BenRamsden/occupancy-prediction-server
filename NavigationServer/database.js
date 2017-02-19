@@ -166,7 +166,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
     var query_1 = "SELECT idHotspot, COUNT(idHotspot)" +
         " FROM (" +
         query_0 +
-        ") " +
+        ") AS t1 " +
         " GROUP BY idHotspot";
 
     var vals_1 = [];
