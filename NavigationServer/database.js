@@ -158,7 +158,9 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
         " + sin( radians( ? ) )" +
         " * sin( radians( lat ) ) ) )" +
         " AS distance FROM hotspot_observations" +
-        " WHERE distance < 0.1";
+        " HAVING distance < 0.1" +
+        " ORDER BY distance ASC" +
+        " LIMIT 20";
 
     var vals_0 = [lat, lng, lat];
 
