@@ -149,7 +149,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     //var example = "SELECT id, ( 3959 * acos( cos( radians(37) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(-122) ) + sin( radians(37) ) * sin( radians( lat ) ) ) ) AS distance FROM markers HAVING distance < 25 ORDER BY distance LIMIT 0 , 20;";
 
-    var query_0 = "SELECT idHotspot ," +
+    var sub_query = "SELECT idHotspot ," +
         " ( 3959" +
         " * acos( cos( radians( ? ) )" +
         " * cos( radians( lat ) )" +
@@ -161,17 +161,15 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
         " HAVING distance < 0.1" +
         " ORDER BY distance ASC";
 
-    var vals_0 = [lat, lng, lat];
-
-    var query_1 = "SELECT idHotspot, COUNT(idHotspot)" +
+    var query = "SELECT COUNT(idHotspot)" +
         " FROM (" +
-        query_0 +
+        sub_query +
         ") AS t1 " +
         " GROUP BY idHotspot";
 
-    var vals_1 = [];
+    var vals = [lat, lng, lat];
 
-    makeQueryWithCallback(query_1, vals_0, function(err, results) {
+    makeQueryWithCallback(query, vals, function(err, results) {
         if (err) {
             return callback(err);
         }
