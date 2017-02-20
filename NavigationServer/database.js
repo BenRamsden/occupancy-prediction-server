@@ -1,7 +1,7 @@
 /**
  * Created by benra on 29/12/2016.
  */
-var constants = require('../constants');
+var constants = require('constants');
 
 var mysql = require('mysql');
 
