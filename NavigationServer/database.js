@@ -157,8 +157,12 @@ const distance_subquery =
 
 database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callback) {
 
+    const LAST_HOUR = "DATE_SUB(NOW(), INTERVAL 1 HOUR)";
+
+    var params = {lat: lat, lng: lng, since_date: LAST_HOUR};
+
     /* Count individual hotspots within 0.1 miles */
-    queryObservationsFromLatLng(lat, lng, "DISTINCT idHotspot", "hotspot_observations NATURAL JOIN hotspots", function(err, results) {
+    queryObservationsFromLatLng(params, "DISTINCT idHotspot", "hotspot_observations NATURAL JOIN hotspots", function(err, results) {
         if (err) {
             return callback(err);
         }
@@ -167,7 +171,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
     });
 
     /* Average bluetooth count within 0.1 miles */
-    queryObservationsFromLatLng(lat, lng, "MAX(bluetooth_count)", "bluetooth_observations", function(err, results) {
+    queryObservationsFromLatLng(params, "MAX(bluetooth_count)", "bluetooth_observations", function(err, results) {
         if (err) {
             return callback(err);
         }
@@ -177,7 +181,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
 
     /* Get number of readings from user devices back */
-    queryObservationsFromLatLng(lat, lng, "COUNT(*)", "hotspot_observations", function(err, results) {
+    queryObservationsFromLatLng(params, "COUNT(*)", "hotspot_observations", function(err, results) {
         if (err) {
             return callback(err);
         }
@@ -186,7 +190,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
     });
 
     /* Get number of readings from user devices back */
-    queryObservationsFromLatLng(lat, lng, "COUNT(*)", "audio_observations", function(err, results) {
+    queryObservationsFromLatLng(params, "COUNT(*)", "audio_observations", function(err, results) {
         if (err) {
             return callback(err);
         }
@@ -195,7 +199,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
     });
 
     /* Get number of readings from user devices back */
-    queryObservationsFromLatLng(lat, lng, "COUNT(*)", "crowd_observations", function(err, results) {
+    queryObservationsFromLatLng(params, "COUNT(*)", "crowd_observations", function(err, results) {
         if (err) {
             return callback(err);
         }
@@ -204,7 +208,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
     });
 
     /* Get number of readings from user devices back */
-    queryObservationsFromLatLng(lat, lng, "COUNT(*)", "bluetooth_observations", function(err, results) {
+    queryObservationsFromLatLng(params, "COUNT(*)", "bluetooth_observations", function(err, results) {
         if (err) {
             return callback(err);
         }
@@ -213,7 +217,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
     });
 
     /* Get number of readings from user devices back */
-    queryObservationsFromLatLng(lat, lng, "COUNT(*)", "accelerometer_observations", function(err, results) {
+    queryObservationsFromLatLng(params, "COUNT(*)", "accelerometer_observations", function(err, results) {
         if (err) {
             return callback(err);
         }
@@ -230,7 +234,11 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
 };
 
-function queryObservationsFromLatLng(lat, lng, field_name, table_name, callback) {
+function queryObservationsFromLatLng(params, field_name, table_name, callback) {
+    const lat = params.lat;
+    const lng = params.lng;
+    const since_date = params.since_date;
+
     var query_1 =
         "SELECT " + field_name +
         " FROM (";
@@ -238,7 +246,8 @@ function queryObservationsFromLatLng(lat, lng, field_name, table_name, callback)
     var query_2 =
         " SELECT *, " + distance_subquery +
         " FROM " + table_name +
-        " HAVING distance < 0.1 ";
+        " HAVING distance < 0.1 " +
+        " WHERE observation_date > " + since_date;
 
     var query_3 =
         ") AS t2";
