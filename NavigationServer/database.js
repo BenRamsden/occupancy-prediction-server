@@ -231,11 +231,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
                 for(var sample in result['audio_histogram']) {
 
-                    for(var bin in sample) {
-
-                        output += bin;
-
-                    }
+                    console.log("On sample " + sample);
 
                 }
             }
