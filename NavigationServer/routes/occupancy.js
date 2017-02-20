@@ -42,14 +42,15 @@ router.post('', function(req, res, next) {
 
         callback_count++;
 
-        if(callback_count == 8) {
+        if(callback_count == 9) {
 
             var occupancy =
                 (3 * callback_results[constants.MAX_BLUETOOTH_COUNT]) +
                 (0.125 * callback_results[constants.TOTAL_HOTSPOTS]) +
-                (1 * callback_results[constants.CROWD_AVERAGE_ESTIMATE]);
+                (1 * callback_results[constants.CROWD_AVERAGE_ESTIMATE]) +
+                (1 * callback_results[constants.AUDIO_HISTOGRAM_ANALYSIS]);
 
-            occupancy = occupancy / 3;
+            occupancy = occupancy / 4;
 
             res.json({success: true, results: callback_results, occupancy: occupancy});
         }
