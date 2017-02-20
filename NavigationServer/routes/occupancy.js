@@ -44,10 +44,16 @@ router.post('', function(req, res, next) {
 
         if(callback_count == 7) {
 
-            res.json({hey: constants.TOTAL_HOTSPOTS});
+            var occupancy =
+                callback_results[constants.HOTSPOT_OBSERVATIONS] +
+                callback_results[constants.MAX_BLUETOOTH_COUNT] +
+                callback_results[constants.TOTAL_HOTSPOTS] +
+                callback_results[constants.ACCELEROMETER_OBSERVATIONS] +
+                callback_results[constants.AUDIO_OBSERVATIONS] +
+                callback_results[constants.BLUETOOTH_OBSERVATIONS] +
+                callback_results[constants.CROWD_OBSERVATIONS];
 
-
-            //res.json({success: true, results: callback_results});
+            res.json({success: true, occupancy: occupancy});
         }
     });
 

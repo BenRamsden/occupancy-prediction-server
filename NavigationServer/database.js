@@ -1,6 +1,7 @@
 /**
  * Created by benra on 29/12/2016.
  */
+var constants = require('../constants');
 
 var mysql = require('mysql');
 
@@ -162,7 +163,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             return callback(err);
         }
 
-        return callback(null, "total_hotspots", results.length);
+        return callback(null, constants.TOTAL_HOTSPOTS, results.length);
     });
 
     /* Average bluetooth count within 0.1 miles */
@@ -171,7 +172,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             return callback(err);
         }
 
-        return callback(null, "max_bluetooth_count", results[0]["MAX(bluetooth_count)"]);
+        return callback(null, constants.MAX_BLUETOOTH_COUNT, results[0]["MAX(bluetooth_count)"]);
     });
 
 
@@ -181,7 +182,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             return callback(err);
         }
 
-        return callback(null, "number_of_hotspot_observations", results[0]["COUNT(*)"]);
+        return callback(null, constants.HOTSPOT_OBSERVATIONS, results[0]["COUNT(*)"]);
     });
 
     /* Get number of readings from user devices back */
@@ -190,7 +191,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             return callback(err);
         }
 
-        return callback(null, "number_of_audio_observations", results[0]["COUNT(*)"]);
+        return callback(null, constants.AUDIO_OBSERVATIONS, results[0]["COUNT(*)"]);
     });
 
     /* Get number of readings from user devices back */
@@ -199,7 +200,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             return callback(err);
         }
 
-        return callback(null, "number_of_crowd_observations", results[0]["COUNT(*)"]);
+        return callback(null, constants.CROWD_OBSERVATIONS, results[0]["COUNT(*)"]);
     });
 
     /* Get number of readings from user devices back */
@@ -208,7 +209,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             return callback(err);
         }
 
-        return callback(null, "number_of_bluetooth_observations", results[0]["COUNT(*)"]);
+        return callback(null, constants.BLUETOOTH_OBSERVATIONS, results[0]["COUNT(*)"]);
     });
 
     /* Get number of readings from user devices back */
@@ -217,7 +218,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             return callback(err);
         }
 
-        return callback(null, "number_of_accelerometer_observations", results[0]["COUNT(*)"]);
+        return callback(null, constants.ACCELEROMETER_OBSERVATIONS, results[0]["COUNT(*)"]);
     });
 
     /* TODO: Gather audio histogram statistics for prediction */
