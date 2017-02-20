@@ -217,7 +217,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
     });
 
     /* Get number of readings from user devices back */
-    var newParams = JSON.parse(JSON.stringify(params));  //TODO: fix quick workaround
+    var newParams = JSON.parse(JSON.stringify(params));  //TODO: can this be done better? quick implementation of deep copy
     newParams.limit = 5;
     queryObservationsFromLatLng(newParams, "audio_histogram", "audio_observations", function(err, results) {
         if (err) {
@@ -227,9 +227,17 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
         var output = 0;
 
         if( results.length != 0) {
-            for(result in results) {
-                var audio_histogram = result['audio_histogram'];
-                output++;
+            for(var result in results) {
+
+                for(var sample in result['audio_histogram']) {
+
+                    for(var bin in sample) {
+
+                        output += bin;
+
+                    }
+
+                }
             }
 
         }
