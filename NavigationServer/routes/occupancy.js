@@ -6,6 +6,7 @@ var router = express.Router();
 
 var handleError = require('../handleError');
 var database = require('../database');
+var constants = require('../constants');
 
 var NO_LAT = "NO_LAT";
 var NO_LNG = "NO_LNG";
@@ -42,7 +43,11 @@ router.post('', function(req, res, next) {
         callback_count++;
 
         if(callback_count == 7) {
-            res.json({success: true, results: callback_results});
+
+            res.json({hey: constants.TOTAL_HOTSPOTS});
+
+
+            //res.json({success: true, results: callback_results});
         }
     });
 
