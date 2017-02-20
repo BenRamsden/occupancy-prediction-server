@@ -246,8 +246,8 @@ function queryObservationsFromLatLng(params, field_name, table_name, callback) {
     var query_2 =
         " SELECT *, " + distance_subquery +
         " FROM " + table_name +
-        " HAVING distance < 0.1 " +
-        " WHERE observation_date > " + since_date;
+        " WHERE observation_date > " + since_date +
+        " HAVING distance < 0.1 ";
 
     var query_3 =
         ") AS t2";
