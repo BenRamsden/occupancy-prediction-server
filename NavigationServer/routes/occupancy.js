@@ -53,7 +53,7 @@ router.post('', function(req, res, next) {
                 callback_results[constants.BLUETOOTH_OBSERVATIONS] +
                 callback_results[constants.CROWD_OBSERVATIONS];
 
-            res.json({success: true, occupancy: occupancy});
+            res.json({success: true, results: callback_results, occupancy: occupancy});
         }
     });
 
