@@ -159,7 +159,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     const LAST_HOUR = "DATE_SUB(NOW(), INTERVAL 1 HOUR)";
 
-    var params = {lat: lat, lng: lng, since_date: LAST_HOUR, distance_limit: 0.1};
+    var params = {lat: lat, lng: lng, since_date: LAST_HOUR, distance_limit: 0.1, limit: 1000};
 
     /* Count individual hotspots within 0.1 miles */
     queryObservationsFromLatLng(params, "DISTINCT idHotspot", "hotspot_observations NATURAL JOIN hotspots", function(err, results) {
@@ -217,15 +217,33 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
     });
 
     /* Get number of readings from user devices back */
-    queryObservationsFromLatLng(params, "COUNT(*)", "accelerometer_observations", function(err, results) {
+    var copy_params = params;
+    copy_params.limit = 5;
+    queryObservationsFromLatLng(copy_params, "audio_histogram", "audio_observations", function(err, results) {
         if (err) {
             return callback(err);
         }
 
-        return callback(null, constants.ACCELEROMETER_OBSERVATIONS, results[0]["COUNT(*)"]);
+        var output = 1;
+
+        if( results.length != 0) {
+            //results[0]["COUNT(*)"]
+            output = 2;
+        }
+
+        return callback(null, constants.AUDIO_HISTOGRAM_ANALYSIS, output);
     });
 
+    console.log("copyparams.limit="+copy_params.limit+" params.limit="+params.limit);
+
     /* TODO: Gather audio histogram statistics for prediction */
+    queryObservationsFromLatLng(params, "AVG(occupancy_estimate)", "crowd_observations", function(err, results) {
+        if (err) {
+            return callback(err);
+        }
+
+        return callback(null, constants.CROWD_AVERAGE_ESTIMATE, results[0]["AVG(occupancy_estimate)"]);
+    });
 
     /* Gather crowd statistics for prediction */
     queryObservationsFromLatLng(params, "AVG(occupancy_estimate)", "crowd_observations", function(err, results) {
