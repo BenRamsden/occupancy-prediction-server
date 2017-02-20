@@ -217,9 +217,9 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
     });
 
     /* Get number of readings from user devices back */
-    var copy_params = params;
-    copy_params.limit = 5;
-    queryObservationsFromLatLng(copy_params, "audio_histogram", "audio_observations", function(err, results) {
+    var newParams = JSON.parse(JSON.stringify(params));  //TODO: fix quick workaround
+    newParams.limit = 5;
+    queryObservationsFromLatLng(newParams, "audio_histogram", "audio_observations", function(err, results) {
         if (err) {
             return callback(err);
         }
@@ -237,7 +237,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
         return callback(null, constants.AUDIO_HISTOGRAM_ANALYSIS, output);
     });
 
-    console.log("copyparams.limit="+copy_params.limit+" params.limit="+params.limit);
+    console.log("newParams.limit="+newParams.limit+" params.limit="+params.limit);
 
     /* TODO: Gather audio histogram statistics for prediction */
     queryObservationsFromLatLng(params, "AVG(occupancy_estimate)", "crowd_observations", function(err, results) {
@@ -267,6 +267,7 @@ function queryObservationsFromLatLng(params, field_name, table_name, callback) {
     const lng = params.lng;
     const since_date = params.since_date;
     const distance_limit = params.distance_limit;
+    const limit = params.limit;
 
     var query_1 =
         "SELECT " + field_name +
@@ -276,7 +277,8 @@ function queryObservationsFromLatLng(params, field_name, table_name, callback) {
         " SELECT *, " + distance_subquery +
         " FROM " + table_name +
         " WHERE observation_date > " + since_date +
-        " HAVING distance < " + distance_limit;
+        " HAVING distance < " + distance_limit +
+        " LIMIT " + limit;
 
     var query_3 =
         ") AS t2";
