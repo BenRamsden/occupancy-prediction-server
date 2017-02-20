@@ -224,11 +224,14 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             return callback(err);
         }
 
-        var output = 1;
+        var output = 0;
 
         if( results.length != 0) {
-            //results[0]["COUNT(*)"]
-            output = 2;
+            for(result in results) {
+                var audio_histogram = result['audio_histogram'];
+                output++;
+            }
+
         }
 
         return callback(null, constants.AUDIO_HISTOGRAM_ANALYSIS, output);
