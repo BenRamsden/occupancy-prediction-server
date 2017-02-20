@@ -227,7 +227,14 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     /* TODO: Gather audio histogram statistics for prediction */
 
-    /* TODO: Gather crowd statistics for prediction */
+    /* Gather crowd statistics for prediction */
+    queryObservationsFromLatLng(params, "AVG(occupancy_estimate)", "crowd_observations", function(err, results) {
+        if (err) {
+            return callback(err);
+        }
+
+        return callback(null, constants.CROWD_AVERAGE_ESTIMATE, results[0]["AVG(occupancy_estimate)"]);
+    });
 
     /* TODO: Gather accelerometer statistics for prediction */
 
