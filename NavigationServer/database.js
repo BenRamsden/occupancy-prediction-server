@@ -229,7 +229,11 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
         if( results.length != 0) {
             for(var result in results) {
 
-                console.log("on result: " + results[result]);
+                for(var bin in results[result]) {
+
+                    console.log("on bin " + bin);
+
+                }
             }
 
         }
