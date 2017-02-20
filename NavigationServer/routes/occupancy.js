@@ -45,8 +45,8 @@ router.post('', function(req, res, next) {
         if(callback_count == 8) {
 
             var occupancy =
-                (2 * callback_results[constants.MAX_BLUETOOTH_COUNT]) +
-                (0.1 * callback_results[constants.TOTAL_HOTSPOTS]) +
+                (3 * callback_results[constants.MAX_BLUETOOTH_COUNT]) +
+                (0.125 * callback_results[constants.TOTAL_HOTSPOTS]) +
                 (1 * callback_results[constants.CROWD_AVERAGE_ESTIMATE]);
 
             occupancy = occupancy / 3;
