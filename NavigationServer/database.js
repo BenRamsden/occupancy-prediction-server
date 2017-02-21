@@ -245,7 +245,9 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
                         for(var bin_index in single_hist) {
 
-                            console.log("Got bin_index " + bin_index);
+                            var bin_val = single_hist[bin_index];
+
+                            console.log("bin_index " + bin_index + " has val " + bin_val);
 
                         }
 
