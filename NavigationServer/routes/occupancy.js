@@ -42,7 +42,7 @@ router.post('', function(req, res, next) {
 
         callback_count++;
 
-        if(callback_count == 9) {
+        if(callback_count == 8) {
 
             var occupancy =
                 (1 * callback_results[constants.MAX_BLUETOOTH_COUNT]) +
