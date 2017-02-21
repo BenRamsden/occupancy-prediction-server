@@ -145,16 +145,6 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
 
 };
 
-const distance_subquery =
-    " ( 3959" +
-    " * acos( cos( radians( ? ) )" +
-    " * cos( radians( lat ) )" +
-    " * cos( radians( lng )" +
-    " - radians( ? ) )" +
-    " + sin( radians( ? ) )" +
-    " * sin( radians( lat ) ) ) )" +
-    " AS distance ";
-
 database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callback) {
 
     const LAST_HOUR = "DATE_SUB(NOW(), INTERVAL 1 HOUR)";
@@ -276,6 +266,18 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
     });
 
 };
+
+
+const distance_subquery =
+    " ( 3959" +
+    " * acos( cos( radians( ? ) )" +
+    " * cos( radians( lat ) )" +
+    " * cos( radians( lng )" +
+    " - radians( ? ) )" +
+    " + sin( radians( ? ) )" +
+    " * sin( radians( lat ) ) ) )" +
+    " AS distance ";
+
 
 function queryObservationsFromLatLng(params, field_name, table_name, callback) {
     const lat = params.lat;
