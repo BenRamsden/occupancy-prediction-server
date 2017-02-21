@@ -239,7 +239,15 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
                     for(var hist_index in audio_histogram) {
 
-                        console.log("Got single_hist " + audio_histogram[hist_index]);
+                        var single_hist = audio_histogram[hist_index];
+
+                        console.log("Got single_hist " + single_hist);
+
+                        for(var bin_index in single_hist) {
+
+                            console.log("Got bin_index " + bin_index);
+
+                        }
 
                     }
                 }
