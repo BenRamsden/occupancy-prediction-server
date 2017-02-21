@@ -224,13 +224,15 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
             return callback(err);
         }
 
+        const audio_histogram_debug_log = false;
+
         var output = 0;
         var count = 0;
 
         if( results.length != 0) {
             for(var sql_result_id in results) {
 
-                console.log("on sql_result_id " + sql_result_id);
+                if(audio_histogram_debug_log) console.log("on sql_result_id " + sql_result_id);
 
                 var audio_histogram = JSON.parse(results[sql_result_id]['audio_histogram']);
 
@@ -238,13 +240,13 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
                     var single_hist = audio_histogram[hist_index];
 
-                    console.log("Got single_hist " + single_hist);
+                    if(audio_histogram_debug_log) console.log("Got single_hist " + single_hist);
 
                     for(var bin_index in single_hist) {
 
                         var bin_val = single_hist[bin_index];
 
-                        console.log("bin_index " + bin_index + " has val " + bin_val);
+                        if(audio_histogram_debug_log) console.log("bin_index " + bin_index + " has val " + bin_val);
 
                         output += bin_val;
 
