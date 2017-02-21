@@ -231,27 +231,22 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
                 console.log("on sql_result_id " + sql_result_id);
 
-                for(var sql_result_cols in results[sql_result_id]) {
+                var audio_histogram = JSON.parse(results[sql_result_id]['audio_histogram']);
 
-                    console.log("on sql_result_cols " + sql_result_cols);
+                for(var hist_index in audio_histogram) {
 
-                    var audio_histogram = JSON.parse(results[sql_result_id][sql_result_cols]);
+                    var single_hist = audio_histogram[hist_index];
 
-                    for(var hist_index in audio_histogram) {
+                    console.log("Got single_hist " + single_hist);
 
-                        var single_hist = audio_histogram[hist_index];
+                    for(var bin_index in single_hist) {
 
-                        console.log("Got single_hist " + single_hist);
+                        var bin_val = single_hist[bin_index];
 
-                        for(var bin_index in single_hist) {
-
-                            var bin_val = single_hist[bin_index];
-
-                            console.log("bin_index " + bin_index + " has val " + bin_val);
-
-                        }
+                        console.log("bin_index " + bin_index + " has val " + bin_val);
 
                     }
+
                 }
             }
 
