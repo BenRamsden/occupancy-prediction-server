@@ -235,7 +235,13 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
                     console.log("on sql_result_cols " + sql_result_cols);
 
-                    console.log("got " + results[sql_result_id][sql_result_cols]);
+                    var audio_histogram = results[sql_result_id][sql_result_cols];
+
+                    for(var hist_index in audio_histogram) {
+
+                        console.log("Got single_hist " + audio_histogram[hist_index]);
+
+                    }
                 }
             }
 
