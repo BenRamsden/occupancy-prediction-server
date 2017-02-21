@@ -293,6 +293,7 @@ function queryObservationsFromLatLng(params, field_name, table_name, callback) {
         " FROM " + table_name +
         " WHERE observation_date > " + since_date +
         " HAVING distance < " + distance_limit +
+        " ORDER BY observation_date DESC" +
         " LIMIT " + limit;
 
     var query_3 =
