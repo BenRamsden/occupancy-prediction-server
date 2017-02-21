@@ -216,7 +216,8 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
         return callback(null, constants.BLUETOOTH_OBSERVATIONS, results[0]["COUNT(*)"]);
     });
 
-    /* Get number of readings from user devices back */
+
+    /* Gather audio histogram statistics for prediction */
     var newParams = JSON.parse(JSON.stringify(params));  //TODO: can this be done better? quick implementation of deep copy
     newParams.limit = 5;
     queryObservationsFromLatLng(newParams, "audio_histogram", "audio_observations", function(err, results) {
@@ -264,9 +265,8 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
         return callback(null, constants.AUDIO_HISTOGRAM_ANALYSIS, output);
     });
 
-    console.log("newParams.limit="+newParams.limit+" params.limit="+params.limit);
 
-    /* TODO: Gather audio histogram statistics for prediction */
+    /* Gather accelerometer statistics for prediction */
     queryObservationsFromLatLng(params, "AVG(occupancy_estimate)", "crowd_observations", function(err, results) {
         if (err) {
             return callback(err);
@@ -274,18 +274,6 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
         return callback(null, constants.CROWD_AVERAGE_ESTIMATE, results[0]["AVG(occupancy_estimate)"]);
     });
-
-    /* Gather crowd statistics for prediction */
-    queryObservationsFromLatLng(params, "AVG(occupancy_estimate)", "crowd_observations", function(err, results) {
-        if (err) {
-            return callback(err);
-        }
-
-        return callback(null, constants.CROWD_AVERAGE_ESTIMATE, results[0]["AVG(occupancy_estimate)"]);
-    });
-
-    /* TODO: Gather accelerometer statistics for prediction */
-
 
 };
 
