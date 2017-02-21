@@ -227,14 +227,15 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
         var output = 0;
 
         if( results.length != 0) {
-            for(var hist_hist_coll in results) {
+            for(var sql_result_id in results) {
 
-                console.log("on hist_hist_coll " + hist_hist_coll);
+                console.log("on sql_result_id " + sql_result_id);
 
-                for(var hist_coll in results[hist_hist_coll]) {
+                for(var sql_result_cols in results[sql_result_id]) {
 
-                    console.log("on hist_coll " + hist_coll);
+                    console.log("on sql_result_cols " + sql_result_cols);
 
+                    console.log("got " + results[sql_result_id][sql_result_cols]);
                 }
             }
 
