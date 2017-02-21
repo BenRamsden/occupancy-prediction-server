@@ -225,6 +225,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
         }
 
         var output = 0;
+        var count = 0;
 
         if( results.length != 0) {
             for(var sql_result_id in results) {
@@ -245,12 +246,18 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
                         console.log("bin_index " + bin_index + " has val " + bin_val);
 
+                        output += bin_val;
+
+                        count++;
+
                     }
 
                 }
             }
 
         }
+
+        output /= count;
 
         return callback(null, constants.AUDIO_HISTOGRAM_ANALYSIS, output);
     });
