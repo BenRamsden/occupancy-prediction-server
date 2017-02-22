@@ -45,6 +45,8 @@ router.post('/bulk', function(req, res, next) {
 
     var latlng_list_param = req.body.latlng_list;
 
+    console.log("latlng_list_param: " + latlng_list_param);
+
     if(!latlng_list_param) {
         return handleError(res, NO_LAT+NO_LNG);
     }
