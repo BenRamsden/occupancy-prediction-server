@@ -36,6 +36,35 @@ router.post('', function(req, res, next) {
 
 });
 
+router.post('/bulk', function(req, res, next) {
+    var apitoken = req.query.apitoken;
+
+    if(!apitoken) {
+        return handleError(res, NO_API_TOKEN);
+    }
+
+    var latlng_list = JSON.parse(req.body.latlng_list);
+
+    if(!lat) {
+        return handleError(res, NO_LAT+NO_LNG);
+    }
+
+    for(latlng_index in latlng_list) {
+        var lat = latlng_list[latlng_index].lat;
+        var lng = latlng_list[latlng_index].lng;
+
+        console.log("Processing lat " + lat + " lng " + lng);
+    }
+
+    res.json({success: false, reason: "not yet implemented"});
+    return;
+
+    getOccupancyEstimation(apitoken, lat, lng, function(results, occupancy) {
+        res.json({success: true, results: results, occupancy: occupancy});
+    });
+
+});
+
 function getOccupancyEstimation(apitoken, lat, lng, callback) {
     var callback_count = 0;
     var callback_results = {};
