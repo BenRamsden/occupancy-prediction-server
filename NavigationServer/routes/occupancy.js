@@ -63,8 +63,8 @@ router.post('/bulk', function(req, res, next) {
     var output_index = 0;
 
     for(latlng_index in latlng_list) {
-        var lat = latlng_list[latlng_index].lat;
-        var lng = latlng_list[latlng_index].lng;
+        const lat = latlng_list[latlng_index].lat;
+        const lng = latlng_list[latlng_index].lng;
 
         console.log("Processing lat " + lat + " lng " + lng);
 
