@@ -50,20 +50,30 @@ router.post('/bulk', function(req, res, next) {
     if(!latlng_list) {
         return handleError(res, NO_LAT+NO_LNG);
     }
-    
+
+    const required_count = latlng_list.length;
+
+    var lat_lng_occupancy_list = {};
+    var output_count = 0;
+
     for(latlng_index in latlng_list) {
         var lat = latlng_list[latlng_index].lat;
         var lng = latlng_list[latlng_index].lng;
 
         console.log("Processing lat " + lat + " lng " + lng);
+
+        getOccupancyEstimation(apitoken, lat, lng, function(results, occupancy) {
+            lat_lng_occupancy_list[output_count] = {lat: lat, lng: lng, occupancy: occupancy};
+
+            output_count++;
+
+            if(output_count == required_count) {
+                res.json({success: true, lat_lng_occupancy_list: lat_lng_occupancy_list});
+            }
+
+        });
+
     }
-
-    res.json({success: false, reason: "not yet implemented"});
-    return;
-
-    getOccupancyEstimation(apitoken, lat, lng, function(results, occupancy) {
-        res.json({success: true, results: results, occupancy: occupancy});
-    });
 
 });
 
