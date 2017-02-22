@@ -69,7 +69,7 @@ router.post('/bulk', function(req, res, next) {
         console.log("Processing lat " + lat + " lng " + lng);
 
         getOccupancyEstimation(apitoken, lat, lng, function(results, occupancy) {
-            console.log("callback output_index: " + output_index + " end_index: " + required_count);
+            console.log("callback output_index: " + output_index + " end_index: " + end_index);
 
             lat_lng_occupancy_list[output_index] = {lat: lat, lng: lng, occupancy: occupancy};
 
