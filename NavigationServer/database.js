@@ -149,7 +149,7 @@ database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callbac
 
     const LAST_HOUR = "DATE_SUB(NOW(), INTERVAL 1 HOUR)";
 
-    var params = {lat: lat, lng: lng, since_date: LAST_HOUR, distance_limit: 0.005, limit: 1000};
+    var params = {lat: lat, lng: lng, since_date: LAST_HOUR, distance_limit: 0.01, limit: 1000};
 
     /* Count individual hotspots within 0.1 miles */
     queryObservationsFromLatLng(params, "DISTINCT idHotspot", "hotspot_observations NATURAL JOIN hotspots", function(err, results) {
