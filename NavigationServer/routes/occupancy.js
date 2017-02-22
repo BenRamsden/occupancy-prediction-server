@@ -51,10 +51,16 @@ router.post('/bulk', function(req, res, next) {
         return handleError(res, NO_LAT+NO_LNG);
     }
 
-    const required_count = latlng_list.length - 1; //-1 because json output starts from 0
+    var end_index = 0;
+
+    for(latlng_index in latlng_list) {
+        end_index++;
+    }
+
+    //TODO: Deny overly long query
 
     var lat_lng_occupancy_list = {};
-    var output_count = 0;
+    var output_index = 0;
 
     for(latlng_index in latlng_list) {
         var lat = latlng_list[latlng_index].lat;
@@ -63,13 +69,13 @@ router.post('/bulk', function(req, res, next) {
         console.log("Processing lat " + lat + " lng " + lng);
 
         getOccupancyEstimation(apitoken, lat, lng, function(results, occupancy) {
-            console.log("callback output_count: " + output_count + " required_count: " + required_count);
+            console.log("callback output_index: " + output_index + " end_index: " + required_count);
 
-            lat_lng_occupancy_list[output_count] = {lat: lat, lng: lng, occupancy: occupancy};
+            lat_lng_occupancy_list[output_index] = {lat: lat, lng: lng, occupancy: occupancy};
 
-            output_count++;
+            output_index++;
 
-            if(output_count == required_count) {
+            if(output_index == end_index) {
                 res.json({success: true, lat_lng_occupancy_list: lat_lng_occupancy_list});
             }
 
