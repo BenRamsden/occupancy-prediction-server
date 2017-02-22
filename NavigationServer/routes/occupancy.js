@@ -51,7 +51,7 @@ router.post('/bulk', function(req, res, next) {
         return handleError(res, NO_LAT+NO_LNG);
     }
 
-    const required_count = latlng_list.length;
+    const required_count = latlng_list.length - 1; //-1 because json output starts from 0
 
     var lat_lng_occupancy_list = {};
     var output_count = 0;
