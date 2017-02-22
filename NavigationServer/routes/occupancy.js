@@ -43,11 +43,13 @@ router.post('/bulk', function(req, res, next) {
         return handleError(res, NO_API_TOKEN);
     }
 
-    var latlng_list = JSON.parse(req.body.latlng_list);
+    var latlng_list_param = req.body.latlng_list;
 
-    if(!lat) {
+    if(!latlng_list_param) {
         return handleError(res, NO_LAT+NO_LNG);
     }
+
+    var latlng_list = JSON.parse(latlng_list_param);
 
     for(latlng_index in latlng_list) {
         var lat = latlng_list[latlng_index].lat;
