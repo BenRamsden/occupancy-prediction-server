@@ -30,6 +30,13 @@ router.post('', function(req, res, next) {
         return handleError(res, NO_LNG);
     }
 
+    getOccupancyEstimation(apitoken, lat, lng, function(results, occupancy) {
+        res.json({success: true, results: results, occupancy: occupancy});
+    });
+
+});
+
+function getOccupancyEstimation(apitoken, lat, lng, callback) {
     var callback_count = 0;
     var callback_results = {};
 
@@ -52,10 +59,9 @@ router.post('', function(req, res, next) {
 
             occupancy = occupancy / 4;
 
-            res.json({success: true, results: callback_results, occupancy: occupancy});
+            callback(callback_results, occupancy);
         }
     });
-
-});
+}
 
 module.exports = router;
