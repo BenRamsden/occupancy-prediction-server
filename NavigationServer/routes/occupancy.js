@@ -66,10 +66,10 @@ router.post('/bulk', function(req, res, next) {
         var lat = latlng_list[latlng_index].lat;
         var lng = latlng_list[latlng_index].lng;
 
-        console.log("Processing lat " + lat + " lng " + lng);
+        //console.log("Processing lat " + lat + " lng " + lng);
 
         getOccupancyEstimation(apitoken, lat, lng, function(results, occupancy, oc_lat, oc_lng) {
-            console.log("callback output_index: " + output_index + " end_index: " + end_index);
+            //console.log("callback output_index: " + output_index + " end_index: " + end_index);
 
             lat_lng_occupancy_list[output_index] = {lat: oc_lat, lng: oc_lng, occupancy: occupancy};
 
