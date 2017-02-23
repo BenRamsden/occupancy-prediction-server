@@ -43,17 +43,17 @@ router.post('/bulk', function(req, res, next) {
         return handleError(res, NO_API_TOKEN);
     }
 
-    var latlng_list = req.body.latlng_list;
+    var lat_lng_list = req.body.lat_lng_list;
 
-    console.log("latlng_list: " + latlng_list);
+    console.log("lat_lng_list: " + lat_lng_list);
 
-    if(!latlng_list) {
+    if(!lat_lng_list) {
         return handleError(res, NO_LAT+NO_LNG);
     }
 
     var end_index = 0;
 
-    for(latlng_index in latlng_list) {
+    for(lat_lng_index in lat_lng_list) {
         end_index++;
     }
 
@@ -62,9 +62,9 @@ router.post('/bulk', function(req, res, next) {
     var lat_lng_occupancy_list = {};
     var output_index = 0;
 
-    for(latlng_index in latlng_list) {
-        var lat = latlng_list[latlng_index].lat;
-        var lng = latlng_list[latlng_index].lng;
+    for(lat_lng_index in lat_lng_list) {
+        var lat = lat_lng_list[lat_lng_index].lat;
+        var lng = lat_lng_list[lat_lng_index].lng;
 
         //console.log("Processing lat " + lat + " lng " + lng);
 
