@@ -130,6 +130,8 @@
 
 <script>
 
+
+
     var chart = c3.generate({
         bindto: '#c3_graph',
         data: {
@@ -185,20 +187,47 @@
     }
 
     function graphData(json_response) {
+        const my_observations = json_response.my_observations;
+        var yAxis, xAxis, observation_date;
+
         switch(json_response.tablename) {
             case "hotspot_observations":
+
+                yAxis = ["idHotspot"];
+                xAxis = ["observation_date"];
+
+                for(arrindex in my_observations) {
+                    var idHotspot = my_observations[arrindex].idHotspot;
+                    yAxis.push(idHotspot);
+
+                    observation_date = my_observations[arrindex].observation_date;
+                    xAxis.push(new Date(observation_date));
+
+                    console.log("item " + arrindex + " idHotspot " + idHotspot + " observation_date " + observation_date);
+                }
+
+                chart.load ({
+                    bindto: "#c3_graph",
+                    xs: {
+                        'idHotspot':'observation_date'
+                    },
+                    columns: [
+                        yAxis,
+                        xAxis
+                    ]
+                });
+
                 break;
             case "bluetooth_observations":
-                var my_observations = json_response.my_observations;
 
-                var yAxis = ['bluetooth_count'];
-                var xAxis = ['observation_date'];
+                yAxis = ['bluetooth_count'];
+                xAxis = ['observation_date'];
 
                 for(arrindex in my_observations) {
                     var bluetooth_count = my_observations[arrindex].bluetooth_count;
                     yAxis.push(bluetooth_count);
 
-                    var observation_date = my_observations[arrindex].observation_date;
+                    observation_date = my_observations[arrindex].observation_date;
                     xAxis.push(new Date(observation_date));
 
                     console.log("item " + arrindex + " bluetooth_count " + bluetooth_count + " observation_date " + observation_date);
