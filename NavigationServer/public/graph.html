@@ -119,6 +119,13 @@
                         <button onclick="preSet('2017-02-24T13:53','2017-02-24T14:50')"> Set </button>
                     </div>
 
+                    <div class="preset_query">
+                        <span> 13:53 - 14:50 jubilee sports center </span>
+                        <br>
+                        <span> 30 people </span>
+                        <button onclick="periodSet('last30min')"> Set </button>
+                    </div>
+
                 </div>
             </td>
         </tr>
@@ -145,7 +152,7 @@
 
         newChart();
 
-        requestData(start_date, end_date, observation_type);
+        requestDataWithTime(start_date, end_date, observation_type);
 
     }
 
@@ -157,12 +164,20 @@
         //newChart();
         //TODO: make a new chart if problems occur
 
-        requestData(start_date, end_date, 'hotspot');
-        requestData(start_date, end_date, 'bluetooth');
-        requestData(start_date, end_date, 'crowd');
-        requestData(start_date, end_date, 'accelerometer');
-        requestData(start_date, end_date, 'audio');
+        requestDataWithTime(start_date, end_date, 'hotspot');
+        requestDataWithTime(start_date, end_date, 'bluetooth');
+        requestDataWithTime(start_date, end_date, 'crowd');
+        requestDataWithTime(start_date, end_date, 'accelerometer');
+        requestDataWithTime(start_date, end_date, 'audio');
 
+    }
+
+    function periodSet(period) {
+        requestDataWithPeriod(period, 'hotspot');
+        requestDataWithPeriod(period, 'bluetooth');
+        requestDataWithPeriod(period, 'crowd');
+        requestDataWithPeriod(period, 'accelerometer');
+        requestDataWithPeriod(period, 'audio');
     }
 
     function newChart() {
@@ -190,9 +205,13 @@
         });
     }
 
-    function requestData(start_date, end_date, observation_type) {
-        var get_url = "http://54.154.109.216/observations/";
+    const server_url = "http://54.154.109.216";
 
+    function requestDataWithTime(start_date, end_date, observation_type) {
+
+        var get_url = server_url;
+
+        get_url += "/observations/";
         get_url += observation_type;
         get_url += "/";
         get_url += start_date;
@@ -204,18 +223,37 @@
             url: get_url,
             method: "GET",
             cache: false,
-            success: function(json_response, status){
-
-                if(!json_response.tablename) {
-                    $('#result_table').html("Response could not be parsed: " + json_response);
-                    return;
-                }
-
-                $('#result_table').prepend(json_response.tablename + " (" + Object.keys(json_response.my_observations).length + " entries)<br>");
-
-                graphData(json_response);
-            }
+            success: ajaxSuccessCallback
         });
+    }
+
+    function requestDataWithPeriod(period, observation_type) {
+        var get_url = server_url;
+
+        get_url += "/observations/";
+        get_url += observation_type;
+        get_url += "/";
+        get_url += period;
+        get_url += "?apitoken=koH6a1UC71rTDM1LKppXeKYJ54cjc8nIfuJAKPly1GDYpjMMLLCuK5LBp3fXAEkCcID1jCh5pCQp9D8DmCWhJHQlLcUcy4gD68Qy";
+
+        $.ajax({
+            url: get_url,
+            method: "GET",
+            cache: false,
+            success: ajaxSuccessCallback
+        });
+    }
+
+    function ajaxSuccessCallback(json_response, status){
+
+        if(!json_response.tablename) {
+            $('#result_table').html("Response could not be parsed: " + json_response);
+            return;
+        }
+
+        $('#result_table').prepend(json_response.tablename + " (" + Object.keys(json_response.my_observations).length + " entries)<br>");
+
+        graphData(json_response);
     }
 
     function graphData(json_response) {

@@ -20,6 +20,7 @@ const NO_LNG = "NO_LNG";
 const NO_NUMBER_CONNECTED = "NO_NUMBER_CONNECTED";
 const NO_OBSERVATION_DATE = "NO_OBSERVATION_DATE";
 const MISSING_START_OR_END_DATE = "MISSING_START_OR_END_DATE";
+const MISSING_TIME_PERIOD = "MISSING_TIME_PERIOD";
 
 /* GET observations by user. */
 router.get('/:obtype', function(req, res, next) {
@@ -51,6 +52,39 @@ router.get('/:obtype', function(req, res, next) {
             res.json({tablename:tablename, my_observations: observations, idUser: idUser});
         });
 
+    });
+
+}).get('/:obtype/:period', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    //Above allowed for debugging on local copy in browser
+
+    var apitoken = req.query.apitoken;
+
+    if(!apitoken) {
+        return handleError(res, NO_API_TOKEN);
+    }
+
+    var obtype = req.params.obtype;
+
+    if(!obtype) {
+        return handleError(res, NO_OBTYPE);
+    }
+
+    var period = req.params.period;
+
+    if(!period) {
+        return handleError(res, MISSING_TIME_PERIOD);
+    }
+
+    var tablename = obtype+'_observations';
+
+    database.prototype.getObservationsAfterPeriod(tablename, period, function(err, observations) {
+        if(err) {
+            return handleError(res, ERR_DB_GET_OBSERVATIONS);
+        }
+
+        res.json({tablename:tablename, my_observations: observations});
     });
 
 }).get('/:obtype/:start_date/:end_date', function(req, res, next) {
