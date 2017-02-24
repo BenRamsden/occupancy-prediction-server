@@ -18,6 +18,24 @@
         padding: 0.5em;
     }
 
+    #result_table {
+        overflow: scroll;
+    }
+
+    #query_settings_container {
+        display: block;
+        border: lightgray dotted;
+        width: 15em;
+        height: 20em;
+    }
+
+    #standard_query_settings_container {
+        display: block;
+        border: lightgray dotted;
+        width: 20em;
+        height: 20em;
+    }
+
 </style>
 
 <head>
@@ -31,23 +49,46 @@
     <h4> Data </h4>
     <div id="result_table" class="result_box"></div>
 
-    <p> Start Date </p>
-    <input type="datetime-local" id="start_date">
+    <table>
+        <tr>
+            <td>
+                <div id="query_settings_container">
+                    <h4> Query Settings </h4>
 
-    <p> End Date </p>
-    <input type="datetime-local" id="end_date">
+                    <p> Start Date </p>
+                    <input type="datetime-local" id="start_date" value="2017-02-24T00:00">
 
-    <p> Observation Type </p>
-    <select id="observation_type">
-        <option value="hotspot">Hotspot</option>
-        <option value="bluetooth">Bluetooth</option>
-        <option value="crowd">Crowd</option>
-        <option value="accelerometer">Accelerometer</option>
-        <option value="audio">Audio</option>
-    </select>
+                    <p> End Date </p>
+                    <input type="datetime-local" id="end_date" value="2017-02-25T00:00">
 
-    <p></p>
-    <button onclick="getData()"> Get Data </button>
+                    <p> Observation Type </p>
+                    <select id="observation_type">
+                        <option value="hotspot">Hotspot</option>
+                        <option value="bluetooth">Bluetooth</option>
+                        <option value="crowd">Crowd</option>
+                        <option value="accelerometer">Accelerometer</option>
+                        <option value="audio">Audio</option>
+                    </select>
+
+                    <p></p>
+                    <button onclick="getData()"> Get Data </button>
+                </div>
+            </td>
+            <td>
+                <div id="standard_query_settings_container">
+                    <h4> Standard Query Settings </h4>
+
+                    <button onclick="getData()"> Get Data </button>
+
+                    <button onclick="getData()"> Get Data </button>
+
+                    <button onclick="getData()"> Get Data </button>
+
+                </div>
+            </td>
+        </tr>
+    </table>
+
 
 </body>
 </html>
@@ -84,7 +125,8 @@
         get_url += "?apitoken=koH6a1UC71rTDM1LKppXeKYJ54cjc8nIfuJAKPly1GDYpjMMLLCuK5LBp3fXAEkCcID1jCh5pCQp9D8DmCWhJHQlLcUcy4gD68Qy";
 
         $.get(get_url, function(data, status){
-            alert("Data: " + data + "\nStatus: " + status);
+            //alert("Data: " + data + "\nStatus: " + status);
+            $('#result_table').html(JSON.stringify(data));
         });
 
     }
