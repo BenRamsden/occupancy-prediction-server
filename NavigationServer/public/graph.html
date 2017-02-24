@@ -3,6 +3,10 @@
 
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.css" />
+<script
+        src="https://code.jquery.com/jquery-3.1.1.js"
+        integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
+        crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.js"></script>
 
@@ -61,6 +65,27 @@
     });
 
     function getData() {
+        var start_date = $('#start_date').val();
+        var end_date = $('#end_date').val();
+        var observation_type = $('#observation_type').val();
+
+        if(!start_date || !end_date || !observation_type) {
+            alert("You have not completed all of the required values");
+            //alert("start_date: " + start_date + "\n end_date: " + end_date + "\n observation_type: " + observation_type);
+        }
+
+        var get_url = "http://54.154.109.216/observations/";
+
+        get_url += observation_type;
+        get_url += "/";
+        get_url += start_date;
+        get_url += "/";
+        get_url += end_date;
+        get_url += "?apitoken=koH6a1UC71rTDM1LKppXeKYJ54cjc8nIfuJAKPly1GDYpjMMLLCuK5LBp3fXAEkCcID1jCh5pCQp9D8DmCWhJHQlLcUcy4gD68Qy";
+
+        $.get(get_url, function(data, status){
+            alert("Data: " + data + "\nStatus: " + status);
+        });
 
     }
 
