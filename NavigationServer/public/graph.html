@@ -141,9 +141,13 @@
         get_url += end_date;
         get_url += "?apitoken=koH6a1UC71rTDM1LKppXeKYJ54cjc8nIfuJAKPly1GDYpjMMLLCuK5LBp3fXAEkCcID1jCh5pCQp9D8DmCWhJHQlLcUcy4gD68Qy";
 
-        $.get(get_url, function(data, status){
-            //alert("Data: " + data + "\nStatus: " + status);
-            $('#result_table').html(JSON.stringify(data));
+        $.ajax({
+            url: get_url,
+            method: "GET",
+            cache: false,
+            success: function(data, status){
+                $('#result_table').html(JSON.stringify(data));
+            }
         });
 
     }
