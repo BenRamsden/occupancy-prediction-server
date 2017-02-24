@@ -48,7 +48,7 @@ database.prototype.getObservationsBetweenDates = function(obtype, start_date, en
     });
 };
 
-database.prototype.getObservationsAfterPeriod = function(tablename, period, callback) {
+database.prototype.getObservationsAfterPeriod = function(obtype, period, callback) {
     var time_statement = "";
 
     if(period == "last30min") {
