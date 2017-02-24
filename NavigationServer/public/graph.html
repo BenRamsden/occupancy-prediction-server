@@ -36,6 +36,9 @@
         height: 20em;
     }
 
+    .preset_query {
+    }
+
 </style>
 
 <head>
@@ -78,11 +81,25 @@
                 <div id="standard_query_settings_container">
                     <h4> Standard Query Settings </h4>
 
-                    <button onclick="getData()"> Get Data </button>
+                    <div class="preset_query">
+                        <span> 13:05 - 13:10 quiet cs atrium </span>
+                        <button onclick="preSet('2017-02-24T13:05','2017-02-24T13:10')"> Set </button>
+                    </div>
 
-                    <button onclick="getData()"> Get Data </button>
+                    <div class="preset_query">
+                        <span> 13:16 - 13:22 busy a32 </span>
+                        <button onclick="preSet('2017-02-24T13:16','2017-02-24T13:22')"> Set </button>
+                    </div>
 
-                    <button onclick="getData()"> Get Data </button>
+                    <div class="preset_query">
+                        <span> 13:40 - 13:45 walking outside on jubilee </span>
+                        <button onclick="preSet('2017-02-24T13:40','2017-02-24T13:45')"> Set </button>
+                    </div>
+
+                    <div class="preset_query">
+                        <span> 13:53 - 14:50 jubilee sports center </span>
+                        <button onclick="preSet('2017-02-24T13:53','2017-02-24T14:50')"> Set </button>
+                    </div>
 
                 </div>
             </td>
@@ -129,6 +146,12 @@
             $('#result_table').html(JSON.stringify(data));
         });
 
+    }
+
+    function preSet(start_date, end_date) {
+        $('#start_date').val(start_date);
+        $('#end_date').val(end_date);
+        getData();
     }
 
 </script>
