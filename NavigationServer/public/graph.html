@@ -131,21 +131,7 @@
 <script>
 
 
-
-    var chart = c3.generate({
-        bindto: '#c3_graph',
-        data: {
-            columns: []
-        },
-        axis: {
-            x: {
-                type: 'timeseries',
-                tick: {
-                    format: '%Y-%m-%dT%H:%M:%S.%LZ'
-                }
-            }
-        }
-    });
+    var chart;
 
     function getData() {
         var start_date = $('#start_date').val();
@@ -154,7 +140,7 @@
 
         if(!start_date || !end_date || !observation_type) {
             alert("You have not completed all of the required values");
-            //alert("start_date: " + start_date + "\n end_date: " + end_date + "\n observation_type: " + observation_type);
+            return;
         }
 
         var get_url = "http://54.154.109.216/observations/";
@@ -188,7 +174,9 @@
 
     function graphData(json_response) {
         const my_observations = json_response.my_observations;
-        var yAxis, xAxis, observation_date, xs;
+        var yAxis = [];
+        var xAxis = [];
+        var observation_date, xs;
 
         switch(json_response.tablename) {
             case "hotspot_observations":
@@ -248,24 +236,76 @@
                 xs = {
                     'crowd_sourced':'observation_date'
                 };
+
                 break;
             case "accelerometer_observations":
                 break;
             case "audio_observations":
+                yAxis = ['sound_intensity'];
+                xAxis = ['bin'];
+
+                for(arrindex in my_observations) {
+                    const audio_histograms = JSON.parse(my_observations[arrindex].audio_histogram);
+
+                    for(arrindex2 in audio_histograms) {
+                        const audio_histogram = audio_histograms[arrindex2];
+
+                        for(arrindex3 in audio_histogram) {
+                            yAxis.push(audio_histogram[arrindex3]);
+                            xAxis.push(arrindex3);
+                        }
+
+                    }
+
+                }
+
+                xs = {
+                    'sound_intensity':'bin'
+                };
+
+//                chart.internal.loadConfig({
+//                    axis: {
+//                        x: {
+//                            type: ''
+//                        }
+//                    }
+//                });
+
                 break;
             default:
                 $('#result_table').html("tablename " + json_response.tablename + " not supported");
                 break;
         }
 
-        chart.load ({
-            bindto: "#c3_graph",
-            xs: xs,
-            columns: [
-                yAxis,
-                xAxis
-            ]
+        try {
+            if(chart) chart.destroy();
+        } catch (ex) {
+            console.log("Destroying chart threw " + ex);
+        }
+
+        chart = c3.generate({
+            bindto: '#c3_graph',
+            data: {
+                xs : xs,
+                columns: [yAxis, xAxis]
+            },
+//        axis: {
+//            x: {
+//                type: 'timeseries',
+//                tick: {
+//                    format: '%Y-%m-%dT%H:%M:%S.%LZ'
+//                }
+//            }
+//        }
         });
+
+//        chart.load ({
+//            bindto: "#c3_graph",
+//            xs: xs,
+//            columns: [
+//
+//            ]
+//        });
 
     }
 
