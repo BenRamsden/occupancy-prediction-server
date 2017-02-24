@@ -24,19 +24,29 @@
 
     #query_settings_container {
         display: block;
-        border: lightgray dotted;
         width: 15em;
         height: 20em;
     }
 
     #standard_query_settings_container {
         display: block;
-        border: lightgray dotted;
         width: 20em;
         height: 20em;
     }
 
     .preset_query {
+        width: inherit;
+        height: 3em;
+        margin-bottom: 5px;
+        border: 1px solid lightgray;
+    }
+
+    .preset_query button {
+        float: right;
+    }
+
+    .border_box {
+        border: 1px solid lightgray;
     }
 
 </style>
@@ -55,14 +65,14 @@
     <table>
         <tr>
             <td>
-                <div id="query_settings_container">
+                <div id="query_settings_container" class="border_box">
                     <h4> Query Settings </h4>
 
                     <p> Start Date </p>
-                    <input type="datetime-local" id="start_date" value="2017-02-24T00:00">
+                    <input type="datetime-local" id="start_date">
 
                     <p> End Date </p>
-                    <input type="datetime-local" id="end_date" value="2017-02-25T00:00">
+                    <input type="datetime-local" id="end_date">
 
                     <p> Observation Type </p>
                     <select id="observation_type">
@@ -78,26 +88,34 @@
                 </div>
             </td>
             <td>
-                <div id="standard_query_settings_container">
+                <div id="standard_query_settings_container" class="border_box">
                     <h4> Standard Query Settings </h4>
 
                     <div class="preset_query">
                         <span> 13:05 - 13:10 quiet cs atrium </span>
+                        <br>
+                        <span> 3 people </span>
                         <button onclick="preSet('2017-02-24T13:05','2017-02-24T13:10')"> Set </button>
                     </div>
 
                     <div class="preset_query">
                         <span> 13:16 - 13:22 busy a32 </span>
+                        <br>
+                        <span> 50 people </span>
                         <button onclick="preSet('2017-02-24T13:16','2017-02-24T13:22')"> Set </button>
                     </div>
 
                     <div class="preset_query">
                         <span> 13:40 - 13:45 walking outside on jubilee </span>
+                        <br>
+                        <span> no need to classify </span>
                         <button onclick="preSet('2017-02-24T13:40','2017-02-24T13:45')"> Set </button>
                     </div>
 
                     <div class="preset_query">
                         <span> 13:53 - 14:50 jubilee sports center </span>
+                        <br>
+                        <span> 30 people </span>
                         <button onclick="preSet('2017-02-24T13:53','2017-02-24T14:50')"> Set </button>
                     </div>
 
