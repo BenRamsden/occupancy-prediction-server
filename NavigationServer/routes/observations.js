@@ -72,7 +72,7 @@ router.get('/:obtype', function(req, res, next) {
     if(!start_date || !end_date) {
         return handleError(res, MISSING_START_OR_END_DATE);
     } else {
-        res.json({success: false, reason: "not yet implemented"});
+        res.json({success: false, reason: "not yet implemented", dates: start_date + end_date});
     }
 
 
