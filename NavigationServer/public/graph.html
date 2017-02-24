@@ -257,15 +257,17 @@
                 for(arrindex in my_observations) {
                     const acceleration_timeline = JSON.parse(my_observations[arrindex].acceleration_timeline);
                     observation_date = new Date(my_observations[arrindex].observation_date);
+                    var average = 0;
+                    var count = 0;
 
                     for(arrindex2 in acceleration_timeline) {
                         const sample = acceleration_timeline[arrindex2];
-                        var count = sample[0] + sample[1] + sample[2];
-
-                        yAxis.push(count);
-                        xAxis.push(observation_date);
-
+                        average += sample[0] + sample[1] + sample[2];
+                        count++;
                     }
+
+                    yAxis.push(average / count);
+                    xAxis.push(observation_date);
 
                 }
 
@@ -285,12 +287,16 @@
 
                     for(arrindex2 in audio_histograms) {
                         const audio_histogram = audio_histograms[arrindex2];
+                        var average = 0;
+                        var count = 0;
 
                         for(arrindex3 in audio_histogram) {
-                            yAxis.push(audio_histogram[arrindex3]);
-                            xAxis.push(observation_date);
-                            //xAxis.push(arrindex3);
+                            average += audio_histogram[arrindex3];
+                            count++;
                         }
+
+                        yAxis.push(average / count );
+                        xAxis.push(observation_date);
 
                     }
 
