@@ -130,8 +130,20 @@
 
 <script>
 
-
-    var chart;
+    chart = c3.generate({
+        bindto: '#c3_graph',
+        data: {
+            columns: []
+        },
+        axis: {
+            x: {
+                type: 'timeseries',
+                tick: {
+                    format: '%Y-%m-%dT%H:%M:%S.%LZ'
+                }
+            }
+        }
+    });
 
     function getData() {
         var start_date = $('#start_date').val();
@@ -239,6 +251,28 @@
 
                 break;
             case "accelerometer_observations":
+                yAxis = ['acceleration'];
+                xAxis = ['observation_date'];
+
+                for(arrindex in my_observations) {
+                    const acceleration_timeline = JSON.parse(my_observations[arrindex].acceleration_timeline);
+                    observation_date = new Date(my_observations[arrindex].observation_date);
+
+                    for(arrindex2 in acceleration_timeline) {
+                        const sample = acceleration_timeline[arrindex2];
+                        var count = sample[0] + sample[1] + sample[2];
+
+                        yAxis.push(count);
+                        xAxis.push(observation_date);
+
+                    }
+
+                }
+
+                xs = {
+                    'acceleration':'observation_date'
+                };
+
                 break;
             case "audio_observations":
                 yAxis = ['sound_intensity'];
@@ -273,35 +307,11 @@
                 break;
         }
 
-        try {
-            if(chart) chart.destroy();
-        } catch (ex) {
-            console.log("Destroying chart threw " + ex);
-        }
-
-        chart = c3.generate({
-            bindto: '#c3_graph',
-            data: {
-                xs : xs,
-                columns: [yAxis, xAxis]
-            },
-//        axis: {
-//            x: {
-//                type: 'timeseries',
-//                tick: {
-//                    format: '%Y-%m-%dT%H:%M:%S.%LZ'
-//                }
-//            }
-//        }
+        chart.load ({
+            bindto: "#c3_graph",
+            xs: xs,
+            columns: [yAxis, xAxis]
         });
-
-//        chart.load ({
-//            bindto: "#c3_graph",
-//            xs: xs,
-//            columns: [
-//
-//            ]
-//        });
 
     }
 
