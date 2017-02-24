@@ -34,22 +34,31 @@ router.get('/:obtype', function(req, res, next) {
         return handleError(res, NO_OBTYPE);
     }
 
-    database.prototype.getUserId(apitoken, function(err, idUser) {
-        if(err) {
-            return handleError(res, ERR_DB_GET_USER_ID);
-        }
+    var start_date = req.params.start_date;
+    var end_date = req.params.end_date;
 
-        var tablename = obtype+'_observations';
-
-        database.prototype.getObservations(idUser, tablename, function(err, observations) {
+    if(!start_date || !end_date) {
+        /* FETCH ALL ENTRIES */
+        database.prototype.getUserId(apitoken, function(err, idUser) {
             if(err) {
-                return handleError(res, ERR_DB_GET_OBSERVATIONS);
+                return handleError(res, ERR_DB_GET_USER_ID);
             }
 
-            res.json({tablename:tablename, my_observations: observations, idUser: idUser});
-        });
+            var tablename = obtype+'_observations';
 
-    });
+            database.prototype.getObservations(idUser, tablename, function(err, observations) {
+                if(err) {
+                    return handleError(res, ERR_DB_GET_OBSERVATIONS);
+                }
+
+                res.json({tablename:tablename, my_observations: observations, idUser: idUser});
+            });
+
+        });
+    } else {
+        res.json({success: false, reason: "not yet implemented"});
+    }
+
 
 }).post('/:obtype', function(req, res, next) {
     var apitoken = req.query.apitoken;
