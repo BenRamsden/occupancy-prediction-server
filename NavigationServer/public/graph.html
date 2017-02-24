@@ -242,17 +242,20 @@
                 break;
             case "audio_observations":
                 yAxis = ['sound_intensity'];
-                xAxis = ['bin'];
+                xAxis = ['observation_date'];
+                //xAxis = ['bin']
 
                 for(arrindex in my_observations) {
                     const audio_histograms = JSON.parse(my_observations[arrindex].audio_histogram);
+                    observation_date = new Date(my_observations[arrindex].observation_date);
 
                     for(arrindex2 in audio_histograms) {
                         const audio_histogram = audio_histograms[arrindex2];
 
                         for(arrindex3 in audio_histogram) {
                             yAxis.push(audio_histogram[arrindex3]);
-                            xAxis.push(arrindex3);
+                            xAxis.push(observation_date);
+                            //xAxis.push(arrindex3);
                         }
 
                     }
@@ -260,16 +263,9 @@
                 }
 
                 xs = {
-                    'sound_intensity':'bin'
+                    'sound_intensity':'observation_date'
+                    //'sound_intensity':'bin'
                 };
-
-//                chart.internal.loadConfig({
-//                    axis: {
-//                        x: {
-//                            type: ''
-//                        }
-//                    }
-//                });
 
                 break;
             default:
