@@ -6,14 +6,45 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.js"></script>
 
+<style>
+    .result_box {
+        height:20em;
+        width: 90vw;
+        border-style: solid;
+        padding: 0.5em;
+    }
+
+</style>
+
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-    Graph
+    <h4>Graph</h4>
+    <div id="c3_graph" class="result_box"></div>
 
-    <div id="c3_graph"></div>
+    <h4> Data </h4>
+    <div id="result_table" class="result_box"></div>
+
+    <p> Start Date </p>
+    <input type="datetime-local" id="start_date">
+
+    <p> End Date </p>
+    <input type="datetime-local" id="end_date">
+
+    <p> Observation Type </p>
+    <select id="observation_type">
+        <option value="hotspot">Hotspot</option>
+        <option value="bluetooth">Bluetooth</option>
+        <option value="crowd">Crowd</option>
+        <option value="accelerometer">Accelerometer</option>
+        <option value="audio">Audio</option>
+    </select>
+
+    <p></p>
+    <button onclick="getData()"> Get Data </button>
+
 </body>
 </html>
 
@@ -28,5 +59,9 @@
             ]
         }
     });
+
+    function getData() {
+
+    }
 
 </script>
