@@ -9,19 +9,51 @@ var database = require('../database');
 
 var observation_types = ['hotspot','audio','crowd','bluetooth','accelerometer'];
 
-var NO_API_TOKEN = "NO_API_TOKEN";
-var NO_OBTYPE = "NO_OBTYPE";
-var ERR_DB_GET_USER_ID = "ERR_DB_GET_USER_ID";
-var ERR_DB_GET_OBSERVATIONS = "ERR_DB_GET_OBSERVATIONS";
-var ERR_DB_INSERT_OBSERVATION = "ERR_DB_INSERT_OBSERVATION";
-var OBTYPE_NOT_SUPPORTED = "OBTYPE_NOT_SUPPORTED";
-var NO_LAT = "NO_LAT";
-var NO_LNG = "NO_LNG";
-var NO_NUMBER_CONNECTED = "NO_NUMBER_CONNECTED";
-var NO_OBSERVATION_DATE = "NO_OBSERVATION_DATE";
+const NO_API_TOKEN = "NO_API_TOKEN";
+const NO_OBTYPE = "NO_OBTYPE";
+const ERR_DB_GET_USER_ID = "ERR_DB_GET_USER_ID";
+const ERR_DB_GET_OBSERVATIONS = "ERR_DB_GET_OBSERVATIONS";
+const ERR_DB_INSERT_OBSERVATION = "ERR_DB_INSERT_OBSERVATION";
+const OBTYPE_NOT_SUPPORTED = "OBTYPE_NOT_SUPPORTED";
+const NO_LAT = "NO_LAT";
+const NO_LNG = "NO_LNG";
+const NO_NUMBER_CONNECTED = "NO_NUMBER_CONNECTED";
+const NO_OBSERVATION_DATE = "NO_OBSERVATION_DATE";
+const MISSING_START_OR_END_DATE = "MISSING_START_OR_END_DATE";
 
 /* GET observations by user. */
 router.get('/:obtype', function(req, res, next) {
+    var apitoken = req.query.apitoken;
+
+    if(!apitoken) {
+        return handleError(res, NO_API_TOKEN);
+    }
+
+    var obtype = req.params.obtype;
+
+    if(!obtype) {
+        return handleError(res, NO_OBTYPE);
+    }
+
+    /* FETCH ALL ENTRIES */
+    database.prototype.getUserId(apitoken, function(err, idUser) {
+        if(err) {
+            return handleError(res, ERR_DB_GET_USER_ID);
+        }
+
+        var tablename = obtype+'_observations';
+
+        database.prototype.getObservations(idUser, tablename, function(err, observations) {
+            if(err) {
+                return handleError(res, ERR_DB_GET_OBSERVATIONS);
+            }
+
+            res.json({tablename:tablename, my_observations: observations, idUser: idUser});
+        });
+
+    });
+
+}).get('/:obtype/:start_date/:end_date', function(req, res, next) {
     var apitoken = req.query.apitoken;
 
     if(!apitoken) {
@@ -38,23 +70,7 @@ router.get('/:obtype', function(req, res, next) {
     var end_date = req.params.end_date;
 
     if(!start_date || !end_date) {
-        /* FETCH ALL ENTRIES */
-        database.prototype.getUserId(apitoken, function(err, idUser) {
-            if(err) {
-                return handleError(res, ERR_DB_GET_USER_ID);
-            }
-
-            var tablename = obtype+'_observations';
-
-            database.prototype.getObservations(idUser, tablename, function(err, observations) {
-                if(err) {
-                    return handleError(res, ERR_DB_GET_OBSERVATIONS);
-                }
-
-                res.json({tablename:tablename, my_observations: observations, idUser: idUser});
-            });
-
-        });
+        return handleError(res, MISSING_START_OR_END_DATE);
     } else {
         res.json({success: false, reason: "not yet implemented"});
     }
