@@ -84,7 +84,7 @@
                     </select>
 
                     <p></p>
-                    <button onclick="getData()"> Get Data </button>
+                    <button onclick="getDataButtonClick()"> Get Data </button>
                 </div>
             </td>
             <td>
@@ -130,22 +130,10 @@
 
 <script>
 
-    chart = c3.generate({
-        bindto: '#c3_graph',
-        data: {
-            columns: []
-        },
-        axis: {
-            x: {
-                type: 'timeseries',
-                tick: {
-                    format: '%Y-%m-%d %H:%M'
-                }
-            }
-        }
-    });
+    var chart;
+    newChart();
 
-    function getData() {
+    function getDataButtonClick() {
         var start_date = $('#start_date').val();
         var end_date = $('#end_date').val();
         var observation_type = $('#observation_type').val();
@@ -155,6 +143,54 @@
             return;
         }
 
+        newChart();
+
+        requestData(start_date, end_date, observation_type);
+
+    }
+
+    function preSet(start_date, end_date) {
+        $('#start_date').val(start_date);
+        $('#end_date').val(end_date);
+        //getDataButtonClick();
+
+        //newChart();
+        //TODO: make a new chart if problems occur
+
+        requestData(start_date, end_date, 'hotspot');
+        requestData(start_date, end_date, 'bluetooth');
+        requestData(start_date, end_date, 'crowd');
+        requestData(start_date, end_date, 'accelerometer');
+        requestData(start_date, end_date, 'audio');
+
+    }
+
+    function newChart() {
+        if(chart) {
+            try {
+                chart.destroy();
+            } catch(ex) {
+                console.log("Exception destroying chart caught: " + ex);
+            }
+        }
+
+        chart = c3.generate({
+            bindto: '#c3_graph',
+            data: {
+                columns: []
+            },
+            axis: {
+                x: {
+                    type: 'timeseries',
+                    tick: {
+                        format: '%Y-%m-%d %H:%M'
+                    }
+                }
+            }
+        });
+    }
+
+    function requestData(start_date, end_date, observation_type) {
         var get_url = "http://54.154.109.216/observations/";
 
         get_url += observation_type;
@@ -168,20 +204,18 @@
             url: get_url,
             method: "GET",
             cache: false,
-            success: function(data, status){
-                var json_response = data;
+            success: function(json_response, status){
 
                 if(!json_response.tablename) {
                     $('#result_table').html("Response could not be parsed: " + json_response);
                     return;
                 }
 
-                $('#result_table').html(JSON.stringify(json_response));
+                $('#result_table').prepend(json_response.tablename + " (" + Object.keys(json_response.my_observations).length + " entries)<br>");
 
                 graphData(json_response);
             }
         });
-
     }
 
     function graphData(json_response) {
@@ -321,10 +355,5 @@
 
     }
 
-    function preSet(start_date, end_date) {
-        $('#start_date').val(start_date);
-        $('#end_date').val(end_date);
-        getData();
-    }
 
 </script>
