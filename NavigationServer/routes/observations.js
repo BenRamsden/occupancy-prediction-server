@@ -83,10 +83,6 @@ router.get('/:obtype', function(req, res, next) {
         res.json({tablename:tablename, my_observations: observations});
     });
 
-
-    res.json({success: false, reason: "not yet implemented", dates: start_date + end_date});
-
-
 }).post('/:obtype', function(req, res, next) {
     var apitoken = req.query.apitoken;
 
