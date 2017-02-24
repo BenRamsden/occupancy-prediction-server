@@ -133,10 +133,15 @@
     var chart = c3.generate({
         bindto: '#c3_graph',
         data: {
-            columns: [
-                ['data1', 30, 200, 100, 400, 150, 250],
-                ['data2', 50, 20, 10, 40, 15, 25]
-            ]
+            columns: []
+        },
+        axis: {
+            x: {
+                type: 'timeseries',
+                tick: {
+                    format: '%Y-%m-%dT%H:%M:%S.%LZ'
+                }
+            }
         }
     });
 
@@ -164,9 +169,63 @@
             method: "GET",
             cache: false,
             success: function(data, status){
-                $('#result_table').html(JSON.stringify(data));
+                var json_response = data;
+
+                if(!json_response.tablename) {
+                    $('#result_table').html("Response could not be parsed: " + json_response);
+                    return;
+                }
+
+                $('#result_table').html(JSON.stringify(json_response));
+
+                graphData(json_response);
             }
         });
+
+    }
+
+    function graphData(json_response) {
+        switch(json_response.tablename) {
+            case "hotspot_observations":
+                break;
+            case "bluetooth_observations":
+                var my_observations = json_response.my_observations;
+
+                var yAxis = ['bluetooth_count'];
+                var xAxis = ['observation_date'];
+
+                for(arrindex in my_observations) {
+                    var bluetooth_count = my_observations[arrindex].bluetooth_count;
+                    yAxis.push(bluetooth_count);
+
+                    var observation_date = my_observations[arrindex].observation_date;
+                    xAxis.push(new Date(observation_date));
+
+                    console.log("item " + arrindex + " bluetooth_count " + bluetooth_count + " observation_date " + observation_date);
+                }
+
+                chart.load ({
+                    bindto: "#c3_graph",
+                    xs: {
+                        'bluetooth_count':'observation_date'
+                    },
+                    columns: [
+                        yAxis,
+                        xAxis
+                    ]
+                });
+
+                break;
+            case "crowd_observations":
+                break;
+            case "accelerometer_observations":
+                break;
+            case "audio_observations":
+                break;
+            default:
+                $('#result_table').html("tablename " + json_response.tablename + " not supported");
+                break;
+        }
 
     }
 
