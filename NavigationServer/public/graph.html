@@ -188,34 +188,27 @@
 
     function graphData(json_response) {
         const my_observations = json_response.my_observations;
-        var yAxis, xAxis, observation_date;
+        var yAxis, xAxis, observation_date, xs;
 
         switch(json_response.tablename) {
             case "hotspot_observations":
 
-                yAxis = ["idHotspot"];
+                yAxis = ["hotspot_id"];
                 xAxis = ["observation_date"];
 
                 for(arrindex in my_observations) {
-                    var idHotspot = my_observations[arrindex].idHotspot;
-                    yAxis.push(idHotspot);
+                    var hotspot_id = my_observations[arrindex].idHotspot;
+                    yAxis.push(hotspot_id);
 
                     observation_date = my_observations[arrindex].observation_date;
                     xAxis.push(new Date(observation_date));
 
-                    console.log("item " + arrindex + " idHotspot " + idHotspot + " observation_date " + observation_date);
+                    console.log("item " + arrindex + " hotspot_id " + hotspot_id + " observation_date " + observation_date);
                 }
 
-                chart.load ({
-                    bindto: "#c3_graph",
-                    xs: {
-                        'idHotspot':'observation_date'
-                    },
-                    columns: [
-                        yAxis,
-                        xAxis
-                    ]
-                });
+                xs = {
+                    'hotspot_id':'observation_date'
+                };
 
                 break;
             case "bluetooth_observations":
@@ -233,19 +226,28 @@
                     console.log("item " + arrindex + " bluetooth_count " + bluetooth_count + " observation_date " + observation_date);
                 }
 
-                chart.load ({
-                    bindto: "#c3_graph",
-                    xs: {
-                        'bluetooth_count':'observation_date'
-                    },
-                    columns: [
-                        yAxis,
-                        xAxis
-                    ]
-                });
+                xs = {
+                    'bluetooth_count':'observation_date'
+                };
 
                 break;
             case "crowd_observations":
+                yAxis = ['crowd_sourced'];
+                xAxis = ['observation_date'];
+
+                for(arrindex in my_observations) {
+                    var crowd_sourced = my_observations[arrindex].occupancy_estimate;
+                    yAxis.push(crowd_sourced);
+
+                    observation_date = my_observations[arrindex].observation_date;
+                    xAxis.push(new Date(observation_date));
+
+                    console.log("item " + arrindex + " crowd_sourced " + crowd_sourced + " observation_date " + observation_date);
+                }
+
+                xs = {
+                    'crowd_sourced':'observation_date'
+                };
                 break;
             case "accelerometer_observations":
                 break;
@@ -255,6 +257,15 @@
                 $('#result_table').html("tablename " + json_response.tablename + " not supported");
                 break;
         }
+
+        chart.load ({
+            bindto: "#c3_graph",
+            xs: xs,
+            columns: [
+                yAxis,
+                xAxis
+            ]
+        });
 
     }
 
