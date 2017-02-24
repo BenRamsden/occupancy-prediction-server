@@ -16,6 +16,7 @@
         width: 50em;
         border-style: solid;
         padding: 0.5em;
+        overflow: hidden;
     }
 
     #result_table {
@@ -197,6 +198,12 @@
 
         chart = c3.generate({
             bindto: '#c3_graph',
+            padding: {
+                top: 0,
+                right: 20,
+                bottom: 0,
+                left: 20,
+            },
             data: {
                 columns: []
             },
