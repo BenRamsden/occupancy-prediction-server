@@ -71,9 +71,18 @@ router.get('/:obtype', function(req, res, next) {
 
     if(!start_date || !end_date) {
         return handleError(res, MISSING_START_OR_END_DATE);
-    } else {
-        res.json({success: false, reason: "not yet implemented", dates: start_date + end_date});
     }
+
+    database.prototype.getObservationsBetweenDates(tablename, start_date, end_date, function(err, observations) {
+        if(err) {
+            return handleError(res, ERR_DB_GET_OBSERVATIONS);
+        }
+
+        res.json({tablename:tablename, my_observations: observations, idUser: idUser});
+    });
+
+
+    res.json({success: false, reason: "not yet implemented", dates: start_date + end_date});
 
 
 }).post('/:obtype', function(req, res, next) {

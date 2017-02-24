@@ -32,6 +32,22 @@ database.prototype.getObservations = function(idUser, obtype, callback) {
     });
 };
 
+database.prototype.getObservationsBetweenDates = function(obtype, start_date, end_date, callback) {
+    mysqlpool.getConnection(function(err, connection) {
+        if(err) {
+            return callback(err);
+        }
+
+        connection.query('select * from ' + obtype + ' WHERE observation_date > ? AND observation_date < ?', [start_date, end_date], function(err, results) {
+            connection.release();
+
+            if(err) return callback(err);
+
+            return callback(null, results);
+        });
+    });
+};
+
 database.prototype.getUserId = function(apitoken, callback) {
     mysqlpool.getConnection(function(err, connection) {
         if(err) {
