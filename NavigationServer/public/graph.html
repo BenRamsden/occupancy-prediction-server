@@ -25,20 +25,18 @@
     #query_settings_container {
         display: block;
         width: 15em;
-        height: 20em;
     }
 
     #standard_query_settings_container {
         display: block;
         width: 20em;
-        height: 20em;
     }
 
     .preset_query {
         width: inherit;
         height: 3em;
         margin-bottom: 5px;
-        border: 1px solid lightgray;
+        background-color: aliceblue;
     }
 
     .preset_query button {
@@ -47,6 +45,7 @@
 
     .border_box {
         border: 1px solid lightgray;
+        height: 25em;
     }
 
 </style>
@@ -126,8 +125,6 @@
                         <button onclick="preSet('2017-02-24T13:53','2017-02-24T14:50')"> Set </button>
                     </div>
 
-
-
                     <div class="preset_query">
                         <span> Last 30 minutes </span>
                         <br>
@@ -168,10 +165,8 @@
     function preSet(start_date, end_date) {
         $('#start_date').val(start_date);
         $('#end_date').val(end_date);
-        //getDataButtonClick();
 
-        //newChart();
-        //TODO: make a new chart if problems occur
+        newChart();
 
         requestDataWithTime(start_date, end_date, 'hotspot');
         requestDataWithTime(start_date, end_date, 'bluetooth');
@@ -182,6 +177,8 @@
     }
 
     function periodSet(period) {
+        newChart();
+
         requestDataWithPeriod(period, 'hotspot');
         requestDataWithPeriod(period, 'bluetooth');
         requestDataWithPeriod(period, 'crowd');
