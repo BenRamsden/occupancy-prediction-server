@@ -14,17 +14,14 @@ var NO_LAT = "NO_LAT";
 var NO_LNG = "NO_LNG";
 
 router.post('/neural', function(req, res, next) {
-    const train_start_date = "'2017-02-24 13:53:00'";
-    const train_end_date = "'2017-02-24 14:50:00'";
-    const train_lat = "52.953018";
-    const train_lng = "-1.184026";
     const train_sets_to_use = { hotspot: false, bluetooth: true, crowd: false, accelerometer: false, audio: true };
 
     var net = new brain.NeuralNetwork();
 
-    var output_set = { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0 };
+    const training_set_target = 1;
+    var training_set_count = 0;
 
-    getTrainingData(output_set, train_sets_to_use, train_start_date, train_end_date, train_lat, train_lng, function(err, training_data_arr) {
+    var training_data_callback = function(err, training_data_arr) {
         if(err) {
             res.json({success: false, reason: err});
             return;
@@ -37,8 +34,25 @@ router.post('/neural', function(req, res, next) {
             "audio_average": 1.6551400896770914
         });
 
-        res.json({success: true, training_data_arr: training_data_arr, output: output });
-    });
+        training_set_count++;
+
+        if(training_set_count == training_set_target) {
+            res.json({success: true, training_data_arr: training_data_arr, output: output });
+        }
+    };
+
+
+    getTrainingData(
+        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0 },
+        train_sets_to_use,
+        "'2017-02-24 13:53:00'",
+        "'2017-02-24 14:50:00'",
+        "52.953018",
+        "-1.184026",
+        training_data_callback
+    );
+
+
 
 });
 
