@@ -96,6 +96,26 @@ router.post('/neural', function(req, res, next) {
 
 function networkPrediction(res, net, lat, lng) {
     res.json({success: false, reason: "not yet implemented"});
+
+    var end_date = new Date();
+
+    var start_date = new Date();
+
+    var subtract_minutes = 30;
+
+    start_date.setMinutes(end_date.getMinutes() - subtract_minutes);
+
+    res.json({success: false, reason: "start_date " + start_date + " end_date" + end_date});
+
+    // getOccupancyData(false, start_date, end_date, lat, lng, function(err, input_data) {
+    //     if(err) {
+    //         res.json({success: false, reason: err});
+    //         return;
+    //     }
+    //
+    //     res.json({success: false, reason: "not yet implemented"});
+    // });
+
 }
 
 function testNetworkAndRespond(res, net, training_set) {
@@ -275,7 +295,12 @@ function getOccupancyData(output_set, train_start_date, train_end_date, train_la
             for(arrindex in training_data) {
                 var train_instance = training_data[arrindex];
 
-                training_data_arr.push( { input : train_instance, output: output_set });
+                if(output_set) {
+                    training_data_arr.push( { input : train_instance, output: output_set });
+                } else {
+                    training_data_arr.push( { input : train_instance });
+                }
+
             }
 
             callback(null, training_data_arr);
