@@ -34,7 +34,13 @@ router.post('/neural', function(req, res, next) {
                 var bluetooth_count = bluetooth_observation.bluetooth_count;
                 var observation_date = bluetooth_observation.observation_date;
 
-                training_data.push({bluetooth_count: bluetooth_count, observation_date: observation_date});
+                var input_output =
+                    {
+                        input: {bluetooth_count: bluetooth_count, observation_date: observation_date},
+                        output: { occupancy : 3}
+                    };
+
+                training_data.push(input_output);
             }
 
             res.json({success: true, training_data: training_data });
