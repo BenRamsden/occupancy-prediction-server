@@ -157,7 +157,9 @@ router.post('/neural', function(req, res, next) {
             training_data_arr = [];
 
             for(arrindex in training_data) {
-                training_data_arr.push( { input : training_data[arrindex], output: { occupancy:  30 } });
+                var train_instance = training_data[arrindex];
+
+                training_data_arr.push( { input : train_instance, output: { occupancy:  30 } });
             }
 
 
