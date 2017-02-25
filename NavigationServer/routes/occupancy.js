@@ -22,7 +22,7 @@ router.post('/neural', function(req, res, next) {
 
     var net = new brain.NeuralNetwork();
 
-    getTrainingData(train_sets_to_use, train_start_date, train_end_date, train_lat, train_lng, function(err, net, training_data_arr) {
+    getTrainingData(train_sets_to_use, train_start_date, train_end_date, train_lat, train_lng, function(err, training_data_arr) {
         if(err) {
             res.json({success: false, reason: err});
             return;
