@@ -8,8 +8,14 @@ var handleError = require('../handleError');
 var database = require('../database');
 var constants = require('../constants');
 
+var brain = require('brain');
+
 var NO_LAT = "NO_LAT";
 var NO_LNG = "NO_LNG";
+
+router.post('/neural', function(req, res, next) {
+    res.json({success: false, reason: "Neural net not yet implemented"});
+});
 
 router.post('', function(req, res, next) {
     var apitoken = req.query.apitoken;

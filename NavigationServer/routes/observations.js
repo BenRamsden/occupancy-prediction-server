@@ -54,7 +54,9 @@ router.get('/:obtype', function(req, res, next) {
 
     });
 
-}).get('/:obtype/:period', function(req, res, next) {
+});
+
+router.get('/:obtype/:period', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     //Above allowed for debugging on local copy in browser
@@ -87,7 +89,9 @@ router.get('/:obtype', function(req, res, next) {
         res.json({tablename:tablename, my_observations: observations});
     });
 
-}).get('/:obtype/:start_date/:end_date', function(req, res, next) {
+});
+
+router.get('/:obtype/:start_date/:end_date', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     //Above allowed for debugging on local copy in browser
@@ -121,7 +125,9 @@ router.get('/:obtype', function(req, res, next) {
         res.json({tablename:tablename, my_observations: observations});
     });
 
-}).post('/:obtype', function(req, res, next) {
+});
+
+router.post('/:obtype', function(req, res, next) {
     var apitoken = req.query.apitoken;
 
     if(!apitoken) {
