@@ -105,16 +105,14 @@ function networkPrediction(res, net, lat, lng) {
 
     start_date.setMinutes(end_date.getMinutes() - subtract_minutes);
 
-    res.json({success: false, reason: "start_date " + start_date.toISOString() + " end_date" + end_date.toISOString()});
+    getOccupancyData(false, "'"+start_date.toISOString()+"'", "'"+end_date.toISOString()+"'", lat, lng, function(err, input_data) {
+        if(err) {
+            res.json({success: false, reason: err});
+            return;
+        }
 
-    // getOccupancyData(false, start_date, end_date, lat, lng, function(err, input_data) {
-    //     if(err) {
-    //         res.json({success: false, reason: err});
-    //         return;
-    //     }
-    //
-    //     res.json({success: false, reason: "not yet implemented"});
-    // });
+        res.json({success: true, input_data: input_data});
+    });
 
 }
 
