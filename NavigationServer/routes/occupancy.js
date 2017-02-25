@@ -22,7 +22,9 @@ router.post('/neural', function(req, res, next) {
 
     var net = new brain.NeuralNetwork();
 
-    getTrainingData(train_sets_to_use, train_start_date, train_end_date, train_lat, train_lng, function(err, training_data_arr) {
+    var output_set = { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0 };
+
+    getTrainingData(output_set, train_sets_to_use, train_start_date, train_end_date, train_lat, train_lng, function(err, training_data_arr) {
         if(err) {
             res.json({success: false, reason: err});
             return;
@@ -41,7 +43,7 @@ router.post('/neural', function(req, res, next) {
 });
 
 
-function getTrainingData(train_sets_to_use, train_start_date, train_end_date, train_lat, train_lng, callback) {
+function getTrainingData(output_set, train_sets_to_use, train_start_date, train_end_date, train_lat, train_lng, callback) {
     database.prototype.getObservationTrainingData(train_start_date, train_end_date, train_lat, train_lng,
         function(err, results) {
             if(err) {
@@ -180,7 +182,7 @@ function getTrainingData(train_sets_to_use, train_start_date, train_end_date, tr
             for(arrindex in training_data) {
                 var train_instance = training_data[arrindex];
 
-                training_data_arr.push( { input : train_instance, output: { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1 } });
+                training_data_arr.push( { input : train_instance, output: output_set });
             }
 
             callback(null, training_data_arr);
