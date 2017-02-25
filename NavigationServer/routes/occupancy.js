@@ -81,7 +81,7 @@ router.post('/neural', function(req, res, next) {
                 var count = 0;
 
                 for(arrindex2 in acceleration_timeline) {
-                    const sample = acceleration_timeline[arrindex2];
+                    var sample = acceleration_timeline[arrindex2];
                     average += sample[0] + sample[1] + sample[2];
                     count++;
                 }
@@ -109,7 +109,7 @@ router.post('/neural', function(req, res, next) {
                 var count = 0;
 
                 for(arrindex2 in audio_histograms) {
-                    const audio_histogram = audio_histograms[arrindex2];
+                    var audio_histogram = audio_histograms[arrindex2];
                     var this_average = 0;
                     var this_count = 0;
 
