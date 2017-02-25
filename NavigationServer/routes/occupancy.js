@@ -20,6 +20,26 @@ router.post('/neural', function(req, res, next) {
     const train_lng = "-1.184026";
     const train_sets_to_use = { hotspot: false, bluetooth: true, crowd: false, accelerometer: false, audio: true };
 
+    var net = new brain.NeuralNetwork();
+
+    trainNetwork(net, train_sets_to_use, train_start_date, train_end_date, train_lat, train_lng, function(err, net, training_data_used) {
+        if(err) {
+            res.json({success: false, reason: err});
+            return;
+        }
+
+        var output = net.run({
+            "avg_bluetooth_count": 1,
+            "audio_average": 1.6551400896770914
+        });
+
+        res.json({success: true, training_data_used: training_data_used, output: output });
+    });
+
+});
+
+
+function trainNetwork(net, train_sets_to_use, train_start_date, train_end_date, train_lat, train_lng, callback) {
     database.prototype.getObservationTrainingData(train_start_date, train_end_date, train_lat, train_lng,
         function(err, results) {
             if(err) {
@@ -154,7 +174,7 @@ router.post('/neural', function(req, res, next) {
              * COLLATE TRAINING DATA
              ***************/
 
-            training_data_arr = [];
+            var training_data_arr = [];
 
             for(arrindex in training_data) {
                 var train_instance = training_data[arrindex];
@@ -167,20 +187,13 @@ router.post('/neural', function(req, res, next) {
              * TRAIN MODEL
              ***************/
 
-            var net = new brain.NeuralNetwork();
-
             net.train(training_data_arr);
 
-            var output = net.run({
-                "avg_bluetooth_count": 1,
-                "audio_average": 1.6551400896770914
-            });
+            callback(null, net, training_data_arr);
 
-            res.json({success: true, training_data_arr: training_data_arr, output: output });
         }
     );
-
-});
+}
 
 router.post('', function(req, res, next) {
     var apitoken = req.query.apitoken;
