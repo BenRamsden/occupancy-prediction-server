@@ -234,7 +234,7 @@ function getObservationTrainingData(table_name, limit, params, callback) {
 
     makeQueryWithCallback(query, vals, function(err, results) {
         if (err) {
-            return callback(err);
+            return callback(query);
         }
 
         return callback(null, results, table_name);
