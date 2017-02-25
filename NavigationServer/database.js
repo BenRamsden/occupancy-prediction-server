@@ -227,11 +227,13 @@ function getObservationTrainingData(table_name, limit, params, callback) {
 
     var query =
         " SELECT *, " + distance_subquery +
+        " DATE_FORMAT(observation_date, '%Y-%m-%d %H:%i') as observation_date" +
         " FROM " + table_name +
         " WHERE observation_date > " + start_date +
         " AND observation_date < " + end_date +
         " HAVING distance < " + distance_limit +
         " ORDER BY observation_date DESC" +
+        " GROUP BY (MINUTE(observation_date)) " +
         " LIMIT " + limit;
 
     var vals = [lat, lng, lat];
