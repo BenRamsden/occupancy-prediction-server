@@ -97,7 +97,7 @@ function testNetworkAndRespond(res, net, training_set) {
                 return;
             }
 
-            var differences = [];
+            var output = [];
 
             for(arrindex in training_data_arr) {
                 var input = training_data_arr[arrindex].input;
@@ -106,16 +106,10 @@ function testNetworkAndRespond(res, net, training_set) {
 
                 var actual_output = net.run(input);
 
-                var difference = 0;
-
-                for(output_class in expected_output) {
-                    difference += Math.abs(expected_output[output_class] - actual_output[output_class]);
-                }
-
-                differences.push(difference);
+                output.push({ expected: expected_output, actual: actual_output });
             }
 
-            res.json({success: true, training_set: training_set, testing_set : false, output: { differences: differences } });
+            res.json({success: true, training_set: training_set, testing_set : false, output: output });
 
         }
     );
