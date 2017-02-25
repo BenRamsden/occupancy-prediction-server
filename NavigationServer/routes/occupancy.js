@@ -174,7 +174,7 @@ router.post('/neural', function(req, res, next) {
                 "audio_average": 1.6551400896770914
             });
 
-            res.json({success: true, output: output });
+            res.json({success: true, training_data_arr: training_data_arr, output: output });
         }
     );
 
