@@ -27,12 +27,13 @@ router.post('/neural', function(req, res, next) {
             }
 
             var training_data = {};
+            var observation;
 
             for( arrindex in results['bluetooth_observations'] ) {
-                var bluetooth_observation = results['bluetooth_observations'][arrindex];
+                observation = results['bluetooth_observations'][arrindex];
 
-                var avg_bluetooth_count = bluetooth_observation['AVG(bluetooth_count)'];
-                var minute_group = bluetooth_observation['minute_group'];
+                var avg_bluetooth_count = observation['AVG(bluetooth_count)'];
+                var minute_group = observation['minute_group'];
 
                 if(training_data[minute_group]) {
                     training_data[minute_group].avg_bluetooth_count = avg_bluetooth_count;
@@ -41,6 +42,21 @@ router.post('/neural', function(req, res, next) {
                     training_data[minute_group].avg_bluetooth_count = avg_bluetooth_count;
                 }
             }
+
+            for( arrindex in results['hotspot_observations'] ) {
+                observation = results['hotspot_observations'][arrindex];
+
+                var hotspot_id_count = observation['COUNT(idHotspotObservation)'];
+                var minute_group = observation['minute_group'];
+
+                if(training_data[minute_group]) {
+                    training_data[minute_group].hotspot_id_count = hotspot_id_count;
+                } else {
+                    training_data[minute_group] = {};
+                    training_data[minute_group].hotspot_id_count = hotspot_id_count;
+                }
+            }
+
 
             res.json({success: true, training_data: training_data });
         }
