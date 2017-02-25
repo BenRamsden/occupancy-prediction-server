@@ -38,10 +38,23 @@ router.post('/neural', function(req, res, next) {
         if(training_set_count == training_set_target) {
             net.train(full_training_set);
 
+            //zero to ten example
             var output = net.run({
-                "avg_bluetooth_count": 1,
-                "audio_average": 1.6551400896770914
+                "avg_bluetooth_count": 0,
+                "audio_average": 0.07252400574347127
             });
+
+            //thirty to forty example
+            // var output = net.run({
+            //     "avg_bluetooth_count": 1,
+            //     "audio_average": 1.6551400896770914
+            // });
+
+            //forty to fifty example
+            // var output = net.run({
+            //     "avg_bluetooth_count": 18,
+            //     "audio_average": 1.1489978614499443
+            // });
 
             res.json({success: true, full_training_set: full_training_set, output: output });
         }
