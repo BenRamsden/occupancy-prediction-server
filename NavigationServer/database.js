@@ -226,7 +226,7 @@ function getObservationTrainingData(table_name, limit, params, callback) {
     const distance_limit = params.distance_limit;
 
     var query =
-        " SELECT *, " + distance_subquery +
+        " SELECT *, " + distance_subquery + ", " +
         " DATE_FORMAT(observation_date, '%Y-%m-%d %H:%i') as minute_group" +
         " FROM " + table_name +
         " WHERE observation_date > " + start_date +
