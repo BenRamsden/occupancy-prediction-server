@@ -74,7 +74,7 @@ router.post('/neural', function(req, res, next) {
             for( arrindex in results['accelerometer_observations'] ) {
                 observation = results['accelerometer_observations'][arrindex];
 
-                var acceleration_timeline = observation['acceleration_timeline'];
+                var acceleration_timeline = JSON.parse(observation['acceleration_timeline']);
                 var minute_group = observation['minute_group'];
 
                 var average = 0;
