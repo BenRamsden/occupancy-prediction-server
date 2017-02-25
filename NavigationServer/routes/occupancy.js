@@ -101,7 +101,7 @@ function testNetworkAndRespond(res, net, training_set) {
         "audio_average": 1.1489978614499443
     });
 
-    res.json({success: true, training_set: training_set, testing_set : testing_set, output: { zero_to_ten: output1, thirty_to_forty: output2, forty_to_fifty: output3 } });
+    res.json({success: true, training_set: training_set, testing_set : false, output: { zero_to_ten: output1, thirty_to_forty: output2, forty_to_fifty: output3 } });
 }
 
 
