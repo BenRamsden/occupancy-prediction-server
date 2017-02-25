@@ -14,8 +14,8 @@ var NO_LAT = "NO_LAT";
 var NO_LNG = "NO_LNG";
 
 router.post('/neural', function(req, res, next) {
-    const train_start_date = "2017-02-24 13:53:00";
-    const train_end_date = "2017-02-24 14:50:00";
+    const train_start_date = "'2017-02-24 13:53:00'";
+    const train_end_date = "'2017-02-24 14:50:00'";
     const train_lat = "52.953018";
     const train_lng = "-1.184026";
 
