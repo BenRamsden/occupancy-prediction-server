@@ -29,20 +29,6 @@ router.post('/neural', function(req, res, next) {
             var training_data = {};
             var observation;
 
-            for( arrindex in results['bluetooth_observations'] ) {
-                observation = results['bluetooth_observations'][arrindex];
-
-                var avg_bluetooth_count = observation['AVG(bluetooth_count)'];
-                var minute_group = observation['minute_group'];
-
-                if(training_data[minute_group]) {
-                    training_data[minute_group].avg_bluetooth_count = avg_bluetooth_count;
-                } else {
-                    training_data[minute_group] = {};
-                    training_data[minute_group].avg_bluetooth_count = avg_bluetooth_count;
-                }
-            }
-
             for( arrindex in results['hotspot_observations'] ) {
                 observation = results['hotspot_observations'][arrindex];
 
@@ -57,6 +43,33 @@ router.post('/neural', function(req, res, next) {
                 }
             }
 
+            for( arrindex in results['bluetooth_observations'] ) {
+                observation = results['bluetooth_observations'][arrindex];
+
+                var avg_bluetooth_count = observation['AVG(bluetooth_count)'];
+                var minute_group = observation['minute_group'];
+
+                if(training_data[minute_group]) {
+                    training_data[minute_group].avg_bluetooth_count = avg_bluetooth_count;
+                } else {
+                    training_data[minute_group] = {};
+                    training_data[minute_group].avg_bluetooth_count = avg_bluetooth_count;
+                }
+            }
+
+            for( arrindex in results['crowd_observations'] ) {
+                observation = results['crowd_observations'][arrindex];
+
+                var avg_crowd_occupancy_estimate = observation['AVG(occupancy_estimate)'];
+                var minute_group = observation['minute_group'];
+
+                if(training_data[minute_group]) {
+                    training_data[minute_group].avg_crowd_occupancy_estimate = avg_crowd_occupancy_estimate;
+                } else {
+                    training_data[minute_group] = {};
+                    training_data[minute_group].avg_crowd_occupancy_estimate = avg_crowd_occupancy_estimate;
+                }
+            }
 
             res.json({success: true, training_data: training_data });
         }
