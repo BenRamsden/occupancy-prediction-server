@@ -118,7 +118,7 @@ function networkPrediction(res, net, lat, lng) {
 
             var output = net.run(input);
 
-            console.log("input: " + input + " output: " + output);
+            console.log("input: " + JSON.stringify(input) + " output: " + JSON.stringify(output));
 
             outputs.push(output);
         }
