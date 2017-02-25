@@ -22,24 +22,26 @@ router.post('/neural', function(req, res, next) {
 
     var net = new brain.NeuralNetwork();
 
-    trainNetwork(net, train_sets_to_use, train_start_date, train_end_date, train_lat, train_lng, function(err, net, training_data_used) {
+    getTrainingData(net, train_sets_to_use, train_start_date, train_end_date, train_lat, train_lng, function(err, net, training_data_arr) {
         if(err) {
             res.json({success: false, reason: err});
             return;
         }
+
+        net.train(training_data_arr);
 
         var output = net.run({
             "avg_bluetooth_count": 1,
             "audio_average": 1.6551400896770914
         });
 
-        res.json({success: true, training_data_used: training_data_used, output: output });
+        res.json({success: true, training_data_arr: training_data_arr, output: output });
     });
 
 });
 
 
-function trainNetwork(net, train_sets_to_use, train_start_date, train_end_date, train_lat, train_lng, callback) {
+function getTrainingData(train_sets_to_use, train_start_date, train_end_date, train_lat, train_lng, callback) {
     database.prototype.getObservationTrainingData(train_start_date, train_end_date, train_lat, train_lng,
         function(err, results) {
             if(err) {
@@ -182,14 +184,7 @@ function trainNetwork(net, train_sets_to_use, train_start_date, train_end_date, 
                 training_data_arr.push( { input : train_instance, output: { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1 } });
             }
 
-
-            /***************
-             * TRAIN MODEL
-             ***************/
-
-            net.train(training_data_arr);
-
-            callback(null, net, training_data_arr);
+            callback(null, training_data_arr);
 
         }
     );
