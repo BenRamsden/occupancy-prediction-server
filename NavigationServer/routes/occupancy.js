@@ -26,7 +26,18 @@ router.post('/neural', function(req, res, next) {
                 return;
             }
 
-            res.json({success: true, results: results });
+            var training_data = [];
+
+            for( arrindex in results[bluetooth_observations] ) {
+                var bluetooth_observation = results[bluetooth_observations][arrindex];
+
+                var bluetooth_count = bluetooth_observation.bluetooth_count;
+                var observation_date = bluetooth_observation.observation_date;
+
+                training_data.push({bluetooth_count: bluetooth_count, observation_date: observation_date});
+            }
+
+            res.json({success: true, training_data: training_data });
         }
     );
 
