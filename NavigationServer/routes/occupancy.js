@@ -95,7 +95,7 @@ router.post('/neural', function(req, res, next) {
 });
 
 function networkPrediction(res, net, lat, lng) {
-    res.json({success: false, reason: "not yet implemented"});
+    //res.json({success: false, reason: "not yet implemented"});
 
     var end_date = new Date();
 
