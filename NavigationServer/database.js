@@ -233,7 +233,7 @@ function getObservationTrainingData(field, table_name, limit, params, callback) 
         " AND observation_date < " + end_date +
         " GROUP BY (MINUTE(observation_date)) " +
         " HAVING distance < " + distance_limit +
-        " ORDER BY observation_date DESC" +
+        " ORDER BY observation_date ASC" +
         " LIMIT " + limit;
 
 
