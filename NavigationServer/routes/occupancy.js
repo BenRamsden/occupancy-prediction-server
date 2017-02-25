@@ -111,7 +111,17 @@ function networkPrediction(res, net, lat, lng) {
             return;
         }
 
-        res.json({success: true, input_data: input_data});
+        var outputs = [];
+
+        for(arrindex in input_data) {
+            var input = input_data[arrindex];
+
+            var output = net.run(input);
+
+            outputs.push(output);
+        }
+
+        res.json({success: true, input_data: input_data, outputs: outputs});
     });
 
 }
