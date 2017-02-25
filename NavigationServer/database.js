@@ -225,8 +225,6 @@ function getObservationTrainingData(field, table_name, limit, params, callback) 
     const end_date = params.end_date;
     const distance_limit = params.distance_limit;
 
-    var pre_query = "SET sql_mode = ''; ";
-
     var query =
         " SELECT " + field + ", " + distance_subquery + ", " +
         " DATE_FORMAT(observation_date, '%Y-%m-%d %H:%i') as minute_group" +
@@ -235,7 +233,7 @@ function getObservationTrainingData(field, table_name, limit, params, callback) 
 
     var vals = [lat, lng, lat];
 
-    makeQueryWithCallback(pre_query + query, vals, function(err, results) {
+    makeQueryWithCallback(query, vals, function(err, results) {
         if (err) {
             return callback(query);
         }

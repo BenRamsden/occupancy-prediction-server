@@ -78,7 +78,14 @@ Check the status of the preroute
 
 error when grouping on non-dependancy columns
 
+Temp solution - run in mysql command line
+
     SET sql_mode = ''
+    
+Permanant solution - add theses 2 lines to the bottom of /etc/mysql/my.cnf
+
+    [mysqld]
+    sql-mode=""
 
 ###Get all observation data in the same minute
 
