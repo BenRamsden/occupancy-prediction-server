@@ -18,6 +18,7 @@ router.post('/neural', function(req, res, next) {
     const train_end_date = "'2017-02-24 14:50:00'";
     const train_lat = "52.953018";
     const train_lng = "-1.184026";
+    const train_sets_to_use = { hotspot: false, bluetooth: true, crowd: false, accelerometer: false, audio: true };
 
     database.prototype.getObservationTrainingData(train_start_date, train_end_date, train_lat, train_lng,
         function(err, results) {
@@ -29,111 +30,122 @@ router.post('/neural', function(req, res, next) {
             var training_data = {};
             var observation;
 
-            for( arrindex in results['hotspot_observations'] ) {
-                observation = results['hotspot_observations'][arrindex];
+            if(train_sets_to_use.hotspot) {
+                for( arrindex in results['hotspot_observations'] ) {
+                    observation = results['hotspot_observations'][arrindex];
 
-                var hotspot_id_count = observation['COUNT(idHotspotObservation)'];
-                var minute_group = observation['minute_group'];
+                    var hotspot_id_count = observation['COUNT(idHotspotObservation)'];
+                    var minute_group = observation['minute_group'];
 
-                if(training_data[minute_group]) {
-                    training_data[minute_group].hotspot_id_count = hotspot_id_count;
-                } else {
-                    training_data[minute_group] = {};
-                    training_data[minute_group].hotspot_id_count = hotspot_id_count;
+                    if(training_data[minute_group]) {
+                        training_data[minute_group].hotspot_id_count = hotspot_id_count;
+                    } else {
+                        training_data[minute_group] = {};
+                        training_data[minute_group].hotspot_id_count = hotspot_id_count;
+                    }
                 }
             }
 
-            for( arrindex in results['bluetooth_observations'] ) {
-                observation = results['bluetooth_observations'][arrindex];
+            if(train_sets_to_use.bluetooth) {
+                for( arrindex in results['bluetooth_observations'] ) {
+                    observation = results['bluetooth_observations'][arrindex];
 
-                var avg_bluetooth_count = observation['AVG(bluetooth_count)'];
-                var minute_group = observation['minute_group'];
+                    var avg_bluetooth_count = observation['AVG(bluetooth_count)'];
+                    var minute_group = observation['minute_group'];
 
-                if(training_data[minute_group]) {
-                    training_data[minute_group].avg_bluetooth_count = avg_bluetooth_count;
-                } else {
-                    training_data[minute_group] = {};
-                    training_data[minute_group].avg_bluetooth_count = avg_bluetooth_count;
+                    if(training_data[minute_group]) {
+                        training_data[minute_group].avg_bluetooth_count = avg_bluetooth_count;
+                    } else {
+                        training_data[minute_group] = {};
+                        training_data[minute_group].avg_bluetooth_count = avg_bluetooth_count;
+                    }
                 }
             }
 
-            for( arrindex in results['crowd_observations'] ) {
-                observation = results['crowd_observations'][arrindex];
+            if(train_sets_to_use.crowd) {
+                for( arrindex in results['crowd_observations'] ) {
+                    observation = results['crowd_observations'][arrindex];
 
-                var avg_crowd_occupancy_estimate = observation['AVG(occupancy_estimate)'];
-                var minute_group = observation['minute_group'];
+                    var avg_crowd_occupancy_estimate = observation['AVG(occupancy_estimate)'];
+                    var minute_group = observation['minute_group'];
 
-                if(training_data[minute_group]) {
-                    training_data[minute_group].avg_crowd_occupancy_estimate = avg_crowd_occupancy_estimate;
-                } else {
-                    training_data[minute_group] = {};
-                    training_data[minute_group].avg_crowd_occupancy_estimate = avg_crowd_occupancy_estimate;
+                    if(training_data[minute_group]) {
+                        training_data[minute_group].avg_crowd_occupancy_estimate = avg_crowd_occupancy_estimate;
+                    } else {
+                        training_data[minute_group] = {};
+                        training_data[minute_group].avg_crowd_occupancy_estimate = avg_crowd_occupancy_estimate;
+                    }
                 }
             }
 
-            for( arrindex in results['accelerometer_observations'] ) {
-                observation = results['accelerometer_observations'][arrindex];
+            if(train_sets_to_use.accelerometer) {
+                for( arrindex in results['accelerometer_observations'] ) {
+                    observation = results['accelerometer_observations'][arrindex];
 
-                var acceleration_timeline = JSON.parse(observation['acceleration_timeline']);
-                var minute_group = observation['minute_group'];
+                    var acceleration_timeline = JSON.parse(observation['acceleration_timeline']);
+                    var minute_group = observation['minute_group'];
 
-                var average = 0;
-                var count = 0;
+                    var average = 0;
+                    var count = 0;
 
-                for(arrindex2 in acceleration_timeline) {
-                    var sample = acceleration_timeline[arrindex2];
-                    average += sample[0] + sample[1] + sample[2];
-                    count++;
-                }
-
-                var acceleration_average = average / count;
-
-                /* TODO: minute_groups will collide, as aggregation function has not being used
-                 * TODO: Should handle combining multiple data sets below */
-
-                if(training_data[minute_group]) {
-                    training_data[minute_group].acceleration_average = acceleration_average;
-                } else {
-                    training_data[minute_group] = {};
-                    training_data[minute_group].acceleration_average = acceleration_average;
-                }
-            }
-
-            for( arrindex in results['audio_observations'] ) {
-                observation = results['audio_observations'][arrindex];
-
-                var audio_histograms = JSON.parse(observation['audio_histogram']);
-                var minute_group = observation['minute_group'];
-
-                var average = 0;
-                var count = 0;
-
-                for(arrindex2 in audio_histograms) {
-                    var audio_histogram = audio_histograms[arrindex2];
-                    var this_average = 0;
-                    var this_count = 0;
-
-                    for(arrindex3 in audio_histogram) {
-                        this_average += audio_histogram[arrindex3];
-                        this_count++;
+                    for(arrindex2 in acceleration_timeline) {
+                        var sample = acceleration_timeline[arrindex2];
+                        average += sample[0] + sample[1] + sample[2];
+                        count++;
                     }
 
-                    average += this_average / this_count;
-                    count++;
-                }
+                    var acceleration_average = average / count;
 
-                var audio_average = average / count;
+                    /* TODO: minute_groups will collide, as aggregation function has not being used
+                     * TODO: Should handle combining multiple data sets below */
 
-                /* TODO: minute_groups will collide, as aggregation function has not being used
-                 * TODO: Should handle combining multiple data sets below */
-
-                if(training_data[minute_group]) {
-                    training_data[minute_group].audio_average = audio_average;
-                } else {
-                    training_data[minute_group] = {};
-                    training_data[minute_group].audio_average = audio_average;
+                    if(training_data[minute_group]) {
+                        training_data[minute_group].acceleration_average = acceleration_average;
+                    } else {
+                        training_data[minute_group] = {};
+                        training_data[minute_group].acceleration_average = acceleration_average;
+                    }
                 }
             }
+
+            if(train_sets_to_use.audio) {
+                for( arrindex in results['audio_observations'] ) {
+                    observation = results['audio_observations'][arrindex];
+
+                    var audio_histograms = JSON.parse(observation['audio_histogram']);
+                    var minute_group = observation['minute_group'];
+
+                    var average = 0;
+                    var count = 0;
+
+                    for(arrindex2 in audio_histograms) {
+                        var audio_histogram = audio_histograms[arrindex2];
+                        var this_average = 0;
+                        var this_count = 0;
+
+                        for(arrindex3 in audio_histogram) {
+                            this_average += audio_histogram[arrindex3];
+                            this_count++;
+                        }
+
+                        average += this_average / this_count;
+                        count++;
+                    }
+
+                    var audio_average = average / count;
+
+                    /* TODO: minute_groups will collide, as aggregation function has not being used
+                     * TODO: Should handle combining multiple data sets below */
+
+                    if(training_data[minute_group]) {
+                        training_data[minute_group].audio_average = audio_average;
+                    } else {
+                        training_data[minute_group] = {};
+                        training_data[minute_group].audio_average = audio_average;
+                    }
+                }
+            }
+
 
             res.json({success: true, training_data: training_data });
         }
