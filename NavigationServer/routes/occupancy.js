@@ -30,6 +30,10 @@ router.post('/neural', function(req, res, next) {
             var training_data = {};
             var observation;
 
+            /***************
+             * GATHERING TRAINING DATA
+             ***************/
+
             if(train_sets_to_use.hotspot) {
                 for( arrindex in results['hotspot_observations'] ) {
                     observation = results['hotspot_observations'][arrindex];
@@ -146,8 +150,18 @@ router.post('/neural', function(req, res, next) {
                 }
             }
 
+            /***************
+             * COLLATE TRAINING DATA
+             ***************/
 
-            res.json({success: true, training_data: training_data });
+            training_data_arr = [];
+
+            for(arrindex in training_data) {
+                training_data_arr.push( { input : training_data[arrindex], output: 30 });
+            }
+
+
+            res.json({success: true, training_data: training_data_arr });
         }
     );
 
