@@ -19,7 +19,7 @@ router.post('/neural', function(req, res, next) {
     const train_lat = "52.953018";
     const train_lng = "-1.184026";
 
-    database.prototype.getNetworkTrainingData(train_start_date, train_end_date, train_lat, train_lng,
+    database.prototype.getObservationTrainingData(train_start_date, train_end_date, train_lat, train_lng,
         function(err, results) {
             if(err) {
                 res.json({success: false, reason: err});
