@@ -38,7 +38,7 @@ router.post('/neural', function(req, res, next) {
         if(training_set_count == training_set_target) {
             net.train(full_training_set);
 
-            testNetworkAndRespond(res, net);
+            testNetworkAndRespond(res, net, full_training_set);
         }
     };
 
@@ -82,7 +82,7 @@ router.post('/neural', function(req, res, next) {
 
 });
 
-function testNetworkAndRespond(res, net) {
+function testNetworkAndRespond(res, net, training_set) {
     //zero to ten example
     var output1 = net.run({
         "avg_bluetooth_count": 0,
@@ -101,7 +101,7 @@ function testNetworkAndRespond(res, net) {
         "audio_average": 1.1489978614499443
     });
 
-    res.json({success: true, full_training_set: full_training_set, output: { zero_to_ten: output1, thirty_to_forty: output2, forty_to_fifty: output3 } });
+    res.json({success: true, training_set: training_set, testing_set : testing_set, output: { zero_to_ten: output1, thirty_to_forty: output2, forty_to_fifty: output3 } });
 }
 
 
