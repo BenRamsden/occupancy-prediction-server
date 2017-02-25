@@ -18,7 +18,7 @@ router.post('/neural', function(req, res, next) {
 
     var net = new brain.NeuralNetwork();
 
-    const training_set_target = 1;
+    const training_set_target = 3;
     var training_set_count = 0;
 
     var training_data_callback = function(err, training_data_arr) {
@@ -49,6 +49,26 @@ router.post('/neural', function(req, res, next) {
         "'2017-02-24 14:50:00'",
         "52.953018",
         "-1.184026",
+        training_data_callback
+    );
+
+    getTrainingData(
+        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 1 },
+        train_sets_to_use,
+        "'2017-02-24 13:16:00'",
+        "'2017-02-24 13:22:00'",
+        "52.953357",
+        "-1.18736",
+        training_data_callback
+    );
+
+    getTrainingData(
+        { zero_to_ten: 1, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 1 },
+        train_sets_to_use,
+        "'2017-02-24 13:05:00'",
+        "'2017-02-24 13:10:00'",
+        "52.953357",
+        "-1.18736",
         training_data_callback
     );
 
