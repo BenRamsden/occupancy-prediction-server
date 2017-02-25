@@ -185,6 +185,62 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
 
 };
 
+database.prototype.getObservationTrainingData = function(train_start_date, train_end_date, train_lat, train_lng, callback) {
+    var params =
+        {   lat : train_lat,
+            lng: train_lng,
+            start_date: train_start_date,
+            end_date: train_end_date,
+            distance_limit: 0.1
+        };
+
+    const callback_target = 5;
+    var callback_count = 0;
+    var results = {};
+
+    var observation_callback = function(err, results, table_name) {
+        if(err) { return callback(err); }
+
+        results[table_name] = results;
+
+        callback_count++;
+
+        if(callback_count == callback_target) {
+            callback(null, results);
+        }
+    };
+
+    getObservationTrainingData("hotspot_observations", 1000, params, observation_callback);
+
+};
+
+function getObservationTrainingData(table_name, limit, params, callback) {
+    const lat = params.lat;
+    const lng = params.lng;
+    const start_date = params.start_date;
+    const end_date = params.end_date;
+    const distance_limit = params.distance_limit;
+
+    var query =
+        " SELECT *, " + distance_subquery +
+        " FROM " + table_name +
+        " WHERE observation_date > " + start_date +
+        " AND observation_date < " + end_date +
+        " HAVING distance < " + distance_limit +
+        " ORDER BY observation_date DESC" +
+        " LIMIT " + limit;
+
+    var vals = [lat, lng, lat];
+
+    makeQueryWithCallback(query, vals, function(err, results) {
+        if (err) {
+            return callback(err);
+        }
+
+        return callback(null, results, table_name);
+    });
+}
+
 database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callback) {
 
     const LAST_HOUR = "DATE_SUB(NOW(), INTERVAL 1 HOUR)";

@@ -14,7 +14,22 @@ var NO_LAT = "NO_LAT";
 var NO_LNG = "NO_LNG";
 
 router.post('/neural', function(req, res, next) {
-    res.json({success: false, reason: "Neural net not yet implemented"});
+    const train_start_date = "2017-02-24 13:53:00";
+    const train_end_date = "2017-02-24 14:50:00";
+    const train_lat = "52.953018";
+    const train_lng = "-1.184026";
+
+    database.prototype.getNetworkTrainingData(train_start_date, train_end_date, train_lat, train_lng,
+        function(err, results) {
+            if(err) {
+                res.json({success: false, reason: err});
+                return;
+            }
+
+            res.json({success: true, results: results });
+        }
+    );
+
 });
 
 router.post('', function(req, res, next) {
@@ -117,6 +132,6 @@ function getOccupancyEstimation(apitoken, lat, lng, callback) {
             callback(callback_results, occupancy, lat, lng);
         }
     });
-}
+};
 
 module.exports = router;
