@@ -21,23 +21,29 @@ router.post('/neural', function(req, res, next) {
     const training_set_target = 3;
     var training_set_count = 0;
 
+    var full_training_set = [];
+
     var training_data_callback = function(err, training_data_arr) {
         if(err) {
             res.json({success: false, reason: err});
             return;
         }
 
-        net.train(training_data_arr);
-
-        var output = net.run({
-            "avg_bluetooth_count": 1,
-            "audio_average": 1.6551400896770914
-        });
+        for(arrindex in training_data_arr) {
+            full_training_set.push(training_data_arr[arrindex]);
+        }
 
         training_set_count++;
 
         if(training_set_count == training_set_target) {
-            res.json({success: true, training_data_arr: training_data_arr, output: output });
+            net.train(full_training_set);
+
+            var output = net.run({
+                "avg_bluetooth_count": 1,
+                "audio_average": 1.6551400896770914
+            });
+
+            res.json({success: true, full_training_set: full_training_set, output: output });
         }
     };
 
@@ -63,7 +69,7 @@ router.post('/neural', function(req, res, next) {
     );
 
     getTrainingData(
-        { zero_to_ten: 1, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 1 },
+        { zero_to_ten: 1, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 0 },
         train_sets_to_use,
         "'2017-02-24 13:05:00'",
         "'2017-02-24 13:10:00'",
