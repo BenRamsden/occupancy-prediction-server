@@ -55,15 +55,15 @@ router.post('/neural', function(req, res, next) {
     );
 
     //jubilee sports center
-    // getOccupancyData(
-    //     { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0 },
-    //     TRAIN_SETS_TO_USE,
-    //     "'2017-02-24 13:53:00'",
-    //     "'2017-02-24 14:50:00'",
-    //     "52.953018",
-    //     "-1.184026",
-    //     training_data_callback
-    // );
+    getOccupancyData(
+        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0 },
+        TRAIN_SETS_TO_USE,
+        "'2017-02-24 13:53:00'",
+        "'2017-02-24 14:50:00'",
+        "52.953018",
+        "-1.184026",
+        training_data_callback
+    );
 
     //busy a32
     getOccupancyData(
@@ -82,36 +82,37 @@ router.post('/neural', function(req, res, next) {
 });
 
 function testNetworkAndRespond(res, net, training_set) {
+
+    var testing_data_callback = function(err, training_data_arr) {
+        if(err) {
+            res.json({success: false, reason: err});
+            return;
+        }
+
+        var output = [];
+
+        for(arrindex in training_data_arr) {
+            var input = training_data_arr[arrindex].input;
+
+            var expected_output = training_data_arr[arrindex].output;
+
+            var actual_output = net.run(input);
+
+            output.push({ expected: expected_output, actual: actual_output });
+        }
+
+        res.json({success: true, training_set: training_set, testing_set : false, output: output });
+
+    };
+
     //jubilee sports center
-
-
     getOccupancyData(
         { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0 },
         "'2017-02-24 13:53:00'",
         "'2017-02-24 14:50:00'",
         "52.953018",
         "-1.184026",
-        function(err, training_data_arr) {
-            if(err) {
-                res.json({success: false, reason: err});
-                return;
-            }
-
-            var output = [];
-
-            for(arrindex in training_data_arr) {
-                var input = training_data_arr[arrindex].input;
-
-                var expected_output = training_data_arr[arrindex].output;
-
-                var actual_output = net.run(input);
-
-                output.push({ expected: expected_output, actual: actual_output });
-            }
-
-            res.json({success: true, training_set: training_set, testing_set : false, output: output });
-
-        }
+        testing_data_callback
     );
 
 
