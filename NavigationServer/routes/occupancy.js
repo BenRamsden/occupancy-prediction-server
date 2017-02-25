@@ -62,7 +62,7 @@ router.post('/neural', function(req, res, next) {
 
 
     getTrainingData(
-        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0 },
+        30,
         train_sets_to_use,
         "'2017-02-24 13:53:00'",
         "'2017-02-24 14:50:00'",
@@ -72,7 +72,7 @@ router.post('/neural', function(req, res, next) {
     );
 
     getTrainingData(
-        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 1 },
+        50,
         train_sets_to_use,
         "'2017-02-24 13:16:00'",
         "'2017-02-24 13:22:00'",
@@ -82,7 +82,7 @@ router.post('/neural', function(req, res, next) {
     );
 
     getTrainingData(
-        { zero_to_ten: 1, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 0 },
+        3,
         train_sets_to_use,
         "'2017-02-24 13:05:00'",
         "'2017-02-24 13:10:00'",
