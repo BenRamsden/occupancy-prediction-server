@@ -17,6 +17,18 @@ const TRAIN_SETS_TO_USE = { hotspot: false, bluetooth: true, crowd: false, accel
 
 router.post('/neural', function(req, res, next) {
 
+    var lat = req.body.lat;
+
+    if(!lat) {
+        return handleError(res, NO_LAT);
+    }
+
+    var lng = req.body.lng;
+
+    if(!lng) {
+        return handleError(res, NO_LNG);
+    }
+
     var net = new brain.NeuralNetwork();
 
     const training_set_target = 2;
@@ -39,7 +51,9 @@ router.post('/neural', function(req, res, next) {
         if(training_set_count == training_set_target) {
             net.train(full_training_set);
 
-            testNetworkAndRespond(res, net, full_training_set);
+            //testNetworkAndRespond(res, net, full_training_set);
+
+            networkPrediction(res, net, lat, lng);
         }
     };
 
@@ -79,6 +93,10 @@ router.post('/neural', function(req, res, next) {
 
 
 });
+
+function networkPrediction(res, net, lat, lng) {
+    res.json({success: false, reason: "not yet implemented"});
+}
 
 function testNetworkAndRespond(res, net, training_set) {
 
