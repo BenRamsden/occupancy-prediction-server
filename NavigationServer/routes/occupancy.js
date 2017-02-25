@@ -38,49 +38,12 @@ router.post('/neural', function(req, res, next) {
         if(training_set_count == training_set_target) {
             net.train(full_training_set);
 
-            //zero to ten example
-            var output1 = net.run({
-                "avg_bluetooth_count": 0,
-                "audio_average": 0.07252400574347127
-            });
-
-            //thirty to forty example
-            var output2 = net.run({
-                "avg_bluetooth_count": 1,
-                "audio_average": 1.6551400896770914
-            });
-
-            //forty to fifty example
-            var output3 = net.run({
-                "avg_bluetooth_count": 18,
-                "audio_average": 1.1489978614499443
-            });
-
-            res.json({success: true, full_training_set: full_training_set, output: { zero_to_ten: output1, thirty_to_forty: output2, forty_to_fifty: output3 } });
+            testNetworkAndRespond(res, net);
         }
     };
 
 
-    getTrainingData(
-        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0 },
-        train_sets_to_use,
-        "'2017-02-24 13:53:00'",
-        "'2017-02-24 14:50:00'",
-        "52.953018",
-        "-1.184026",
-        training_data_callback
-    );
-
-    getTrainingData(
-        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 1 },
-        train_sets_to_use,
-        "'2017-02-24 13:16:00'",
-        "'2017-02-24 13:22:00'",
-        "52.953357",
-        "-1.18736",
-        training_data_callback
-    );
-
+    //quiet cs atrium
     getTrainingData(
         { zero_to_ten: 1, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 0 },
         train_sets_to_use,
@@ -91,9 +54,55 @@ router.post('/neural', function(req, res, next) {
         training_data_callback
     );
 
+    //jubilee sports center
+    getTrainingData(
+        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0 },
+        train_sets_to_use,
+        "'2017-02-24 13:53:00'",
+        "'2017-02-24 14:50:00'",
+        "52.953018",
+        "-1.184026",
+        training_data_callback
+    );
+
+    //busy a32
+    getTrainingData(
+        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 1 },
+        train_sets_to_use,
+        "'2017-02-24 13:16:00'",
+        "'2017-02-24 13:22:00'",
+        "52.953357",
+        "-1.18736",
+        training_data_callback
+    );
+
+
+
 
 
 });
+
+function testNetworkAndRespond(res, net) {
+    //zero to ten example
+    var output1 = net.run({
+        "avg_bluetooth_count": 0,
+        "audio_average": 0.07252400574347127
+    });
+
+    //thirty to forty example
+    var output2 = net.run({
+        "avg_bluetooth_count": 1,
+        "audio_average": 1.6551400896770914
+    });
+
+    //forty to fifty example
+    var output3 = net.run({
+        "avg_bluetooth_count": 18,
+        "audio_average": 1.1489978614499443
+    });
+
+    res.json({success: true, full_training_set: full_training_set, output: { zero_to_ten: output1, thirty_to_forty: output2, forty_to_fifty: output3 } });
+}
 
 
 function getTrainingData(output_set, train_sets_to_use, train_start_date, train_end_date, train_lat, train_lng, callback) {
