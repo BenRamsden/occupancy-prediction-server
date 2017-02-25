@@ -196,17 +196,17 @@ database.prototype.getObservationTrainingData = function(train_start_date, train
 
     const callback_target = 5;
     var callback_count = 0;
-    var results = {};
+    var results_list = {};
 
     var observation_callback = function(err, results, table_name) {
         if(err) { return callback(err); }
 
-        results[table_name] = results;
+        results_list[table_name] = results;
 
         callback_count++;
 
         if(callback_count == callback_target) {
-            callback(null, results);
+            callback(null, results_list);
         }
     };
 
