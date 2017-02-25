@@ -105,7 +105,7 @@ function networkPrediction(res, net, lat, lng) {
 
     start_date.setMinutes(end_date.getMinutes() - subtract_minutes);
 
-    res.json({success: false, reason: "start_date " + start_date + " end_date" + end_date});
+    res.json({success: false, reason: "start_date " + start_date.toISOString() + " end_date" + end_date.toISOString()});
 
     // getOccupancyData(false, start_date, end_date, lat, lng, function(err, input_data) {
     //     if(err) {
