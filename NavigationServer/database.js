@@ -210,15 +210,15 @@ database.prototype.getObservationTrainingData = function(train_start_date, train
         }
     };
 
-    getObservationTrainingData("hotspot_observations", 1000, params, observation_callback);
-    getObservationTrainingData("bluetooth_observations", 1000, params, observation_callback);
-    getObservationTrainingData("crowd_observations", 1000, params, observation_callback);
-    getObservationTrainingData("accelerometer_observations", 1000, params, observation_callback);
-    getObservationTrainingData("audio_observations", 1000, params, observation_callback);
+    getObservationTrainingData("1","hotspot_observations", 1000, params, observation_callback);
+    getObservationTrainingData("AVG(bluetooth_count)","bluetooth_observations", 1000, params, observation_callback);
+    getObservationTrainingData("1","crowd_observations", 1000, params, observation_callback);
+    getObservationTrainingData("1","accelerometer_observations", 1000, params, observation_callback);
+    getObservationTrainingData("1","audio_observations", 1000, params, observation_callback);
 
 };
 
-function getObservationTrainingData(table_name, limit, params, callback) {
+function getObservationTrainingData(field, table_name, limit, params, callback) {
     const lat = params.lat;
     const lng = params.lng;
     const start_date = params.start_date;
@@ -228,7 +228,7 @@ function getObservationTrainingData(table_name, limit, params, callback) {
     var pre_query = "SET sql_mode = ''; ";
 
     var query =
-        " SELECT *, " + distance_subquery + ", " +
+        " SELECT " + field + ", " + distance_subquery + ", " +
         " DATE_FORMAT(observation_date, '%Y-%m-%d %H:%i') as minute_group" +
         " FROM " + table_name +
         " GROUP BY (MINUTE(observation_date)) ";
