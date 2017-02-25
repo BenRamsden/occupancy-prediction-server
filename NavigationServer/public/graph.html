@@ -120,13 +120,6 @@
                     </div>
 
                     <div class="preset_query">
-                        <span> 13:53 - 14:50 jubilee sports center </span>
-                        <br>
-                        <span> 30 people </span>
-                        <button onclick="preSet('2017-02-24T13:53','2017-02-24T14:50')"> Set </button>
-                    </div>
-
-                    <div class="preset_query">
                         <span> Last 30 minutes </span>
                         <br>
                         <span> unknown </span>
@@ -278,21 +271,34 @@
         switch(json_response.tablename) {
             case "hotspot_observations":
 
-                yAxis = ["hotspot_id"];
+                yAxis = ["hotspot_count"];
                 xAxis = ["observation_date"];
 
+                var hotspot_count = {};
+
                 for(arrindex in my_observations) {
-                    var hotspot_id = my_observations[arrindex].idHotspot;
-                    yAxis.push(hotspot_id);
+                    //var hotspot_id = my_observations[arrindex].idHotspot;
+                    //yAxis.push(hotspot_id);
 
                     observation_date = my_observations[arrindex].observation_date;
-                    xAxis.push(new Date(observation_date));
+                    //xAxis.push(new Date(observation_date));
 
-                    console.log("item " + arrindex + " hotspot_id " + hotspot_id + " observation_date " + observation_date);
+                    if(typeof hotspot_count[observation_date] == 'undefined') {
+                        hotspot_count[observation_date] = 1;
+                    } else {
+                        hotspot_count[observation_date] += 1;
+                    }
+
+                    //console.log("item " + arrindex + " hotspot_id " + hotspot_id + " observation_date " + observation_date);
+                }
+
+                for(date in hotspot_count) {
+                    yAxis.push(hotspot_count[date]);
+                    xAxis.push(new Date(date));
                 }
 
                 xs = {
-                    'hotspot_id':'observation_date'
+                    'hotspot_count':'observation_date'
                 };
 
                 break;
