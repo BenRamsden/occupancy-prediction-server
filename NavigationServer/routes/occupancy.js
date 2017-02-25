@@ -161,7 +161,20 @@ router.post('/neural', function(req, res, next) {
             }
 
 
-            res.json({success: true, training_data: training_data_arr });
+            /***************
+             * TRAIN MODEL
+             ***************/
+
+            var net = new brain.NeuralNetwork();
+
+            net.train(training_data_arr);
+
+            var output = net.run({
+                "avg_bluetooth_count": 1,
+                "audio_average": 1.6551400896770914
+            });
+
+            res.json({success: true, output: output });
         }
     );
 
