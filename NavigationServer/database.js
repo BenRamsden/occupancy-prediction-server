@@ -211,6 +211,10 @@ database.prototype.getObservationTrainingData = function(train_start_date, train
     };
 
     getObservationTrainingData("hotspot_observations", 1000, params, observation_callback);
+    getObservationTrainingData("bluetooth_observations", 1000, params, observation_callback);
+    getObservationTrainingData("crowd_observations", 1000, params, observation_callback);
+    getObservationTrainingData("accelerometer_observations", 1000, params, observation_callback);
+    getObservationTrainingData("audio_observations", 1000, params, observation_callback);
 
 };
 
