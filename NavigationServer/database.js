@@ -231,9 +231,7 @@ function getObservationTrainingData(table_name, limit, params, callback) {
         " SELECT *, " + distance_subquery + ", " +
         " DATE_FORMAT(observation_date, '%Y-%m-%d %H:%i') as minute_group" +
         " FROM " + table_name +
-        " GROUP BY (MINUTE(observation_date)) " +
-        " HAVING distance < " + distance_limit +
-        " LIMIT " + limit + ";";
+        " GROUP BY (MINUTE(observation_date)) ";
 
     var vals = [lat, lng, lat];
 
