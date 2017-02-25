@@ -36,8 +36,8 @@ router.post('/neural', function(req, res, next) {
 
                 var input_output =
                     {
-                        input: {bluetooth_count: bluetooth_count, observation_date: observation_date},
-                        output: { occupancy : 3}
+                        input: { bluetooth_count: bluetooth_count },
+                        output: { occupancy : 30 }
                     };
 
                 training_data.push(input_output);

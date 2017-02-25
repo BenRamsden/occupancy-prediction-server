@@ -73,3 +73,13 @@ To reroute the traffic to 8080 to 80 i ran the command
 Check the status of the preroute
 
     sudo iptables -L -vt nat
+
+###Prevent MySQL only_full_group_by
+
+error when grouping on non-dependancy columns
+
+    SET sql_mode = ''
+
+###Get all observation data in the same minute
+
+     SELECT AVG(bluetooth_count), DATE_FORMAT(observation_date, '%Y-%m-%d %H:%i') as observation_date FROM bluetooth_observations GROUP BY (MINUTE(observation_date));
