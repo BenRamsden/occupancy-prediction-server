@@ -13,8 +13,9 @@ var brain = require('brain');
 var NO_LAT = "NO_LAT";
 var NO_LNG = "NO_LNG";
 
+const TRAIN_SETS_TO_USE = { hotspot: false, bluetooth: true, crowd: false, accelerometer: false, audio: true };
+
 router.post('/neural', function(req, res, next) {
-    const train_sets_to_use = { hotspot: false, bluetooth: true, crowd: false, accelerometer: false, audio: true };
 
     var net = new brain.NeuralNetwork();
 
@@ -46,7 +47,6 @@ router.post('/neural', function(req, res, next) {
     //quiet cs atrium
     getOccupancyData(
         { zero_to_ten: 1, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 0 },
-        train_sets_to_use,
         "'2017-02-24 13:05:00'",
         "'2017-02-24 13:10:00'",
         "52.953357",
@@ -57,7 +57,7 @@ router.post('/neural', function(req, res, next) {
     //jubilee sports center
     // getOccupancyData(
     //     { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0 },
-    //     train_sets_to_use,
+    //     TRAIN_SETS_TO_USE,
     //     "'2017-02-24 13:53:00'",
     //     "'2017-02-24 14:50:00'",
     //     "52.953018",
@@ -68,7 +68,6 @@ router.post('/neural', function(req, res, next) {
     //busy a32
     getOccupancyData(
         { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 1 },
-        train_sets_to_use,
         "'2017-02-24 13:16:00'",
         "'2017-02-24 13:22:00'",
         "52.953357",
@@ -85,11 +84,9 @@ router.post('/neural', function(req, res, next) {
 function testNetworkAndRespond(res, net, training_set) {
     //jubilee sports center
 
-    var differences = [];
 
     getOccupancyData(
         { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0 },
-        train_sets_to_use,
         "'2017-02-24 13:53:00'",
         "'2017-02-24 14:50:00'",
         "52.953018",
@@ -99,6 +96,8 @@ function testNetworkAndRespond(res, net, training_set) {
                 res.json({success: false, reason: err});
                 return;
             }
+
+            var differences = [];
 
             for(arrindex in training_data_arr) {
                 var input = training_data_arr[arrindex].input;
@@ -114,17 +113,18 @@ function testNetworkAndRespond(res, net, training_set) {
                 }
 
                 differences.push(difference);
-
             }
+
+            res.json({success: true, training_set: training_set, testing_set : false, output: { differences: differences } });
+
         }
     );
 
 
-    res.json({success: true, training_set: training_set, testing_set : false, output: { differences: differences } });
 }
 
 
-function getOccupancyData(output_set, train_sets_to_use, train_start_date, train_end_date, train_lat, train_lng, callback) {
+function getOccupancyData(output_set, train_start_date, train_end_date, train_lat, train_lng, callback) {
     database.prototype.getObservationTrainingData(train_start_date, train_end_date, train_lat, train_lng,
         function(err, results) {
             if(err) {
@@ -138,7 +138,7 @@ function getOccupancyData(output_set, train_sets_to_use, train_start_date, train
              * GATHERING TRAINING DATA
              ***************/
 
-            if(train_sets_to_use.hotspot) {
+            if(TRAIN_SETS_TO_USE.hotspot) {
                 for( arrindex in results['hotspot_observations'] ) {
                     observation = results['hotspot_observations'][arrindex];
 
@@ -154,7 +154,7 @@ function getOccupancyData(output_set, train_sets_to_use, train_start_date, train
                 }
             }
 
-            if(train_sets_to_use.bluetooth) {
+            if(TRAIN_SETS_TO_USE.bluetooth) {
                 for( arrindex in results['bluetooth_observations'] ) {
                     observation = results['bluetooth_observations'][arrindex];
 
@@ -170,7 +170,7 @@ function getOccupancyData(output_set, train_sets_to_use, train_start_date, train
                 }
             }
 
-            if(train_sets_to_use.crowd) {
+            if(TRAIN_SETS_TO_USE.crowd) {
                 for( arrindex in results['crowd_observations'] ) {
                     observation = results['crowd_observations'][arrindex];
 
@@ -186,7 +186,7 @@ function getOccupancyData(output_set, train_sets_to_use, train_start_date, train
                 }
             }
 
-            if(train_sets_to_use.accelerometer) {
+            if(TRAIN_SETS_TO_USE.accelerometer) {
                 for( arrindex in results['accelerometer_observations'] ) {
                     observation = results['accelerometer_observations'][arrindex];
 
@@ -216,7 +216,7 @@ function getOccupancyData(output_set, train_sets_to_use, train_start_date, train
                 }
             }
 
-            if(train_sets_to_use.audio) {
+            if(TRAIN_SETS_TO_USE.audio) {
                 for( arrindex in results['audio_observations'] ) {
                     observation = results['audio_observations'][arrindex];
 
