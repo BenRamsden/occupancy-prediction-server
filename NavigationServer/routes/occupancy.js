@@ -102,17 +102,36 @@ router.post('/neural', function(req, res, next) {
             for( arrindex in results['audio_observations'] ) {
                 observation = results['audio_observations'][arrindex];
 
-                var audio_histogram = observation['audio_histogram'];
+                var audio_histograms = JSON.parse(observation['audio_histogram']);
                 var minute_group = observation['minute_group'];
+
+                var average = 0;
+                var count = 0;
+
+                for(arrindex2 in audio_histograms) {
+                    const audio_histogram = audio_histograms[arrindex2];
+                    var this_average = 0;
+                    var this_count = 0;
+
+                    for(arrindex3 in audio_histogram) {
+                        this_average += audio_histogram[arrindex3];
+                        this_count++;
+                    }
+
+                    average += this_average / this_count;
+                    count++;
+                }
+
+                var audio_average = average / count;
 
                 /* TODO: minute_groups will collide, as aggregation function has not being used
                  * TODO: Should handle combining multiple data sets below */
 
                 if(training_data[minute_group]) {
-                    training_data[minute_group].audio_histogram = audio_histogram;
+                    training_data[minute_group].audio_average = audio_average;
                 } else {
                     training_data[minute_group] = {};
-                    training_data[minute_group].audio_histogram = audio_histogram;
+                    training_data[minute_group].audio_average = audio_average;
                 }
             }
 
