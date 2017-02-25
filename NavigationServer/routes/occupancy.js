@@ -77,11 +77,25 @@ router.post('/neural', function(req, res, next) {
                 var acceleration_timeline = observation['acceleration_timeline'];
                 var minute_group = observation['minute_group'];
 
+                var average = 0;
+                var count = 0;
+
+                for(arrindex2 in acceleration_timeline) {
+                    const sample = acceleration_timeline[arrindex2];
+                    average += sample[0] + sample[1] + sample[2];
+                    count++;
+                }
+
+                var acceleration_average = average / count;
+
+                /* TODO: minute_groups will collide, as aggregation function has not being used
+                 * TODO: Should handle combining multiple data sets below */
+
                 if(training_data[minute_group]) {
-                    training_data[minute_group].acceleration_timeline = acceleration_timeline;
+                    training_data[minute_group].acceleration_average = acceleration_average;
                 } else {
                     training_data[minute_group] = {};
-                    training_data[minute_group].acceleration_timeline = acceleration_timeline;
+                    training_data[minute_group].acceleration_average = acceleration_average;
                 }
             }
 
@@ -90,6 +104,9 @@ router.post('/neural', function(req, res, next) {
 
                 var audio_histogram = observation['audio_histogram'];
                 var minute_group = observation['minute_group'];
+
+                /* TODO: minute_groups will collide, as aggregation function has not being used
+                 * TODO: Should handle combining multiple data sets below */
 
                 if(training_data[minute_group]) {
                     training_data[minute_group].audio_histogram = audio_histogram;
