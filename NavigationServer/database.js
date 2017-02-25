@@ -210,9 +210,9 @@ database.prototype.getObservationTrainingData = function(train_start_date, train
         }
     };
 
-    getObservationTrainingData("1","hotspot_observations", 1000, params, observation_callback);
+    getObservationTrainingData("COUNT(idHotspotObservations)","hotspot_observations", 1000, params, observation_callback);
     getObservationTrainingData("AVG(bluetooth_count)","bluetooth_observations", 1000, params, observation_callback);
-    getObservationTrainingData("1","crowd_observations", 1000, params, observation_callback);
+    getObservationTrainingData("AVG(occupancy_estimate)","crowd_observations", 1000, params, observation_callback);
     getObservationTrainingData("1","accelerometer_observations", 1000, params, observation_callback);
     getObservationTrainingData("1","audio_observations", 1000, params, observation_callback);
 

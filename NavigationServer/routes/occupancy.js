@@ -26,21 +26,20 @@ router.post('/neural', function(req, res, next) {
                 return;
             }
 
-            var training_data = [];
+            var training_data = {};
 
             for( arrindex in results['bluetooth_observations'] ) {
                 var bluetooth_observation = results['bluetooth_observations'][arrindex];
 
-                var bluetooth_count = bluetooth_observation['AVG(bluetooth_count)'];
+                var avg_bluetooth_count = bluetooth_observation['AVG(bluetooth_count)'];
                 var minute_group = bluetooth_observation['minute_group'];
 
-                var input_output =
-                    {
-                        input: { bluetooth_count: bluetooth_count, minute_group: minute_group },
-                        output: { occupancy : 30 }
-                    };
-
-                training_data.push(input_output);
+                if(training_data[minute_group]) {
+                    training_data[minute_group].avg_bluetooth_count = avg_bluetooth_count;
+                } else {
+                    training_data[minute_group] = {};
+                    training_data[minute_group].avg_bluetooth_count = avg_bluetooth_count;
+                }
             }
 
             res.json({success: true, training_data: training_data });
