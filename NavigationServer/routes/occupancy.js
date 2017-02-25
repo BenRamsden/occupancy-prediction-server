@@ -39,30 +39,30 @@ router.post('/neural', function(req, res, next) {
             net.train(full_training_set);
 
             //zero to ten example
-            var output = net.run({
+            var output1 = net.run({
                 "avg_bluetooth_count": 0,
                 "audio_average": 0.07252400574347127
             });
 
             //thirty to forty example
-            // var output = net.run({
-            //     "avg_bluetooth_count": 1,
-            //     "audio_average": 1.6551400896770914
-            // });
+            var output2 = net.run({
+                "avg_bluetooth_count": 1,
+                "audio_average": 1.6551400896770914
+            });
 
             //forty to fifty example
-            // var output = net.run({
-            //     "avg_bluetooth_count": 18,
-            //     "audio_average": 1.1489978614499443
-            // });
+            var output3 = net.run({
+                "avg_bluetooth_count": 18,
+                "audio_average": 1.1489978614499443
+            });
 
-            res.json({success: true, full_training_set: full_training_set, output: output });
+            res.json({success: true, full_training_set: full_training_set, output: { zero_to_ten: output1, thirty_to_forty: output2, forty_to_fifty: output3 } });
         }
     };
 
 
     getTrainingData(
-        { occupancy: 30 },
+        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0 },
         train_sets_to_use,
         "'2017-02-24 13:53:00'",
         "'2017-02-24 14:50:00'",
@@ -72,7 +72,7 @@ router.post('/neural', function(req, res, next) {
     );
 
     getTrainingData(
-        { occupancy: 50 },
+        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 1 },
         train_sets_to_use,
         "'2017-02-24 13:16:00'",
         "'2017-02-24 13:22:00'",
@@ -82,7 +82,7 @@ router.post('/neural', function(req, res, next) {
     );
 
     getTrainingData(
-        { occupancy : 3 },
+        { zero_to_ten: 1, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 0 },
         train_sets_to_use,
         "'2017-02-24 13:05:00'",
         "'2017-02-24 13:10:00'",
