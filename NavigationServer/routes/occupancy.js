@@ -114,7 +114,13 @@ function networkPrediction(res, net, lat, lng) {
         var outputs = [];
 
         for(arrindex in input_data) {
-            outputs.push(net.run(input_data[arrindex]));
+            var input = input_data[arrindex];
+
+            var output = net.run(input);
+
+            console.log("input: " + input + " output: " + output);
+
+            outputs.push(output);
         }
 
         res.json({success: true, input_data: input_data, outputs: outputs});
