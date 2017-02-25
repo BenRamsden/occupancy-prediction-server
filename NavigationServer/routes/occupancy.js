@@ -31,12 +31,12 @@ router.post('/neural', function(req, res, next) {
             for( arrindex in results['bluetooth_observations'] ) {
                 var bluetooth_observation = results['bluetooth_observations'][arrindex];
 
-                var bluetooth_count = bluetooth_observation.bluetooth_count;
-                var observation_date = bluetooth_observation.observation_date;
+                var bluetooth_count = bluetooth_observation['AVG(bluetooth_count)'];
+                var minute_group = bluetooth_observation['minute_group'];
 
                 var input_output =
                     {
-                        input: { bluetooth_count: bluetooth_count },
+                        input: { bluetooth_count: bluetooth_count, minute_group: minute_group },
                         output: { occupancy : 30 }
                     };
 
