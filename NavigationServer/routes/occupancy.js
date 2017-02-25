@@ -71,6 +71,34 @@ router.post('/neural', function(req, res, next) {
                 }
             }
 
+            for( arrindex in results['accelerometer_observations'] ) {
+                observation = results['accelerometer_observations'][arrindex];
+
+                var acceleration_timeline = observation['acceleration_timeline'];
+                var minute_group = observation['minute_group'];
+
+                if(training_data[minute_group]) {
+                    training_data[minute_group].acceleration_timeline = acceleration_timeline;
+                } else {
+                    training_data[minute_group] = {};
+                    training_data[minute_group].acceleration_timeline = acceleration_timeline;
+                }
+            }
+
+            for( arrindex in results['audio_observations'] ) {
+                observation = results['audio_observations'][arrindex];
+
+                var audio_histogram = observation['audio_histogram'];
+                var minute_group = observation['minute_group'];
+
+                if(training_data[minute_group]) {
+                    training_data[minute_group].audio_histogram = audio_histogram;
+                } else {
+                    training_data[minute_group] = {};
+                    training_data[minute_group].audio_histogram = audio_histogram;
+                }
+            }
+
             res.json({success: true, training_data: training_data });
         }
     );

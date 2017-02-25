@@ -213,8 +213,8 @@ database.prototype.getObservationTrainingData = function(train_start_date, train
     getObservationTrainingData("COUNT(idHotspotObservation)","hotspot_observations", 1000, params, observation_callback);
     getObservationTrainingData("AVG(bluetooth_count)","bluetooth_observations", 1000, params, observation_callback);
     getObservationTrainingData("AVG(occupancy_estimate)","crowd_observations", 1000, params, observation_callback);
-    getObservationTrainingData("1","accelerometer_observations", 1000, params, observation_callback);
-    getObservationTrainingData("1","audio_observations", 1000, params, observation_callback);
+    getObservationTrainingData("acceleration_timeline","accelerometer_observations", 1000, params, observation_callback);
+    getObservationTrainingData("audio_histogram","audio_observations", 1000, params, observation_callback);
 
 };
 
