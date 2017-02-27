@@ -39,8 +39,8 @@ router.post('/get_occupancy_data', function(req, res, next) {
 
 });
 
-function getOccupancyDataNoLocation(train_start_date, train_end_date, callback) {
-    database.prototype.getObservationTrainingDataNoLocation(train_start_date, train_end_date,
+function getOccupancyDataNoLocation(start_date, end_date, callback) {
+    database.prototype.getObservationTrainingDataNoLocation(start_date, end_date,
         function(err, results) {
             if(err) {
                 callback(err);
@@ -49,7 +49,7 @@ function getOccupancyDataNoLocation(train_start_date, train_end_date, callback) 
             var training_data = extractTrainingData(results);
 
             console.log("getOccupancyDataNoLocation called with\nStart Date: " + start_date + "\nEnd Date: " + end_date + "\nGot Result Length: " + training_data.length);
-            
+
             callback(null, training_data);
 
         }
