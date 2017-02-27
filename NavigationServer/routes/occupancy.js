@@ -13,7 +13,7 @@ var brain = require('brain');
 var NO_LAT = "NO_LAT";
 var NO_LNG = "NO_LNG";
 
-const TRAIN_SETS_TO_USE = { hotspot: false, bluetooth: true, crowd: false, accelerometer: false, audio: true };
+const TRAIN_SETS_TO_USE = { hotspot: false, bluetooth: true, crowd: false, accelerometer: false, audio: false };
 
 router.post('/neural', function(req, res, next) {
 
@@ -50,7 +50,7 @@ router.post('/neural', function(req, res, next) {
 
         if(training_set_count == training_set_target) {
             net.train(full_training_set, {
-                errorThresh: 0.45,
+                errorThresh: 0.10,
                 log: true,
                 logPeriod: 1,
                 learningRate: 0.1
