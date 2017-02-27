@@ -43,9 +43,7 @@ router.post('/neural', function(req, res, next) {
         }
 
         for(arrindex in training_data_arr) {
-            if(training_data_arr[arrindex].input.length == 2) {
-                full_training_set.push(training_data_arr[arrindex]);
-            }
+            full_training_set.push(training_data_arr[arrindex]);
         }
 
         training_set_count++;
