@@ -13,7 +13,7 @@ var brain = require('brain');
 var NO_LAT = "NO_LAT";
 var NO_LNG = "NO_LNG";
 
-const TRAIN_SETS_TO_USE = { hotspot: false, bluetooth: true, crowd: false, accelerometer: false, audio: false };
+const TRAIN_SETS_TO_USE = { hotspot: true, bluetooth: true, crowd: false, accelerometer: false, audio: true };
 
 router.post('/neural', function(req, res, next) {
 
@@ -29,9 +29,9 @@ router.post('/neural', function(req, res, next) {
         return handleError(res, NO_LNG);
     }
 
-    var net = new brain.NeuralNetwork(); //{hiddenLayers: [15, 15, 6]}
+    var net = new brain.NeuralNetwork({hiddenLayers: [70, 50, 50]});
 
-    const training_set_target = 3;
+    const training_set_target = 5;
     var training_set_count = 0;
 
     var full_training_set = [];
@@ -49,12 +49,7 @@ router.post('/neural', function(req, res, next) {
         training_set_count++;
 
         if(training_set_count == training_set_target) {
-            net.train(full_training_set, {
-                errorThresh: 0.10,
-                log: true,
-                logPeriod: 1,
-                learningRate: 0.1
-            });
+            net.train(full_training_set);
 
             testNetworkAndRespond(res, net, full_training_set);
 
@@ -74,14 +69,14 @@ router.post('/neural', function(req, res, next) {
     );
 
     //jubilee sports center
-    // getOccupancyData(
-    //     { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0, fifty_to_one_hundred : 0, one_hundred_plus : 0  },
-    //     "'2017-02-24 13:53:00'",
-    //     "'2017-02-24 14:50:00'",
-    //     "52.953018",
-    //     "-1.184026",
-    //     training_data_callback
-    // );
+    getOccupancyData(
+        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0, fifty_to_one_hundred : 0, one_hundred_plus : 0  },
+        "'2017-02-24 13:53:00'",
+        "'2017-02-24 14:50:00'",
+        "52.953018",
+        "-1.184026",
+        training_data_callback
+    );
 
     //busy a32
     getOccupancyData(
@@ -93,16 +88,6 @@ router.post('/neural', function(req, res, next) {
         training_data_callback
     );
 
-    //b52 lecture
-    // getOccupancyData(
-    //     { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 0, fifty_to_one_hundred : 0, one_hundred_plus : 1  },
-    //     "'2017-02-27 15:59:00'",
-    //     "'2017-02-27 16:51:00'",
-    //     "52.951627",
-    //     "-1.1864",
-    //     training_data_callback
-    // );
-
     //jubilee gym
     getOccupancyData(
         { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 0, fifty_to_one_hundred : 1, one_hundred_plus : 0  },
@@ -113,6 +98,15 @@ router.post('/neural', function(req, res, next) {
         training_data_callback
     );
 
+    //b52 lecture
+    getOccupancyData(
+        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 0, fifty_to_one_hundred : 0, one_hundred_plus : 1  },
+        "'2017-02-27 15:59:00'",
+        "'2017-02-27 16:51:00'",
+        "52.951627",
+        "-1.1864",
+        training_data_callback
+    );
 
 });
 
