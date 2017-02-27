@@ -74,15 +74,6 @@
                     <p> End Date </p>
                     <input type="datetime-local" id="end_date">
 
-                    <p> Observation Type </p>
-                    <select id="observation_type">
-                        <option value="hotspot">Hotspot</option>
-                        <option value="bluetooth">Bluetooth</option>
-                        <option value="crowd">Crowd</option>
-                        <option value="accelerometer">Accelerometer</option>
-                        <option value="audio">Audio</option>
-                    </select>
-
                     <p></p>
                     <button onclick="getDataButtonClick()"> Get Data </button>
                 </div>
@@ -131,7 +122,7 @@
                         <span> Last 30 minutes </span>
                         <br>
                         <span> unknown </span>
-                        <button onclick="periodSet('last30min')"> Set </button>
+                        <button onclick="lastNMinutes(30)"> Set </button>
                     </div>
 
                 </div>
@@ -151,17 +142,15 @@
     function getDataButtonClick() {
         var start_date = $('#start_date').val();
         var end_date = $('#end_date').val();
-        var observation_type = $('#observation_type').val();
 
-        if(!start_date || !end_date || !observation_type) {
+        if(!start_date || !end_date) {
             alert("You have not completed all of the required values");
             return;
         }
 
         newChart();
 
-        requestDataWithTime(start_date, end_date, observation_type);
-
+        requestDataWithTime(start_date, end_date);
     }
 
     function preSet(start_date, end_date) {
@@ -170,22 +159,22 @@
 
         newChart();
 
-        requestDataWithTime(start_date, end_date, 'hotspot');
-        requestDataWithTime(start_date, end_date, 'bluetooth');
-        requestDataWithTime(start_date, end_date, 'crowd');
-        requestDataWithTime(start_date, end_date, 'accelerometer');
-        requestDataWithTime(start_date, end_date, 'audio');
-
+        requestDataWithTime(start_date, end_date);
     }
 
-    function periodSet(period) {
+    function lastNMinutes(minute_subtract) {
+        var start_date = new Date();
+
+        start_date.setMinutes( start_date.getMinutes() - minute_subtract );
+
+        var end_date = new Date();
+
+        $('#start_date').val(start_date.toISOString().slice(0,16)); //cut to just minute precision
+        $('#end_date').val(end_date.toISOString().slice(0,16)); //cut to just minute precision
+
         newChart();
 
-        requestDataWithPeriod(period, 'hotspot');
-        requestDataWithPeriod(period, 'bluetooth');
-        requestDataWithPeriod(period, 'crowd');
-        requestDataWithPeriod(period, 'accelerometer');
-        requestDataWithPeriod(period, 'audio');
+        requestDataWithTime(start_date.toISOString(), end_date.toISOString());
     }
 
     function newChart() {
@@ -219,40 +208,14 @@
         });
     }
 
-    const server_url = "http://54.154.109.216";
-
     function requestDataWithTime(start_date, end_date, observation_type) {
 
-        var get_url = server_url;
-
-        get_url += "/observations/";
-        get_url += observation_type;
-        get_url += "/";
-        get_url += start_date;
-        get_url += "/";
-        get_url += end_date;
-        get_url += "?apitoken=koH6a1UC71rTDM1LKppXeKYJ54cjc8nIfuJAKPly1GDYpjMMLLCuK5LBp3fXAEkCcID1jCh5pCQp9D8DmCWhJHQlLcUcy4gD68Qy";
+        var post_url = "/occupancy/get_occupancy_data";
 
         $.ajax({
-            url: get_url,
-            method: "GET",
-            cache: false,
-            success: ajaxSuccessCallback
-        });
-    }
-
-    function requestDataWithPeriod(period, observation_type) {
-        var get_url = server_url;
-
-        get_url += "/observations/";
-        get_url += observation_type;
-        get_url += "/";
-        get_url += period;
-        get_url += "?apitoken=koH6a1UC71rTDM1LKppXeKYJ54cjc8nIfuJAKPly1GDYpjMMLLCuK5LBp3fXAEkCcID1jCh5pCQp9D8DmCWhJHQlLcUcy4gD68Qy";
-
-        $.ajax({
-            url: get_url,
-            method: "GET",
+            url: post_url,
+            method: "POST",
+            data: { start_date: start_date, end_date: end_date },
             cache: false,
             success: ajaxSuccessCallback
         });
@@ -260,162 +223,89 @@
 
     function ajaxSuccessCallback(json_response, status){
 
-        if(!json_response.tablename) {
-            $('#result_table').html("Response could not be parsed: " + json_response);
+        if(!json_response.success) {
+            $('#result_table').html("Response could not be parsed: " + JSON.stringify(json_response));
             return;
         }
 
-        $('#result_table').prepend(json_response.tablename + " (" + Object.keys(json_response.my_observations).length + " entries)<br>");
+        //$('#result_table').prepend(Object.keys(json_response.results) + "<br>");
+        $('#result_table').prepend("Got Data " + " (" + Object.keys(json_response.results).length + " timestamps)<br>");
 
         graphData(json_response);
     }
 
     function graphData(json_response) {
-        const my_observations = json_response.my_observations;
-        var yAxis = [];
-        var xAxis = [];
-        var observation_date, xs;
+        const results = json_response.results;
 
-        switch(json_response.tablename) {
-            case "hotspot_observations":
+        const hotspot_index = 'hotspot_id_count';
+        const bluetooth_index = 'avg_bluetooth_count';
+        const crowd_index = 'avg_crowd_occupancy_estimate';
+        const acceleration_index = 'acceleration_average';
+        const audio_index = 'audio_average';
+        const timestamp = 'timestamp';
 
-                yAxis = ["hotspot_count"];
-                xAxis = ["observation_date"];
+        var hotspotAxis = [hotspot_index];
+        var hotspotTimeAxis = [timestamp];
 
-                var hotspot_count = {};
+        var bluetoothAxis = [bluetooth_index];
+        var bluetoothTimeAxis = [timestamp];
 
-                for(arrindex in my_observations) {
-                    //var hotspot_id = my_observations[arrindex].idHotspot;
-                    //yAxis.push(hotspot_id);
+        var crowdAxis = [crowd_index];
+        var crowdTimeAxis = [timestamp];
 
-                    observation_date = my_observations[arrindex].observation_date;
-                    //xAxis.push(new Date(observation_date));
+        var accelerationAxis = [acceleration_index];
+        var accelerationTimeAxis = [timestamp];
 
-                    if(typeof hotspot_count[observation_date] == 'undefined') {
-                        hotspot_count[observation_date] = 1;
-                    } else {
-                        hotspot_count[observation_date] += 1;
-                    }
+        var audioAxis = [audio_index];
+        var audioTimeAxis = [timestamp];
 
-                    //console.log("item " + arrindex + " hotspot_id " + hotspot_id + " observation_date " + observation_date);
-                }
 
-                for(date in hotspot_count) {
-                    yAxis.push(hotspot_count[date]);
-                    xAxis.push(new Date(date));
-                }
+        for(dateindex in results) {
+            var date_result = results[dateindex];
 
-                xs = {
-                    'hotspot_count':'observation_date'
-                };
+            if(date_result[hotspot_index]) {
+                hotspotAxis.push(date_result[hotspot_index]);
+                hotspotTimeAxis.push(new Date(dateindex));
+            }
 
-                break;
-            case "bluetooth_observations":
+            if(date_result[bluetooth_index]) {
+                bluetoothAxis.push(date_result[bluetooth_index]);
+                bluetoothTimeAxis.push(new Date(dateindex));
+            }
 
-                yAxis = ['bluetooth_count'];
-                xAxis = ['observation_date'];
+            if(date_result[crowd_index]) {
+                crowdAxis.push(date_result[crowd_index]);
+                crowdTimeAxis.push(new Date(dateindex));
+            }
 
-                for(arrindex in my_observations) {
-                    var bluetooth_count = my_observations[arrindex].bluetooth_count;
-                    yAxis.push(bluetooth_count);
+            if(date_result[acceleration_index]) {
+                accelerationAxis.push(date_result[acceleration_index]);
+                accelerationTimeAxis.push(new Date(dateindex));
+            }
 
-                    observation_date = my_observations[arrindex].observation_date;
-                    xAxis.push(new Date(observation_date));
+            if(date_result[audio_index]) {
+                audioAxis.push(date_result[audio_index]);
+                audioTimeAxis.push(new Date(dateindex));
+            }
 
-                    console.log("item " + arrindex + " bluetooth_count " + bluetooth_count + " observation_date " + observation_date);
-                }
-
-                xs = {
-                    'bluetooth_count':'observation_date'
-                };
-
-                break;
-            case "crowd_observations":
-                yAxis = ['crowd_sourced'];
-                xAxis = ['observation_date'];
-
-                for(arrindex in my_observations) {
-                    var crowd_sourced = my_observations[arrindex].occupancy_estimate;
-                    yAxis.push(crowd_sourced);
-
-                    observation_date = my_observations[arrindex].observation_date;
-                    xAxis.push(new Date(observation_date));
-
-                    console.log("item " + arrindex + " crowd_sourced " + crowd_sourced + " observation_date " + observation_date);
-                }
-
-                xs = {
-                    'crowd_sourced':'observation_date'
-                };
-
-                break;
-            case "accelerometer_observations":
-                yAxis = ['acceleration'];
-                xAxis = ['observation_date'];
-
-                for(arrindex in my_observations) {
-                    var acceleration_timeline = JSON.parse(my_observations[arrindex].acceleration_timeline);
-                    observation_date = new Date(my_observations[arrindex].observation_date);
-                    var average = 0;
-                    var count = 0;
-
-                    for(arrindex2 in acceleration_timeline) {
-                        var sample = acceleration_timeline[arrindex2];
-                        average += sample[0] + sample[1] + sample[2];
-                        count++;
-                    }
-
-                    yAxis.push(average / count);
-                    xAxis.push(observation_date);
-
-                }
-
-                xs = {
-                    'acceleration':'observation_date'
-                };
-
-                break;
-            case "audio_observations":
-                yAxis = ['sound_intensity'];
-                xAxis = ['observation_date'];
-                //xAxis = ['bin']
-
-                for(arrindex in my_observations) {
-                    const audio_histograms = JSON.parse(my_observations[arrindex].audio_histogram);
-                    observation_date = new Date(my_observations[arrindex].observation_date);
-
-                    for(arrindex2 in audio_histograms) {
-                        var audio_histogram = audio_histograms[arrindex2];
-                        var average = 0;
-                        var count = 0;
-
-                        for(arrindex3 in audio_histogram) {
-                            average += audio_histogram[arrindex3];
-                            count++;
-                        }
-
-                        yAxis.push(average / count );
-                        xAxis.push(observation_date);
-
-                    }
-
-                }
-
-                xs = {
-                    'sound_intensity':'observation_date'
-                    //'sound_intensity':'bin'
-                };
-
-                break;
-            default:
-                $('#result_table').html("tablename " + json_response.tablename + " not supported");
-                break;
         }
+
+        var xs = {};
+
+        xs[hotspot_index] = timestamp;
+        xs[bluetooth_index] = timestamp;
+        xs[crowd_index] = timestamp;
+        xs[acceleration_index] = timestamp;
+        xs[audio_index] = timestamp;
 
         chart.load ({
             bindto: "#c3_graph",
             xs: xs,
-            columns: [yAxis, xAxis]
+            columns: [  hotspotAxis, hotspotTimeAxis,
+                        bluetoothAxis, bluetoothTimeAxis,
+                        crowdAxis, crowdTimeAxis,
+                        accelerationAxis, accelerationTimeAxis,
+                        audioAxis, audioTimeAxis ]
         });
 
     }

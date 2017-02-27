@@ -5,14 +5,33 @@ var constants = require('./constants');
 
 var mysql = require('mysql');
 
-var mysqlpool = mysql.createPool({
-    connectionLimit: 10,
-    host: 'localhost',
-    port: '3306',
-    user: 'root',
-    password: 'gibsonXC40',
-    database: 'NavigationDB'
-});
+var os = require('os');
+
+if(os.platform() == 'win32') {
+    //Assume running remotely on non_aws server
+    var mysqlpool = mysql.createPool({
+        connectionLimit: 10,
+        host: '54.154.109.216',
+        port: '3306',
+        user: 'navigation_remote',
+        password: 'gibsonXC40_99546',
+        database: 'NavigationDB'
+    });
+
+    console.log("Loaded remote mysqlpool, os platform: " + os.platform());
+} else {
+    //Assume running locally to mysql database on my AWS server
+    var mysqlpool = mysql.createPool({
+        connectionLimit: 10,
+        host: 'localhost',
+        port: '3306',
+        user: 'root',
+        password: 'gibsonXC40',
+        database: 'NavigationDB'
+    });
+
+    console.log("Loaded local mysqlpool, os platform: " + os.platform());
+}
 
 var database = function() {};
 
@@ -210,7 +229,39 @@ database.prototype.getObservationTrainingData = function(train_start_date, train
         }
     };
 
-    getObservationTrainingData("COUNT(idHotspotObservation)","hotspot_observations", 1000, params, observation_callback);
+    getObservationTrainingData("COUNT(DISTINCT idHotspot)","hotspot_observations", 1000, params, observation_callback);
+    getObservationTrainingData("AVG(bluetooth_count)","bluetooth_observations", 1000, params, observation_callback);
+    getObservationTrainingData("AVG(occupancy_estimate)","crowd_observations", 1000, params, observation_callback);
+    getObservationTrainingData("acceleration_timeline","accelerometer_observations", 1000, params, observation_callback);
+    getObservationTrainingData("audio_histogram","audio_observations", 1000, params, observation_callback);
+
+};
+
+
+database.prototype.getObservationTrainingDataNoLocation = function(train_start_date, train_end_date, callback) {
+    var params =
+        {
+            start_date: train_start_date,
+            end_date: train_end_date
+        };
+
+    const callback_target = 5;
+    var callback_count = 0;
+    var results_list = {};
+
+    var observation_callback = function(err, results, table_name) {
+        if(err) { return callback(err); }
+
+        results_list[table_name] = results;
+
+        callback_count++;
+
+        if(callback_count == callback_target) {
+            callback(null, results_list);
+        }
+    };
+
+    getObservationTrainingData("COUNT(DISTINCT idHotspot)","hotspot_observations", 1000, params, observation_callback);
     getObservationTrainingData("AVG(bluetooth_count)","bluetooth_observations", 1000, params, observation_callback);
     getObservationTrainingData("AVG(occupancy_estimate)","crowd_observations", 1000, params, observation_callback);
     getObservationTrainingData("acceleration_timeline","accelerometer_observations", 1000, params, observation_callback);
@@ -221,23 +272,52 @@ database.prototype.getObservationTrainingData = function(train_start_date, train
 function getObservationTrainingData(field, table_name, limit, params, callback) {
     const lat = params.lat;
     const lng = params.lng;
-    const start_date = params.start_date;
-    const end_date = params.end_date;
     const distance_limit = params.distance_limit;
 
-    var query =
-        " SELECT " + field + ", " + distance_subquery + ", " +
-        " DATE_FORMAT(observation_date, '%Y-%m-%d %H:%i') as minute_group" +
-        " FROM " + table_name +
-        " WHERE observation_date > " + start_date +
-        " AND observation_date < " + end_date +
-        " GROUP BY (MINUTE(observation_date)) " +
-        " HAVING distance < " + distance_limit +
-        " ORDER BY observation_date ASC" +
-        " LIMIT " + limit;
+    const start_date = params.start_date;
+    const end_date = params.end_date;
+
+    var query_mode = "allparams";
+
+    if(!lat && !lng && !distance_limit) {
+
+        if(start_date && end_date) {
+            query_mode = "justdate";
+        } else {
+            return callback("MISSING_PARAMS");
+        }
+
+    }
+
+    var query, vals;
+
+    if(query_mode == "allparams") {
+        query =
+            " SELECT " + field + ", " + distance_subquery + ", " +
+            " DATE_FORMAT(observation_date, '%Y-%m-%d %H:%i') as minute_group" +
+            " FROM " + table_name +
+            " WHERE observation_date > " + start_date +
+            " AND observation_date < " + end_date +
+            " GROUP BY (MINUTE(observation_date)) " +
+            " HAVING distance < " + distance_limit +
+            " ORDER BY observation_date ASC" +
+            " LIMIT " + limit;
 
 
-    var vals = [lat, lng, lat];
+        vals = [lat, lng, lat];
+    } else {
+        query =
+            " SELECT " + field + ", " +
+            " DATE_FORMAT(observation_date, '%Y-%m-%d %H:%i') as minute_group" +
+            " FROM " + table_name +
+            " WHERE observation_date > " + start_date +
+            " AND observation_date < " + end_date +
+            " GROUP BY (MINUTE(observation_date)) " +
+            " ORDER BY observation_date ASC" +
+            " LIMIT " + limit;
+
+        vals = [];
+    }
 
     makeQueryWithCallback(query, vals, function(err, results) {
         if (err) {

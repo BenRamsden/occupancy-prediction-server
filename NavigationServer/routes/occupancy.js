@@ -12,322 +12,167 @@ var brain = require('brain');
 
 var NO_LAT = "NO_LAT";
 var NO_LNG = "NO_LNG";
+var NO_START_DATE = "NO_START_DATE";
+var NO_END_DATE = "NO_END_DATE";
 
-const TRAIN_SETS_TO_USE = { hotspot: true, bluetooth: true, crowd: false, accelerometer: false, audio: true };
 
-router.post('/neural', function(req, res, next) {
+router.post('/get_occupancy_data', function(req, res, next) {
+    var start_date = req.body.start_date;
 
-    var lat = req.body.lat;
-
-    if(!lat) {
-        return handleError(res, NO_LAT);
+    if(!start_date) {
+        return handleError(res, NO_START_DATE);
     }
 
-    var lng = req.body.lng;
+    var end_date = req.body.end_date;
 
-    if(!lng) {
-        return handleError(res, NO_LNG);
+    if(!end_date) {
+        return handleError(res, NO_END_DATE);
     }
 
-    var net = new brain.NeuralNetwork({hiddenLayers: [70, 50]});
+    console.log("/get_occupancy_data start_date: " + start_date + " end_date:" + end_date);
 
-    const training_set_target = 5;
-    var training_set_count = 0;
-
-    var full_training_set = [];
-
-    var training_data_callback = function(err, training_data_arr) {
+    getOccupancyDataNoLocation("'"+start_date+"'","'"+end_date+"'", function(err, results) {
         if(err) {
-            res.json({success: false, reason: err});
-            return;
+            return res.json({success: false, reason: err});
         }
 
-        for(arrindex in training_data_arr) {
-            full_training_set.push(training_data_arr[arrindex]);
-        }
-
-        training_set_count++;
-
-        if(training_set_count == training_set_target) {
-            net.train(full_training_set, {
-                errorThresh: 0.025,
-                log: true,
-                logPeriod: 1,
-                learningRate: 0.1
-            });
-
-            testNetworkAndRespond(res, net, full_training_set);
-
-            //networkPrediction(res, net, lat, lng);
-        }
-    };
-
-
-    //quiet cs atrium
-    getOccupancyData(
-        { zero_to_ten: 1, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 0, fifty_to_one_hundred : 0, one_hundred_plus : 0 },
-        "'2017-02-24 13:05:00'",
-        "'2017-02-24 13:10:00'",
-        "52.953357",
-        "-1.18736",
-        training_data_callback
-    );
-
-    //jubilee sports center
-    getOccupancyData(
-        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0, fifty_to_one_hundred : 0, one_hundred_plus : 0  },
-        "'2017-02-24 13:53:00'",
-        "'2017-02-24 14:50:00'",
-        "52.953018",
-        "-1.184026",
-        training_data_callback
-    );
-
-    //busy a32
-    getOccupancyData(
-        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 1, fifty_to_one_hundred : 0, one_hundred_plus : 0  },
-        "'2017-02-24 13:16:00'",
-        "'2017-02-24 13:22:00'",
-        "52.953357",
-        "-1.18736",
-        training_data_callback
-    );
-
-    //jubilee gym
-    getOccupancyData(
-        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 0, fifty_to_one_hundred : 1, one_hundred_plus : 0  },
-        "'2017-02-27 17:06:00'",
-        "'2017-02-27 17:50:00'",
-        "52.953018",
-        "-1.184026",
-        training_data_callback
-    );
-
-    //b52 lecture
-    getOccupancyData(
-        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 0, fifty_to_one_hundred : 0, one_hundred_plus : 1  },
-        "'2017-02-27 15:59:00'",
-        "'2017-02-27 16:51:00'",
-        "52.951627",
-        "-1.1864",
-        training_data_callback
-    );
+        res.json({success: true, results: results});
+    });
 
 });
 
-function networkPrediction(res, net, lat, lng) {
-    //res.json({success: false, reason: "not yet implemented"});
-
-    var end_date = new Date();
-
-    var start_date = new Date();
-
-    var subtract_minutes = 30;
-
-    start_date.setMinutes(end_date.getMinutes() - subtract_minutes);
-
-    getOccupancyData(false, "'"+start_date.toISOString()+"'", "'"+end_date.toISOString()+"'", lat, lng, function(err, input_data) {
-        if(err) {
-            res.json({success: false, reason: err});
-            return;
-        }
-
-        var output = net.run(input_data);
-
-        res.json({success: true, input_data: input_data, output: output});
-    });
-
-}
-
-function testNetworkAndRespond(res, net, training_set) {
-
-    var testing_data_callback = function(err, training_data_arr) {
-        if(err) {
-            res.json({success: false, reason: err});
-            return;
-        }
-
-        var output = [];
-
-        for(arrindex in training_data_arr) {
-            var input = training_data_arr[arrindex].input;
-
-            var expected_output = training_data_arr[arrindex].output;
-
-            var actual_output = net.run(input);
-
-            output.push({ expected: expected_output, actual: actual_output });
-        }
-
-        res.json({success: true, training_set: training_set, testing_set : false, output: output });
-
-    };
-
-    //jubilee sports center
-    getOccupancyData(
-        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0, fifty_to_one_hundred : 0, one_hundred_plus : 0  },
-        "'2017-02-24 13:53:00'",
-        "'2017-02-24 14:50:00'",
-        "52.953018",
-        "-1.184026",
-        testing_data_callback
-    );
-
-
-}
-
-
-function getOccupancyData(output_set, train_start_date, train_end_date, train_lat, train_lng, callback) {
-    database.prototype.getObservationTrainingData(train_start_date, train_end_date, train_lat, train_lng,
+function getOccupancyDataNoLocation(train_start_date, train_end_date, callback) {
+    database.prototype.getObservationTrainingDataNoLocation(train_start_date, train_end_date,
         function(err, results) {
             if(err) {
                 callback(err);
             }
 
-            var training_data = {};
-            var observation;
+            console.log("Got results of length: " + Object.keys(results).length);
 
-            /***************
-             * GATHERING TRAINING DATA
-             ***************/
+            var training_data = extractTrainingData(results);
 
-            if(TRAIN_SETS_TO_USE.hotspot) {
-                for( arrindex in results['hotspot_observations'] ) {
-                    observation = results['hotspot_observations'][arrindex];
-
-                    var hotspot_id_count = observation['COUNT(idHotspotObservation)'];
-                    var minute_group = observation['minute_group'];
-
-                    if(training_data[minute_group]) {
-                        training_data[minute_group].hotspot_id_count = hotspot_id_count;
-                    } else {
-                        training_data[minute_group] = {};
-                        training_data[minute_group].hotspot_id_count = hotspot_id_count;
-                    }
-                }
-            }
-
-            if(TRAIN_SETS_TO_USE.bluetooth) {
-                for( arrindex in results['bluetooth_observations'] ) {
-                    observation = results['bluetooth_observations'][arrindex];
-
-                    var avg_bluetooth_count = observation['AVG(bluetooth_count)'];
-                    var minute_group = observation['minute_group'];
-
-                    if(training_data[minute_group]) {
-                        training_data[minute_group].avg_bluetooth_count = avg_bluetooth_count;
-                    } else {
-                        training_data[minute_group] = {};
-                        training_data[minute_group].avg_bluetooth_count = avg_bluetooth_count;
-                    }
-                }
-            }
-
-            if(TRAIN_SETS_TO_USE.crowd) {
-                for( arrindex in results['crowd_observations'] ) {
-                    observation = results['crowd_observations'][arrindex];
-
-                    var avg_crowd_occupancy_estimate = observation['AVG(occupancy_estimate)'];
-                    var minute_group = observation['minute_group'];
-
-                    if(training_data[minute_group]) {
-                        training_data[minute_group].avg_crowd_occupancy_estimate = avg_crowd_occupancy_estimate;
-                    } else {
-                        training_data[minute_group] = {};
-                        training_data[minute_group].avg_crowd_occupancy_estimate = avg_crowd_occupancy_estimate;
-                    }
-                }
-            }
-
-            if(TRAIN_SETS_TO_USE.accelerometer) {
-                for( arrindex in results['accelerometer_observations'] ) {
-                    observation = results['accelerometer_observations'][arrindex];
-
-                    var acceleration_timeline = JSON.parse(observation['acceleration_timeline']);
-                    var minute_group = observation['minute_group'];
-
-                    var average = 0;
-                    var count = 0;
-
-                    for(arrindex2 in acceleration_timeline) {
-                        var sample = acceleration_timeline[arrindex2];
-                        average += sample[0] + sample[1] + sample[2];
-                        count++;
-                    }
-
-                    var acceleration_average = average / count;
-
-                    /* TODO: minute_groups will collide, as aggregation function has not being used
-                     * TODO: Should handle combining multiple data sets below */
-
-                    if(training_data[minute_group]) {
-                        training_data[minute_group].acceleration_average = acceleration_average;
-                    } else {
-                        training_data[minute_group] = {};
-                        training_data[minute_group].acceleration_average = acceleration_average;
-                    }
-                }
-            }
-
-            if(TRAIN_SETS_TO_USE.audio) {
-                for( arrindex in results['audio_observations'] ) {
-                    observation = results['audio_observations'][arrindex];
-
-                    var audio_histograms = JSON.parse(observation['audio_histogram']);
-                    var minute_group = observation['minute_group'];
-
-                    var average = 0;
-                    var count = 0;
-
-                    for(arrindex2 in audio_histograms) {
-                        var audio_histogram = audio_histograms[arrindex2];
-                        var this_average = 0;
-                        var this_count = 0;
-
-                        for(arrindex3 in audio_histogram) {
-                            this_average += audio_histogram[arrindex3];
-                            this_count++;
-                        }
-
-                        average += this_average / this_count;
-                        count++;
-                    }
-
-                    var audio_average = average / count;
-
-                    /* TODO: minute_groups will collide, as aggregation function has not being used
-                     * TODO: Should handle combining multiple data sets below */
-
-                    if(training_data[minute_group]) {
-                        training_data[minute_group].audio_average = audio_average;
-                    } else {
-                        training_data[minute_group] = {};
-                        training_data[minute_group].audio_average = audio_average;
-                    }
-                }
-            }
-
-            /***************
-             * COLLATE TRAINING DATA
-             ***************/
-
-            var training_data_arr = [];
-
-            for(arrindex in training_data) {
-                var train_instance = training_data[arrindex];
-
-                if(output_set) {
-                    training_data_arr.push( { input : train_instance, output: output_set });
-                } else {
-                    training_data_arr.push( { input : train_instance });
-                }
-
-            }
-
-            callback(null, training_data_arr);
+            callback(null, training_data);
 
         }
     );
+}
+
+function extractTrainingData(results) {
+    var training_data = {};
+    var observation;
+
+    /***************
+     * GATHERING TRAINING DATA
+     ***************/
+
+    for( arrindex in results['hotspot_observations'] ) {
+        observation = results['hotspot_observations'][arrindex];
+
+        var hotspot_id_count = observation['COUNT(DISTINCT idHotspot)'];
+        var minute_group = observation['minute_group'];
+
+        if(training_data[minute_group]) {
+            training_data[minute_group].hotspot_id_count = hotspot_id_count;
+        } else {
+            training_data[minute_group] = {};
+            training_data[minute_group].hotspot_id_count = hotspot_id_count;
+        }
+    }
+
+    for( arrindex in results['bluetooth_observations'] ) {
+        observation = results['bluetooth_observations'][arrindex];
+
+        var avg_bluetooth_count = observation['AVG(bluetooth_count)'];
+        var minute_group = observation['minute_group'];
+
+        if(training_data[minute_group]) {
+            training_data[minute_group].avg_bluetooth_count = avg_bluetooth_count;
+        } else {
+            training_data[minute_group] = {};
+            training_data[minute_group].avg_bluetooth_count = avg_bluetooth_count;
+        }
+    }
+
+    for( arrindex in results['crowd_observations'] ) {
+        observation = results['crowd_observations'][arrindex];
+
+        var avg_crowd_occupancy_estimate = observation['AVG(occupancy_estimate)'];
+        var minute_group = observation['minute_group'];
+
+        if(training_data[minute_group]) {
+            training_data[minute_group].avg_crowd_occupancy_estimate = avg_crowd_occupancy_estimate;
+        } else {
+            training_data[minute_group] = {};
+            training_data[minute_group].avg_crowd_occupancy_estimate = avg_crowd_occupancy_estimate;
+        }
+    }
+
+    for( arrindex in results['accelerometer_observations'] ) {
+        observation = results['accelerometer_observations'][arrindex];
+
+        var acceleration_timeline = JSON.parse(observation['acceleration_timeline']);
+        var minute_group = observation['minute_group'];
+
+        var average = 0;
+        var count = 0;
+
+        for(arrindex2 in acceleration_timeline) {
+            var sample = acceleration_timeline[arrindex2];
+            average += sample[0] + sample[1] + sample[2];
+            count++;
+        }
+
+        var acceleration_average = average / count;
+
+        /* TODO: minute_groups will collide, as aggregation function has not being used
+         * TODO: Should handle combining multiple data sets below */
+
+        if(training_data[minute_group]) {
+            training_data[minute_group].acceleration_average = acceleration_average;
+        } else {
+            training_data[minute_group] = {};
+            training_data[minute_group].acceleration_average = acceleration_average;
+        }
+    }
+
+    for( arrindex in results['audio_observations'] ) {
+        observation = results['audio_observations'][arrindex];
+
+        var audio_histograms = JSON.parse(observation['audio_histogram']);
+        var minute_group = observation['minute_group'];
+
+        var average = 0;
+        var count = 0;
+
+        for(arrindex2 in audio_histograms) {
+            var audio_histogram = audio_histograms[arrindex2];
+            var this_average = 0;
+            var this_count = 0;
+
+            for(arrindex3 in audio_histogram) {
+                this_average += audio_histogram[arrindex3];
+                this_count++;
+            }
+
+            average += this_average / this_count;
+            count++;
+        }
+
+        var audio_average = average / count;
+
+        /* TODO: minute_groups will collide, as aggregation function has not being used
+         * TODO: Should handle combining multiple data sets below */
+
+        if(training_data[minute_group]) {
+            training_data[minute_group].audio_average = audio_average;
+        } else {
+            training_data[minute_group] = {};
+            training_data[minute_group].audio_average = audio_average;
+        }
+    }
+
+    return training_data;
 }
 
 router.post('', function(req, res, next) {
