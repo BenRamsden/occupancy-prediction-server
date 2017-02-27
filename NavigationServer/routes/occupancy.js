@@ -29,7 +29,7 @@ router.post('/neural', function(req, res, next) {
         return handleError(res, NO_LNG);
     }
 
-    var net = new brain.NeuralNetwork();
+    var net = new brain.NeuralNetwork({hiddenLayers: [15, 15, 6]});
 
     const training_set_target = 4;
     var training_set_count = 0;
@@ -49,7 +49,12 @@ router.post('/neural', function(req, res, next) {
         training_set_count++;
 
         if(training_set_count == training_set_target) {
-            net.train(full_training_set);
+            net.train(full_training_set, {
+                errorThresh: 0.05,
+                log: true,
+                logPeriod: 1,
+                learningRate: 0.1
+            });
 
             testNetworkAndRespond(res, net, full_training_set);
 
