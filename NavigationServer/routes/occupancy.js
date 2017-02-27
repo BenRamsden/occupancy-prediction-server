@@ -50,7 +50,7 @@ router.post('/neural', function(req, res, next) {
 
         if(training_set_count == training_set_target) {
             net.train(full_training_set, {
-                errorThresh: 0.05,
+                errorThresh: 0.45,
                 log: true,
                 logPeriod: 1,
                 learningRate: 0.1
