@@ -31,7 +31,7 @@ router.post('/neural', function(req, res, next) {
 
     var net = new brain.NeuralNetwork();
 
-    const training_set_target = 2;
+    const training_set_target = 4;
     var training_set_count = 0;
 
     var full_training_set = [];
@@ -60,7 +60,7 @@ router.post('/neural', function(req, res, next) {
 
     //quiet cs atrium
     getOccupancyData(
-        { zero_to_ten: 1, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 0 },
+        { zero_to_ten: 1, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 0, fifty_to_one_hundred : 0, one_hundred_plus : 0 },
         "'2017-02-24 13:05:00'",
         "'2017-02-24 13:10:00'",
         "52.953357",
@@ -69,18 +69,18 @@ router.post('/neural', function(req, res, next) {
     );
 
     //jubilee sports center
-    getOccupancyData(
-        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0 },
-        "'2017-02-24 13:53:00'",
-        "'2017-02-24 14:50:00'",
-        "52.953018",
-        "-1.184026",
-        training_data_callback
-    );
+    // getOccupancyData(
+    //     { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0, fifty_to_one_hundred : 0, one_hundred_plus : 0  },
+    //     "'2017-02-24 13:53:00'",
+    //     "'2017-02-24 14:50:00'",
+    //     "52.953018",
+    //     "-1.184026",
+    //     training_data_callback
+    // );
 
     //busy a32
     getOccupancyData(
-        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 1 },
+        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 1, fifty_to_one_hundred : 0, one_hundred_plus : 0  },
         "'2017-02-24 13:16:00'",
         "'2017-02-24 13:22:00'",
         "52.953357",
@@ -88,8 +88,25 @@ router.post('/neural', function(req, res, next) {
         training_data_callback
     );
 
+    //b52 lecture
+    getOccupancyData(
+        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 0, fifty_to_one_hundred : 0, one_hundred_plus : 1  },
+        "'2017-02-27 15:59:00'",
+        "'2017-02-27 16:51:00'",
+        "52.951627",
+        "-1.1864",
+        training_data_callback
+    );
 
-
+    //jubilee gym
+    getOccupancyData(
+        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 0, fifty_to_one_hundred : 1, one_hundred_plus : 0  },
+        "'2017-02-27 17:06:00'",
+        "'2017-02-27 17:50:00'",
+        "52.953018",
+        "-1.184026",
+        training_data_callback
+    );
 
 
 });
@@ -144,7 +161,7 @@ function testNetworkAndRespond(res, net, training_set) {
 
     //jubilee sports center
     getOccupancyData(
-        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0 },
+        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 1, forty_to_fifty: 0, fifty_to_one_hundred : 0, one_hundred_plus : 0  },
         "'2017-02-24 13:53:00'",
         "'2017-02-24 14:50:00'",
         "52.953018",
@@ -399,12 +416,11 @@ function getOccupancyEstimation(apitoken, lat, lng, callback) {
         if(callback_count == 8) {
 
             var occupancy =
-                (1 * callback_results[constants.MAX_BLUETOOTH_COUNT]) +
-                (0.125 * callback_results[constants.TOTAL_HOTSPOTS]) +
-                (1 * callback_results[constants.CROWD_AVERAGE_ESTIMATE]) +
-                (5 * callback_results[constants.AUDIO_HISTOGRAM_ANALYSIS]);
+                (1 * callback_results[constants.MAX_BLUETOOTH_COUNT] + 2) *
+                (1 * callback_results[constants.AUDIO_HISTOGRAM_ANALYSIS] + 1) +
+                (1 * callback_results[constants.CROWD_AVERAGE_ESTIMATE]);
 
-            occupancy = occupancy / 4;
+            occupancy = occupancy;
 
             callback(callback_results, occupancy, lat, lng);
         }
