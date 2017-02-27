@@ -2,5 +2,16 @@
 > navigationserver@0.0.0 start /home/ubuntu/navigation-server/NavigationServer
 > node ./bin/www
 
-[0mGET /occupancy?apitoken=koH6a1UC71rTDM1LKppXeKYJ54cjc8nIfuJAKPly1GDYpjMMLLCuK5LBp3fXAEkCcID1jCh5pCQp9D8DmCWhJHQlLcUcy4gD68Qy [36m304 [0m7.400 ms - -[0m
-[0mGET /favicon.ico [32m200 [0m3.924 ms - 318[0m
+Loaded local mysqlpool, os platform: linux
+--RECEIVED_REQUEST: IP: ::ffff:82.24.65.88 TIME: 2/27/2017, 11:30:58 PM
+getOccupancyDataNoLocation called with
+Start Date: '2017-02-24T13:16'
+End Date: '2017-02-24T13:22'
+Got Result Length: 6
+[0mPOST /occupancy/get_occupancy_data [32m200 [0m67.880 ms - 849[0m
+--RECEIVED_REQUEST: IP: ::ffff:82.24.65.88 TIME: 2/27/2017, 11:31:01 PM
+getOccupancyDataNoLocation called with
+Start Date: '2017-02-27T23:01:01.690Z'
+End Date: '2017-02-27T23:31:01.690Z'
+Got Result Length: 4
+[0mPOST /occupancy/get_occupancy_data [32m200 [0m14.233 ms - 636[0m

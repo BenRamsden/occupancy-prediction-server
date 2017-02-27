@@ -27,7 +27,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function(req, res, next) {
-    console.log("--RECEIVED_REQUEST: from ip: " + req.connection.remoteAddress);
+    var now_time = new Date();
+    console.log("--RECEIVED_REQUEST: IP: " + req.connection.remoteAddress + " TIME: " + now_time.toLocaleString());
     next();
 });
 
