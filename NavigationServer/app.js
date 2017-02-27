@@ -26,6 +26,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(function(req, res, next) {
+    console.log("--RECEIVED_REQUEST: from ip: " + req.connection.remoteAddress);
+    next();
+});
+
 app.use('/graph', graph);
 app.use('/', index);
 app.use('/users', users);

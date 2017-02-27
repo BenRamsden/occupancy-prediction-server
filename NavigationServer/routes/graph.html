@@ -49,6 +49,18 @@
         height: 25em;
     }
 
+    #loadingDiv {
+        display: none;
+        position: absolute;
+        left: 24em;
+        top: 12em;
+    }
+
+    #loadingGif {
+        height: 1em;
+        width: 1em;
+    }
+
 </style>
 
 <head>
@@ -56,6 +68,11 @@
     <title>Title</title>
 </head>
 <body>
+    <div id="loadingDiv">
+        <img id="loadingGif" src="loading.gif" />
+        <span>Loading</span>
+    </div>
+
     <h4>Graph</h4>
     <div id="c3_graph" class="result_box"></div>
 
@@ -136,10 +153,30 @@
 
 <script>
 
+    var last_data_loading = false;
+
     var chart;
     newChart();
 
+    function enableLastLoading() {
+        if(last_data_loading == true) {
+            alert("The last data set has not yet loaded, please wait until it does before requesting another!");
+            return true;
+        }
+
+        $('#loadingDiv').css('display','inline');
+        last_data_loading = true;
+        return false;
+    }
+
+    function disableLastLoading() {
+        $('#loadingDiv').css('display','none');
+        last_data_loading = false;
+    }
+
     function getDataButtonClick() {
+        if(enableLastLoading()) return;
+
         var start_date = $('#start_date').val();
         var end_date = $('#end_date').val();
 
@@ -154,6 +191,8 @@
     }
 
     function preSet(start_date, end_date) {
+        if(enableLastLoading()) return;
+
         $('#start_date').val(start_date);
         $('#end_date').val(end_date);
 
@@ -163,6 +202,8 @@
     }
 
     function lastNMinutes(minute_subtract) {
+        if(enableLastLoading()) return;
+
         var start_date = new Date();
 
         start_date.setMinutes( start_date.getMinutes() - minute_subtract );
@@ -175,6 +216,11 @@
         newChart();
 
         requestDataWithTime(start_date.toISOString(), end_date.toISOString());
+    }
+
+    function setChartTimeRange(start_date, end_date) {
+        chart.axis.min({x: start_date});
+        chart.axis.max({x: end_date});
     }
 
     function newChart() {
@@ -208,7 +254,7 @@
         });
     }
 
-    function requestDataWithTime(start_date, end_date, observation_type) {
+    function requestDataWithTime(start_date, end_date) {
 
         var post_url = "/occupancy/get_occupancy_data";
 
@@ -307,6 +353,8 @@
                         accelerationAxis, accelerationTimeAxis,
                         audioAxis, audioTimeAxis ]
         });
+
+        disableLastLoading();
 
     }
 
