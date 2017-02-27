@@ -31,7 +31,7 @@ router.post('/neural', function(req, res, next) {
 
     var net = new brain.NeuralNetwork(); //{hiddenLayers: [15, 15, 6]}
 
-    const training_set_target = 4;
+    const training_set_target = 3;
     var training_set_count = 0;
 
     var full_training_set = [];
@@ -50,10 +50,10 @@ router.post('/neural', function(req, res, next) {
 
         if(training_set_count == training_set_target) {
             net.train(full_training_set, {
-                errorThresh: 0.15,
+                errorThresh: 0.05,
                 log: true,
                 logPeriod: 1,
-                learningRate: 0.5
+                learningRate: 0.1
             });
 
             testNetworkAndRespond(res, net, full_training_set);
@@ -94,14 +94,14 @@ router.post('/neural', function(req, res, next) {
     );
 
     //b52 lecture
-    getOccupancyData(
-        { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 0, fifty_to_one_hundred : 0, one_hundred_plus : 1  },
-        "'2017-02-27 15:59:00'",
-        "'2017-02-27 16:51:00'",
-        "52.951627",
-        "-1.1864",
-        training_data_callback
-    );
+    // getOccupancyData(
+    //     { zero_to_ten: 0, ten_to_twenty: 0, thirty_to_forty: 0, forty_to_fifty: 0, fifty_to_one_hundred : 0, one_hundred_plus : 1  },
+    //     "'2017-02-27 15:59:00'",
+    //     "'2017-02-27 16:51:00'",
+    //     "52.951627",
+    //     "-1.1864",
+    //     training_data_callback
+    // );
 
     //jubilee gym
     getOccupancyData(
