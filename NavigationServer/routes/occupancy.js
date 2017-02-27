@@ -51,9 +51,9 @@ router.post('/neural', function(req, res, next) {
         if(training_set_count == training_set_target) {
             net.train(full_training_set);
 
-            //testNetworkAndRespond(res, net, full_training_set);
+            testNetworkAndRespond(res, net, full_training_set);
 
-            networkPrediction(res, net, lat, lng);
+            //networkPrediction(res, net, lat, lng);
         }
     };
 
