@@ -15,6 +15,64 @@ var NO_LNG = "NO_LNG";
 var NO_START_DATE = "NO_START_DATE";
 var NO_END_DATE = "NO_END_DATE";
 
+router.post('', function(req, res, next) {
+    var lat = req.body.lat;
+
+    if(!lat) {
+        return handleError(res, NO_LAT);
+    }
+
+    var lng = req.body.lng;
+
+    if(!lng) {
+        return handleError(res, NO_LNG);
+    }
+
+    var start_date = new Date();
+    start_date.setMinutes( start_date.getMinutes() - 30 );
+    var end_date = new Date();
+
+    const callback_target = 4;
+    var callback_count = 0;
+
+    var results = {};
+
+    var my_callback = function(ref_name, result) {
+        console.log(ref_name + " " + result);
+
+        results[ref_name] = result;
+
+        callback_count++;
+
+        if(callback_count == callback_target) {
+            var occupancy =
+                ( 1 * results["max_bluetooth"] + 1) *
+                ( 5 * results["audio_average"] + 1) +
+                ( 0.1 * results["distinct_hotspots"]) +
+                results["avg_crowd_estimate"];
+
+            res.json({success: true, occupancy: occupancy});
+
+        }
+    };
+
+    database.prototype.getMaxBluetoothCount(start_date,end_date,lat,lng,function(err, result) {
+        my_callback("max_bluetooth", result);
+    });
+
+    database.prototype.getDistinctHotspots(start_date,end_date,lat,lng,function(err, result) {
+        my_callback("distinct_hotspots", result);
+    });
+
+    database.prototype.getAudioHistogramAverage(start_date,end_date,lat,lng, function(err, result) {
+        my_callback("audio_average", result);
+    });
+
+    database.prototype.getAverageCrowdEstimate(start_date,end_date,lat,lng, function(err, result) {
+        my_callback("avg_crowd_estimate", result);
+    });
+
+});
 
 router.post('/get_occupancy_data', function(req, res, next) {
     var start_date = req.body.start_date;
@@ -172,31 +230,6 @@ function extractTrainingData(results) {
 
     return training_data;
 }
-
-router.post('', function(req, res, next) {
-    var apitoken = req.query.apitoken;
-
-    if(!apitoken) {
-        return handleError(res, NO_API_TOKEN);
-    }
-
-    var lat = req.body.lat;
-
-    if(!lat) {
-        return handleError(res, NO_LAT);
-    }
-
-    var lng = req.body.lng;
-
-    if(!lng) {
-        return handleError(res, NO_LNG);
-    }
-
-    getOccupancyEstimation(apitoken, lat, lng, function(results, occupancy, oc_lat, oc_lng) {
-        res.json({success: true, results: results, occupancy: occupancy});
-    });
-
-});
 
 router.post('/bulk', function(req, res, next) {
     var apitoken = req.query.apitoken;

@@ -544,4 +544,176 @@ database.prototype.insertAccelerometerObservation = function(idUser, params, cal
 
 };
 
+
+
+database.prototype.getDistinctHotspots = function(start_date, end_date, lat, lng, callback) {
+
+    const distance_limit = 0.01;
+
+    const field_name = "COUNT(DISTINCT idHotspot)";
+
+    var query =
+        " SELECT " + field_name + ", " +
+
+        " ( 3959" +
+        " * acos( cos( radians( ? ) )" +  //lat
+        " * cos( radians( lat ) )" +
+        " * cos( radians( lng )" +
+        " - radians( ? ) )" +             //lng
+        " + sin( radians( ? ) )" +        //lat
+        " * sin( radians( lat ) ) ) )" +
+        " AS distance " +
+
+        " FROM hotspot_observations " +
+        " WHERE observation_date > ? " +  //start_date
+        " AND observation_date < ? " +    //end_date
+        " HAVING distance < ? ";          //distance_limit
+
+    var vals = [lat, lng, lat, start_date, end_date, distance_limit];
+
+    makeQueryWithCallback(query, vals, function(err, results) {
+        if (err) {
+            return callback(query);
+        }
+
+        if(typeof results[0] == 'undefined') {
+            return callback(null, 0);
+        }
+
+        return callback(null, results[0][field_name]);
+    });
+
+};
+
+database.prototype.getMaxBluetoothCount = function(start_date, end_date, lat, lng, callback) {
+
+    const distance_limit = 0.01;
+
+    const field_name = "MAX(bluetooth_count)";
+
+    var query =
+        " SELECT " + field_name + ", " +
+
+        " ( 3959" +
+        " * acos( cos( radians( ? ) )" +  //lat
+        " * cos( radians( lat ) )" +
+        " * cos( radians( lng )" +
+        " - radians( ? ) )" +             //lng
+        " + sin( radians( ? ) )" +        //lat
+        " * sin( radians( lat ) ) ) )" +
+        " AS distance " +
+
+        " FROM bluetooth_observations " +
+        " WHERE observation_date > ? " +  //start_date
+        " AND observation_date < ? " +    //end_date
+        " HAVING distance < ? ";          //distance_limit
+
+    var vals = [lat, lng, lat, start_date, end_date, distance_limit];
+
+    makeQueryWithCallback(query, vals, function(err, results) {
+        if (err) {
+            return callback(query);
+        }
+
+        if(typeof results[0] == 'undefined') {
+            return callback(null, 0);
+        }
+
+        return callback(null, results[0][field_name]);
+    });
+};
+
+database.prototype.getAudioHistogramAverage = function(start_date, end_date, lat, lng, callback) {
+
+    const distance_limit = 0.01;
+
+    const field_name = "audio_histogram";
+
+    var query =
+        " SELECT " + field_name + ", " +
+
+        " ( 3959" +
+        " * acos( cos( radians( ? ) )" +  //lat
+        " * cos( radians( lat ) )" +
+        " * cos( radians( lng )" +
+        " - radians( ? ) )" +             //lng
+        " + sin( radians( ? ) )" +        //lat
+        " * sin( radians( lat ) ) ) )" +
+        " AS distance " +
+
+        " FROM audio_observations " +
+        " WHERE observation_date > ? " +  //start_date
+        " AND observation_date < ? " +    //end_date
+        " HAVING distance < ? ";          //distance_limit
+
+    var vals = [lat, lng, lat, start_date, end_date, distance_limit];
+
+    makeQueryWithCallback(query, vals, function(err, results) {
+        if (err) {
+            return callback(query);
+        }
+
+        if(typeof results[0] == 'undefined') {
+            return callback(null, 0);
+        }
+
+        var audio_histogram_results = JSON.parse(results[0][field_name]);
+        var total = 0;
+        var count = 0;
+
+        for(arrindex in audio_histogram_results) {
+            for(arrindex2 in audio_histogram_results[arrindex]) {
+                total += audio_histogram_results[arrindex][arrindex2];
+                count++;
+            }
+        }
+
+        if(count > 0) {
+            total = total / count;
+        }
+
+        return callback(null, total);
+    });
+};
+
+database.prototype.getAverageCrowdEstimate = function(start_date, end_date, lat, lng, callback) {
+
+    const distance_limit = 0.01;
+
+    const field_name = "AVG(occupancy_estimate)";
+
+    var query =
+        " SELECT " + field_name + ", " +
+
+        " ( 3959" +
+        " * acos( cos( radians( ? ) )" +  //lat
+        " * cos( radians( lat ) )" +
+        " * cos( radians( lng )" +
+        " - radians( ? ) )" +             //lng
+        " + sin( radians( ? ) )" +        //lat
+        " * sin( radians( lat ) ) ) )" +
+        " AS distance " +
+
+        " FROM crowd_observations " +
+        " WHERE observation_date > ? " +  //start_date
+        " AND observation_date < ? " +    //end_date
+        " HAVING distance < ? ";          //distance_limit
+
+    var vals = [lat, lng, lat, start_date, end_date, distance_limit];
+
+    makeQueryWithCallback(query, vals, function(err, results) {
+        if (err) {
+            return callback(query);
+        }
+
+        if(typeof results[0] == 'undefined') {
+            return callback(null, 0);
+        }
+
+        return callback(null, results[0][field_name]);
+    });
+};
+
+
+
 module.exports = database;
