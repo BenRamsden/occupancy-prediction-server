@@ -32,6 +32,13 @@ router.post('', function(req, res, next) {
     start_date.setMinutes( start_date.getMinutes() - 30 );
     var end_date = new Date();
 
+    predictOccupancy(start_date,end_date,lat,lng,"single_call",function(err, ref_name, occupancy) {
+        res.json({success: true, occupancy: occupancy});
+    });
+
+});
+
+function predictOccupancy(start_date, end_date, lat, lng, ref_name, callback) {
     const callback_target = 4;
     var callback_count = 0;
 
@@ -51,8 +58,7 @@ router.post('', function(req, res, next) {
                 ( 0.1 * results["distinct_hotspots"]) +
                 results["avg_crowd_estimate"];
 
-            res.json({success: true, occupancy: occupancy});
-
+            callback(null, ref_name, occupancy);
         }
     };
 
@@ -71,8 +77,7 @@ router.post('', function(req, res, next) {
     database.prototype.getAverageCrowdEstimate(start_date,end_date,lat,lng, function(err, result) {
         my_callback("avg_crowd_estimate", result);
     });
-
-});
+}
 
 router.post('/get_occupancy_data', function(req, res, next) {
     var start_date = req.body.start_date;
@@ -232,19 +237,15 @@ function extractTrainingData(results) {
 }
 
 router.post('/bulk', function(req, res, next) {
-    var apitoken = req.query.apitoken;
-
-    if(!apitoken) {
-        return handleError(res, NO_API_TOKEN);
-    }
-
     var lat_lng_list = req.body.lat_lng_list;
-
-    console.log("lat_lng_list: " + lat_lng_list);
 
     if(!lat_lng_list) {
         return handleError(res, NO_LAT+NO_LNG);
     }
+
+    var start_date = new Date();
+    start_date.setMinutes( start_date.getMinutes() - 30 );
+    var end_date = new Date();
 
     var end_index = 0;
 
@@ -252,29 +253,17 @@ router.post('/bulk', function(req, res, next) {
         end_index++;
     }
 
-    //TODO: Deny overly long query
-
-    var lat_lng_occupancy_list = {};
-    var output_index = 0;
-
     for(lat_lng_index in lat_lng_list) {
         var lat = lat_lng_list[lat_lng_index].lat;
         var lng = lat_lng_list[lat_lng_index].lng;
 
-        //console.log("Processing lat " + lat + " lng " + lng);
-
-        getOccupancyEstimation(apitoken, lat, lng, function(results, occupancy, oc_lat, oc_lng) {
-            //console.log("callback output_index: " + output_index + " end_index: " + end_index);
-
-            lat_lng_occupancy_list[output_index] = {lat: oc_lat, lng: oc_lng, occupancy: occupancy};
-
-            output_index++;
-
-            if(output_index == end_index) {
-                res.json({success: true, lat_lng_occupancy_list: lat_lng_occupancy_list});
-            }
-
+        predictOccupancy(start_date,end_date,lat,lng,lat_lng_index,function(err, ref_name, occupancy) {
+            lat_lng_list[ref_name] = occupancy;
         });
+
+        if(lat_lng_index == end_index) {
+            res.json({success: true, lat_lng_occupancy_list: lat_lng_list});
+        }
 
     }
 
