@@ -247,21 +247,24 @@ router.post('/bulk', function(req, res, next) {
     start_date.setMinutes( start_date.getMinutes() - 30 );
     var end_date = new Date();
 
-    var end_index = 0;
+    var callback_target = 0;
     for(lat_lng_index in lat_lng_list) {
-        end_index++;
+        callback_target++;
     }
+
+    var callback_count = 0;
 
     for(lat_lng_index in lat_lng_list) {
         var lat = lat_lng_list[lat_lng_index].lat;
         var lng = lat_lng_list[lat_lng_index].lng;
 
         predictOccupancy(start_date,end_date,lat,lng,lat_lng_index,function(err, ref_name, occupancy) {
-            lat_lng_list[ref_name].occupancy = occupancy;
+            callback_count++;
 
-            if(ref_name == end_index) {
-                res.json({success: true, lat_lng_occupancy_list: lat_lng_list});
+            if(callback_count == callback_target) {
+                res.json({success: true, occupancy: 5});
             }
+
         });
 
     }
