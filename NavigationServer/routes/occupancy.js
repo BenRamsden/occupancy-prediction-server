@@ -258,11 +258,11 @@ router.post('/bulk', function(req, res, next) {
 
         predictOccupancy(start_date,end_date,lat,lng,lat_lng_index,function(err, ref_name, occupancy) {
             lat_lng_list[ref_name].occupancy = occupancy;
-        });
 
-        if(lat_lng_index == end_index) {
-            res.json({success: true, lat_lng_occupancy_list: lat_lng_list});
-        }
+            if(ref_name == end_index) {
+                res.json({success: true, lat_lng_occupancy_list: lat_lng_list});
+            }
+        });
 
     }
 
