@@ -248,20 +248,22 @@ router.post('/bulk', function(req, res, next) {
     var end_date = new Date();
 
     var end_index = 0;
-
     for(lat_lng_index in lat_lng_list) {
         end_index++;
     }
+    var current_index = 0;
 
     for(lat_lng_index in lat_lng_list) {
         var lat = lat_lng_list[lat_lng_index].lat;
         var lng = lat_lng_list[lat_lng_index].lng;
 
         predictOccupancy(start_date,end_date,lat,lng,lat_lng_index,function(err, ref_name, occupancy) {
-            lat_lng_list[ref_name] = occupancy;
+            lat_lng_list[ref_name].occupancy = occupancy;
         });
 
-        if(lat_lng_index == end_index) {
+        current_index++;
+
+        if(current_index == end_index) {
             res.json({success: true, lat_lng_occupancy_list: lat_lng_list});
         }
 
