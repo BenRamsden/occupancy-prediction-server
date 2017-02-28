@@ -45,7 +45,7 @@ function predictOccupancy(start_date, end_date, lat, lng, ref_name, callback) {
     var results = {};
 
     var my_callback = function(val_name, result) {
-        console.log(val_name + " " + result);
+        //console.log(val_name + " " + result);
 
         results[val_name] = result;
 
