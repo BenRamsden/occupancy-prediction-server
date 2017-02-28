@@ -44,10 +44,10 @@ function predictOccupancy(start_date, end_date, lat, lng, ref_name, callback) {
 
     var results = {};
 
-    var my_callback = function(ref_name, result) {
-        console.log(ref_name + " " + result);
+    var my_callback = function(val_name, result) {
+        console.log(val_name + " " + result);
 
-        results[ref_name] = result;
+        results[val_name] = result;
 
         callback_count++;
 
@@ -251,7 +251,6 @@ router.post('/bulk', function(req, res, next) {
     for(lat_lng_index in lat_lng_list) {
         end_index++;
     }
-    var current_index = 0;
 
     for(lat_lng_index in lat_lng_list) {
         var lat = lat_lng_list[lat_lng_index].lat;
@@ -261,9 +260,7 @@ router.post('/bulk', function(req, res, next) {
             lat_lng_list[ref_name].occupancy = occupancy;
         });
 
-        current_index++;
-
-        if(current_index == end_index) {
+        if(lat_lng_index == end_index) {
             res.json({success: true, lat_lng_occupancy_list: lat_lng_list});
         }
 
