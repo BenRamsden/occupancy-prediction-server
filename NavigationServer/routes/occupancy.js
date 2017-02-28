@@ -53,8 +53,8 @@ function predictOccupancy(start_date, end_date, lat, lng, ref_name, callback) {
 
         if(callback_count == callback_target) {
             var occupancy =
-                ( 1 * results["max_bluetooth"] + 1) *
-                ( 5 * results["audio_average"] + 1) +
+                ( 1 * results["max_bluetooth"]) *
+                ( 5 * results["audio_average"]) +
                 ( 0.1 * results["distinct_hotspots"]) +
                 results["avg_crowd_estimate"];
 
