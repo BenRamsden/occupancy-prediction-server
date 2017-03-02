@@ -10,7 +10,7 @@ var os = require('os');
 if(os.platform() == 'win32') {
     //Assume running remotely on non_aws server
     var mysqlpool = mysql.createPool({
-        connectionLimit: 10,
+        connectionLimit: 50,
         host: '54.154.109.216',
         port: '3306',
         user: 'navigation_remote',
@@ -22,7 +22,7 @@ if(os.platform() == 'win32') {
 } else {
     //Assume running locally to mysql database on my AWS server
     var mysqlpool = mysql.createPool({
-        connectionLimit: 10,
+        connectionLimit: 50,
         host: 'localhost',
         port: '3306',
         user: 'root',
@@ -204,7 +204,7 @@ database.prototype.insertHotspotObservation = function(idUser, params, callback)
 
 };
 
-database.prototype.getObservationTrainingData = function(train_start_date, train_end_date, train_lat, train_lng, callback) {
+database.prototype.getObservationData = function(train_start_date, train_end_date, train_lat, train_lng, callback) {
     var params =
         {   lat : train_lat,
             lng: train_lng,
@@ -229,16 +229,16 @@ database.prototype.getObservationTrainingData = function(train_start_date, train
         }
     };
 
-    getObservationTrainingData("COUNT(DISTINCT idHotspot)","hotspot_observations", 1000, params, observation_callback);
-    getObservationTrainingData("AVG(bluetooth_count)","bluetooth_observations", 1000, params, observation_callback);
-    getObservationTrainingData("AVG(occupancy_estimate)","crowd_observations", 1000, params, observation_callback);
-    getObservationTrainingData("acceleration_timeline","accelerometer_observations", 1000, params, observation_callback);
-    getObservationTrainingData("audio_histogram","audio_observations", 1000, params, observation_callback);
+    queryObservationData("COUNT(DISTINCT idHotspot)","hotspot_observations", 1000, params, observation_callback);
+    queryObservationData("AVG(bluetooth_count)","bluetooth_observations", 1000, params, observation_callback);
+    queryObservationData("AVG(occupancy_estimate)","crowd_observations", 1000, params, observation_callback);
+    queryObservationData("acceleration_timeline","accelerometer_observations", 1000, params, observation_callback);
+    queryObservationData("audio_histogram","audio_observations", 1000, params, observation_callback);
 
 };
 
 
-database.prototype.getObservationTrainingDataNoLocation = function(train_start_date, train_end_date, callback) {
+database.prototype.getObservationDataNoLocation = function(train_start_date, train_end_date, callback) {
     var params =
         {
             start_date: train_start_date,
@@ -261,15 +261,15 @@ database.prototype.getObservationTrainingDataNoLocation = function(train_start_d
         }
     };
 
-    getObservationTrainingData("COUNT(DISTINCT idHotspot)","hotspot_observations", 1000, params, observation_callback);
-    getObservationTrainingData("AVG(bluetooth_count)","bluetooth_observations", 1000, params, observation_callback);
-    getObservationTrainingData("AVG(occupancy_estimate)","crowd_observations", 1000, params, observation_callback);
-    getObservationTrainingData("acceleration_timeline","accelerometer_observations", 1000, params, observation_callback);
-    getObservationTrainingData("audio_histogram","audio_observations", 1000, params, observation_callback);
+    queryObservationData("COUNT(DISTINCT idHotspot)","hotspot_observations", 1000, params, observation_callback);
+    queryObservationData("AVG(bluetooth_count)","bluetooth_observations", 1000, params, observation_callback);
+    queryObservationData("AVG(occupancy_estimate)","crowd_observations", 1000, params, observation_callback);
+    queryObservationData("acceleration_timeline","accelerometer_observations", 1000, params, observation_callback);
+    queryObservationData("audio_histogram","audio_observations", 1000, params, observation_callback);
 
 };
 
-function getObservationTrainingData(field, table_name, limit, params, callback) {
+function queryObservationData(field, table_name, limit, params, callback) {
     const lat = params.lat;
     const lng = params.lng;
     const distance_limit = params.distance_limit;
@@ -328,130 +328,6 @@ function getObservationTrainingData(field, table_name, limit, params, callback) 
     });
 }
 
-database.prototype.getOccupancyEstimation = function(apitoken, lat, lng, callback) {
-
-    const LAST_HOUR = "DATE_SUB(NOW(), INTERVAL 1 HOUR)";
-    const LAST_15_MIN = "DATE_SUB(NOW(), INTERVAL 15 MINUTE)";
-
-    var params = {lat: lat, lng: lng, since_date: LAST_15_MIN, distance_limit: 0.01, limit: 1000};
-
-    /* Count individual hotspots within 0.1 miles */
-    queryObservationsFromLatLng(params, "DISTINCT idHotspot", "hotspot_observations NATURAL JOIN hotspots", function(err, results) {
-        if (err) {
-            return callback(err);
-        }
-
-        return callback(null, constants.TOTAL_HOTSPOTS, results.length);
-    });
-
-    /* Average bluetooth count within 0.1 miles */
-    queryObservationsFromLatLng(params, "MAX(bluetooth_count)", "bluetooth_observations", function(err, results) {
-        if (err) {
-            return callback(err);
-        }
-
-        return callback(null, constants.MAX_BLUETOOTH_COUNT, results[0]["MAX(bluetooth_count)"]);
-    });
-
-
-    /* Get number of readings from user devices back */
-    queryObservationsFromLatLng(params, "COUNT(*)", "hotspot_observations", function(err, results) {
-        if (err) {
-            return callback(err);
-        }
-
-        return callback(null, constants.HOTSPOT_OBSERVATIONS, results[0]["COUNT(*)"]);
-    });
-
-    /* Get number of readings from user devices back */
-    queryObservationsFromLatLng(params, "COUNT(*)", "audio_observations", function(err, results) {
-        if (err) {
-            return callback(err);
-        }
-
-        return callback(null, constants.AUDIO_OBSERVATIONS, results[0]["COUNT(*)"]);
-    });
-
-    /* Get number of readings from user devices back */
-    queryObservationsFromLatLng(params, "COUNT(*)", "crowd_observations", function(err, results) {
-        if (err) {
-            return callback(err);
-        }
-
-        return callback(null, constants.CROWD_OBSERVATIONS, results[0]["COUNT(*)"]);
-    });
-
-    /* Get number of readings from user devices back */
-    queryObservationsFromLatLng(params, "COUNT(*)", "bluetooth_observations", function(err, results) {
-        if (err) {
-            return callback(err);
-        }
-
-        return callback(null, constants.BLUETOOTH_OBSERVATIONS, results[0]["COUNT(*)"]);
-    });
-
-
-    /* Gather audio histogram statistics for prediction */
-    var newParams = JSON.parse(JSON.stringify(params));  //TODO: can this be done better? quick implementation of deep copy
-    newParams.limit = 5;
-    queryObservationsFromLatLng(newParams, "audio_histogram", "audio_observations", function(err, results) {
-        if (err) {
-            return callback(err);
-        }
-
-        const audio_histogram_debug_log = false;
-
-        var output = 0;
-        var count = 0;
-
-        if( results.length != 0) {
-            for(var sql_result_id in results) {
-
-                if(audio_histogram_debug_log) console.log("on sql_result_id " + sql_result_id);
-
-                var audio_histogram = JSON.parse(results[sql_result_id]['audio_histogram']);
-
-                for(var hist_index in audio_histogram) {
-
-                    var single_hist = audio_histogram[hist_index];
-
-                    if(audio_histogram_debug_log) console.log("Got single_hist " + single_hist);
-
-                    for(var bin_index in single_hist) {
-
-                        var bin_val = single_hist[bin_index];
-
-                        if(audio_histogram_debug_log) console.log("bin_index " + bin_index + " has val " + bin_val);
-
-                        output += bin_val;
-
-                        count++;
-
-                    }
-
-                }
-            }
-
-        }
-
-        output /= count;
-
-        return callback(null, constants.AUDIO_HISTOGRAM_ANALYSIS, output);
-    });
-
-
-    /* Gather accelerometer statistics for prediction */
-    queryObservationsFromLatLng(params, "AVG(occupancy_estimate)", "crowd_observations", function(err, results) {
-        if (err) {
-            return callback(err);
-        }
-
-        return callback(null, constants.CROWD_AVERAGE_ESTIMATE, results[0]["AVG(occupancy_estimate)"]);
-    });
-
-};
-
-
 const distance_subquery =
     " ( 3959" +
     " * acos( cos( radians( ? ) )" +
@@ -461,40 +337,6 @@ const distance_subquery =
     " + sin( radians( ? ) )" +
     " * sin( radians( lat ) ) ) )" +
     " AS distance ";
-
-
-function queryObservationsFromLatLng(params, field_name, table_name, callback) {
-    const lat = params.lat;
-    const lng = params.lng;
-    const since_date = params.since_date;
-    const distance_limit = params.distance_limit;
-    const limit = params.limit;
-
-    var query_1 =
-        "SELECT " + field_name +
-        " FROM (";
-
-    var query_2 =
-        " SELECT *, " + distance_subquery +
-        " FROM " + table_name +
-        " WHERE observation_date > " + since_date +
-        " HAVING distance < " + distance_limit +
-        " ORDER BY observation_date DESC" +
-        " LIMIT " + limit;
-
-    var query_3 =
-        ") AS t2";
-
-    var vals = [lat, lng, lat];
-
-    makeQueryWithCallback(query_1+query_2+query_3, vals, function(err, results) {
-        if (err) {
-            return callback(err);
-        }
-
-        return callback(null, results);
-    });
-}
 
 database.prototype.insertAudioObservation = function(idUser, params, callback) {
 
