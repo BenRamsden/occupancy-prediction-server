@@ -68,11 +68,12 @@ function predictOccupancy(start_date, end_date, lat, lng, ref_name, callback) {
 
         if(callback_count == callback_target) {
             var blue_audio;
+            var limited_audio = Math.min(results["audio_average"], 1.5); //prevent super loud audio skewing results
 
             if(results["max_bluetooth"] > 0 && results["audio_average"] > 0) {
-                blue_audio = ( 1 * results["max_bluetooth"]) * ( 5 * results["audio_average"]);
+                blue_audio = ( 1 * results["max_bluetooth"]) * ( 5 * limited_audio);
             } else {
-                blue_audio = ( 1 * results["max_bluetooth"]) + ( 5 * results["audio_average"]);
+                blue_audio = ( 1 * results["max_bluetooth"]) + ( 5 * limited_audio);
             }
 
             var occupancy;
@@ -88,15 +89,15 @@ function predictOccupancy(start_date, end_date, lat, lng, ref_name, callback) {
                     0.1 * results["distinct_hotspots"];
             }
 
-            // if(occupancy > 0.1) {
-            //     console.log("Calculating Occupancy for ref_name: " + ref_name +  "\n" +
-            //         "lat: " + lat + " lng: " + lng + "\n" +
-            //         "max_bluetooth: " + results["max_bluetooth"] + "\n" +
-            //         "audio_average: " + results["audio_average"] + "\n" +
-            //         "distinct_hotspots: " + results["distinct_hotspots"] + "\n" +
-            //         "avg_crowd_estimate: " + results["avg_crowd_estimate"] + "\n" +
-            //         "OUTPUT OCCUPANCY: " + occupancy + "\n");
-            // }
+            if(occupancy > 0.1) {
+                console.log("Calculating Occupancy for ref_name: " + ref_name +  "\n" +
+                    "lat: " + lat + " lng: " + lng + "\n" +
+                    "max_bluetooth: " + results["max_bluetooth"] + "\n" +
+                    "audio_average: " + results["audio_average"] + "\n" +
+                    "distinct_hotspots: " + results["distinct_hotspots"] + "\n" +
+                    "avg_crowd_estimate: " + results["avg_crowd_estimate"] + "\n" +
+                    "OUTPUT OCCUPANCY: " + occupancy + "\n");
+            }
 
 
             callback(null, ref_name, occupancy);
