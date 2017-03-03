@@ -274,9 +274,23 @@ router.post('/bulk', function(req, res, next) {
         return handleError(res, NO_LAT+NO_LNG);
     }
 
-    var start_date = new Date();
-    start_date.setMinutes( start_date.getMinutes() - 30 );
-    var end_date = new Date();
+    var start_date, end_date, user_dates_used;
+
+    if(req.body.start_date && req.body.end_date) {
+        start_date = req.body.start_date;
+        end_date = req.body.end_date;
+
+        user_dates_used = true;
+        console.log("using custom start_date: " + start_date + " end_date: " + end_date);
+    } else {
+        start_date = new Date();
+        start_date.setMinutes( start_date.getMinutes() - 15 );
+
+        end_date = new Date();
+        end_date.setMinutes( end_date.getMinutes() + 2 ); //ensure the current minute is included
+
+        user_dates_used = false;
+    }
 
     var callback_target = 0;
     for(lat_lng_index in lat_lng_list) {
@@ -285,7 +299,7 @@ router.post('/bulk', function(req, res, next) {
 
     var callback_count = 0;
 
-    for(lat_lng_index in lat_lng_list) {
+    for(var lat_lng_index in lat_lng_list) {
         var lat = lat_lng_list[lat_lng_index].lat;
         var lng = lat_lng_list[lat_lng_index].lng;
 
@@ -295,7 +309,7 @@ router.post('/bulk', function(req, res, next) {
             lat_lng_list[ref_name]['occupancy'] = occupancy;
 
             if(callback_count == callback_target) {
-                res.json({success: true, lat_lng_occupancy_list : lat_lng_list});
+                res.json({success: true, user_dates_used: user_dates_used, lat_lng_occupancy_list : lat_lng_list});
             }
 
         });
