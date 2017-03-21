@@ -62,7 +62,7 @@ then run this command on the server
     
 Find out the IP address of the VM server, connect to it on the host
     
-    http://IPHERE:3000
+    http://IPHERE:8080
     
 ###Reroute to port 80
     
@@ -86,7 +86,3 @@ Permanant solution - add theses 2 lines to the bottom of /etc/mysql/my.cnf
 
     [mysqld]
     sql-mode=""
-
-###Get all observation data in the same minute
-
-     SELECT AVG(bluetooth_count), DATE_FORMAT(observation_date, '%Y-%m-%d %H:%i') as observation_date FROM bluetooth_observations GROUP BY (MINUTE(observation_date));
