@@ -14,6 +14,7 @@ var NO_LAT = "NO_LAT";
 var NO_LNG = "NO_LNG";
 var NO_START_DATE = "NO_START_DATE";
 var NO_END_DATE = "NO_END_DATE";
+var NO_DATES = "NO_DATES";
 
 router.post('', function(req, res, next) {
     var lat = req.body.lat;
@@ -28,34 +29,22 @@ router.post('', function(req, res, next) {
         return handleError(res, NO_LNG);
     }
 
-    var start_date;
-    var end_date;
-    var user_dates_used;
-
-    if(req.body.start_date && req.body.end_date) {
-        start_date = new Date(req.body.start_date);
-        end_date = new Date(req.body.end_date);
-
-        user_dates_used = true;
-    } else {
-        start_date = new Date();
-        start_date.setMinutes( start_date.getMinutes() - 15 );
-
-        end_date = new Date();
-        end_date.setMinutes( end_date.getMinutes() + 2 ); //ensure the current minute is included
-
-        user_dates_used = false;
+    if(!req.body.start_date || !req.body.end_date) {
+        return handleError(res, NO_DATES);
     }
 
+    var start_date = new Date(req.body.start_date);
+    var end_date = new Date(req.body.end_date);
+
     predictOccupancy(start_date,end_date,lat,lng,"single_call",function(err, ref_name, occupancy) {
-        res.json({success: true, user_dates_used: user_dates_used, occupancy: occupancy});
+        res.json({success: true, occupancy: occupancy});
     });
 
 });
 
 function predictOccupancy(start_date, end_date, lat, lng, ref_name, callback) {
 
-    console.log("predictOccupancy " + start_date + " " + end_date + " " + lat + " " + lng);
+    //console.log("predictOccupancy " + start_date + " " + end_date + " " + lat + " " + lng);
 
     const callback_target = 4;
     var callback_count = 0;
@@ -278,23 +267,12 @@ router.post('/bulk', function(req, res, next) {
         return handleError(res, NO_LAT+NO_LNG);
     }
 
-    var start_date, end_date, user_dates_used;
-
-    if(req.body.start_date && req.body.end_date) {
-        start_date = new Date(req.body.start_date);
-        end_date = new Date(req.body.end_date);
-
-        user_dates_used = true;
-        console.log("using custom start_date: " + start_date + " end_date: " + end_date);
-    } else {
-        start_date = new Date();
-        start_date.setMinutes( start_date.getMinutes() - 15 );
-
-        end_date = new Date();
-        end_date.setMinutes( end_date.getMinutes() + 2 ); //ensure the current minute is included
-
-        user_dates_used = false;
+    if(!req.body.start_date || !req.body.end_date) {
+        return handleError(res, NO_DATES);
     }
+
+    var start_date = new Date(req.body.start_date);
+    var end_date = new Date(req.body.end_date);
 
     var callback_target = 0;
     for(lat_lng_index in lat_lng_list) {
@@ -313,7 +291,7 @@ router.post('/bulk', function(req, res, next) {
             lat_lng_list[ref_name]['occupancy'] = occupancy;
 
             if(callback_count == callback_target) {
-                res.json({success: true, user_dates_used: user_dates_used, lat_lng_occupancy_list : lat_lng_list});
+                res.json({success: true, lat_lng_occupancy_list : lat_lng_list});
             }
 
         });
