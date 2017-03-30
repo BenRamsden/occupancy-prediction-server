@@ -390,7 +390,7 @@ database.prototype.insertAccelerometerObservation = function(idUser, params, cal
 
 database.prototype.getDistinctHotspots = function(start_date, end_date, lat, lng, callback) {
 
-    const distance_limit = 0.01;
+    const distance_limit = 0.02;
 
     const field_name = "COUNT(DISTINCT idHotspot)";
 
@@ -429,7 +429,7 @@ database.prototype.getDistinctHotspots = function(start_date, end_date, lat, lng
 
 database.prototype.getMaxBluetoothCount = function(start_date, end_date, lat, lng, callback) {
 
-    const distance_limit = 0.01;
+    const distance_limit = 0.015;
 
     const field_name = "MAX(bluetooth_count)";
 
@@ -520,7 +520,7 @@ database.prototype.getAudioHistogramAverage = function(start_date, end_date, lat
 
 database.prototype.getAverageCrowdEstimate = function(start_date, end_date, lat, lng, callback) {
 
-    const distance_limit = 0.01;
+    const distance_limit = 0.02;
 
     const field_name = "AVG(occupancy_estimate)";
 
