@@ -55,7 +55,7 @@ router.post('', function(req, res, next) {
 
 function predictOccupancy(start_date, end_date, lat, lng, ref_name, callback) {
 
-    //console.log("predictOccupancy " + start_date + " " + end_date + " " + lat + " " + lng);
+    console.log("predictOccupancy " + start_date + " " + end_date + " " + lat + " " + lng);
 
     const callback_target = 4;
     var callback_count = 0;
@@ -92,15 +92,15 @@ function predictOccupancy(start_date, end_date, lat, lng, ref_name, callback) {
                     0.1 * results["distinct_hotspots"];
             }
 
-            if(occupancy > 0.1) {
-                console.log("Calculating Occupancy for ref_name: " + ref_name +  "\n" +
-                    "lat: " + lat + " lng: " + lng + "\n" +
-                    "max_bluetooth: " + results["max_bluetooth"] + "\n" +
-                    "audio_average: " + results["audio_average"] + "\n" +
-                    "distinct_hotspots: " + results["distinct_hotspots"] + "\n" +
-                    "avg_crowd_estimate: " + results["avg_crowd_estimate"] + "\n" +
-                    "OUTPUT OCCUPANCY: " + occupancy + "\n");
-            }
+            // if(occupancy > 0.1) {
+            //     console.log("Calculating Occupancy for ref_name: " + ref_name +  "\n" +
+            //         "lat: " + lat + " lng: " + lng + "\n" +
+            //         "max_bluetooth: " + results["max_bluetooth"] + "\n" +
+            //         "audio_average: " + results["audio_average"] + "\n" +
+            //         "distinct_hotspots: " + results["distinct_hotspots"] + "\n" +
+            //         "avg_crowd_estimate: " + results["avg_crowd_estimate"] + "\n" +
+            //         "OUTPUT OCCUPANCY: " + occupancy + "\n");
+            // }
 
 
             callback(null, ref_name, occupancy);
