@@ -33,8 +33,8 @@ router.post('', function(req, res, next) {
     var user_dates_used;
 
     if(req.body.start_date && req.body.end_date) {
-        start_date = req.body.start_date;
-        end_date = req.body.end_date;
+        start_date = new Date(req.body.start_date);
+        end_date = new Date(req.body.end_date);
 
         user_dates_used = true;
     } else {
@@ -54,6 +54,9 @@ router.post('', function(req, res, next) {
 });
 
 function predictOccupancy(start_date, end_date, lat, lng, ref_name, callback) {
+
+    //console.log("predictOccupancy " + start_date + " " + end_date + " " + lat + " " + lng);
+
     const callback_target = 4;
     var callback_count = 0;
 
@@ -278,8 +281,8 @@ router.post('/bulk', function(req, res, next) {
     var start_date, end_date, user_dates_used;
 
     if(req.body.start_date && req.body.end_date) {
-        start_date = req.body.start_date;
-        end_date = req.body.end_date;
+        start_date = new Date(req.body.start_date);
+        end_date = new Date(req.body.end_date);
 
         user_dates_used = true;
         console.log("using custom start_date: " + start_date + " end_date: " + end_date);
