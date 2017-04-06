@@ -68,29 +68,43 @@ function predictOccupancy(start_date, end_date, lat, lng, ref_name, callback) {
                 blue_audio = ( 1 * results["max_bluetooth"]) + ( 5 * limited_audio);
             }
 
+            var max_minutes = 24 * 60;
+            var mid_day = new Date(start_date).setHours(13,0,0,0);
+            var current_date = new Date(start_date);
+            var time_to_mid_day = Math.abs(mid_day - current_date) / 1000 / 60;
+            var time_to_mid_day_norm = 1 - time_to_mid_day / max_minutes;
+            var time_hotspot_prediction = Math.max(time_to_mid_day_norm - 0.6, 0) * results["distinct_hotspots"];
+
             var occupancy;
 
             if(results["avg_crowd_estimate"] > 0) {
                 occupancy =
                     0.6 * blue_audio +
-                    0.1 * results["distinct_hotspots"] +
+                    1.0 * time_hotspot_prediction +
                     0.3 * results["avg_crowd_estimate"];
             } else {
                 occupancy =
                     0.9 * blue_audio +
-                    0.1 * results["distinct_hotspots"];
+                    1.0 * time_hotspot_prediction;
             }
 
-            if(occupancy > 0.1) {
+            //view hotspots
+            //occupancy = results["distinct_hotspots"];
+
+            if(occupancy > 0.5) {
                 console.log("Calculating Occupancy for ref_name: " + ref_name +  "\n" +
                     "lat: " + lat + " lng: " + lng + "\n" +
                     "max_bluetooth: " + results["max_bluetooth"] + "\n" +
                     "audio_average: " + results["audio_average"] + "\n" +
                     "distinct_hotspots: " + results["distinct_hotspots"] + "\n" +
                     "avg_crowd_estimate: " + results["avg_crowd_estimate"] + "\n" +
+                    "time_hotspot_prediction: " + time_hotspot_prediction + "\n" +
                     "OUTPUT OCCUPANCY: " + occupancy + "\n");
             }
 
+            if(occupancy < 5) {
+                occupancy = 0;
+            }
 
             callback(null, ref_name, occupancy);
         }

@@ -390,14 +390,12 @@ database.prototype.insertAccelerometerObservation = function(idUser, params, cal
 
 database.prototype.getDistinctHotspots = function(start_date, end_date, lat, lng, callback) {
 
-    const distance_limit = 0.02;
+    const distance_limit = 0.01;
 
     const field_name = "COUNT(DISTINCT idHotspot)";
 
-    var query =
-        " SELECT " + field_name + ", " +
-
-        " ( 3959" +
+    var sub_query =
+        " SELECT idHotspot, ( 3959" +
         " * acos( cos( radians( ? ) )" +  //lat
         " * cos( radians( lat ) )" +
         " * cos( radians( lng )" +
@@ -405,16 +403,19 @@ database.prototype.getDistinctHotspots = function(start_date, end_date, lat, lng
         " + sin( radians( ? ) )" +        //lat
         " * sin( radians( lat ) ) ) )" +
         " AS distance " +
+        " FROM hotspot_observations ";
 
-        " FROM hotspot_observations " +
-        " WHERE observation_date > ? " +  //start_date
-        " AND observation_date < ? " +    //end_date
-        " HAVING distance < ? ";          //distance_limit
+    var query =
+        " SELECT " + field_name + " FROM " +
+        " (" + sub_query + ") AS sq " +
+        " WHERE distance < ?";
 
-    var vals = [lat, lng, lat, start_date, end_date, distance_limit];
+    var vals = [lat, lng, lat, distance_limit];
 
     makeQueryWithCallback(query, vals, function(err, results) {
         if (err) {
+            console.log(err);
+            throw new Error();
             return callback(query);
         }
 
