@@ -81,15 +81,15 @@ function predictOccupancy(start_date, end_date, lat, lng, ref_name, callback) {
                     0.1 * results["distinct_hotspots"];
             }
 
-            // if(occupancy > 0.1) {
-            //     console.log("Calculating Occupancy for ref_name: " + ref_name +  "\n" +
-            //         "lat: " + lat + " lng: " + lng + "\n" +
-            //         "max_bluetooth: " + results["max_bluetooth"] + "\n" +
-            //         "audio_average: " + results["audio_average"] + "\n" +
-            //         "distinct_hotspots: " + results["distinct_hotspots"] + "\n" +
-            //         "avg_crowd_estimate: " + results["avg_crowd_estimate"] + "\n" +
-            //         "OUTPUT OCCUPANCY: " + occupancy + "\n");
-            // }
+            if(occupancy > 0.1) {
+                console.log("Calculating Occupancy for ref_name: " + ref_name +  "\n" +
+                    "lat: " + lat + " lng: " + lng + "\n" +
+                    "max_bluetooth: " + results["max_bluetooth"] + "\n" +
+                    "audio_average: " + results["audio_average"] + "\n" +
+                    "distinct_hotspots: " + results["distinct_hotspots"] + "\n" +
+                    "avg_crowd_estimate: " + results["avg_crowd_estimate"] + "\n" +
+                    "OUTPUT OCCUPANCY: " + occupancy + "\n");
+            }
 
 
             callback(null, ref_name, occupancy);
@@ -114,17 +114,17 @@ function predictOccupancy(start_date, end_date, lat, lng, ref_name, callback) {
 }
 
 router.post('/get_occupancy_data', function(req, res, next) {
-    var start_date = req.body.start_date;
-
-    if(!start_date) {
+    if(!req.body.start_date) {
         return handleError(res, NO_START_DATE);
     }
 
-    var end_date = req.body.end_date;
+    var start_date = new Date(req.body.start_date).toISOString();
 
-    if(!end_date) {
+    if(!req.body.end_date) {
         return handleError(res, NO_END_DATE);
     }
+
+    var end_date = new Date(req.body.end_date).toISOString();
 
     database.prototype.getObservationDataNoLocation("'"+start_date+"'", "'"+end_date+"'",
         function(err, results) {
