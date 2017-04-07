@@ -75,36 +75,33 @@ function predictOccupancy(start_date, end_date, lat, lng, ref_name, callback) {
             var time_to_mid_day_norm = 1 - time_to_mid_day / max_minutes;
             var time_hotspot_prediction = Math.max(time_to_mid_day_norm - 0.6, 0) * results["distinct_hotspots"];
 
-            var occupancy;
+            var occupancy = {};
+            var crowd_data = results["avg_crowd_estimate"] > 0;
+            var live_data = blue_audio > 0;
 
-            if(results["avg_crowd_estimate"] > 0) {
-                occupancy =
-                    0.6 * blue_audio +
-                    1.0 * time_hotspot_prediction +
-                    0.3 * results["avg_crowd_estimate"];
+            if(live_data && crowd_data) {
+                occupancy.prediction =
+                    0.3 * blue_audio +
+                    0.3 * time_hotspot_prediction +
+                    0.4 * results["avg_crowd_estimate"];
+            } else if(live_data) {
+                occupancy.prediction =
+                    0.5 * blue_audio +
+                    0.5 * time_hotspot_prediction;
+            } else if(crowd_data) {
+                occupancy.prediction =
+                    0.5 * time_hotspot_prediction +
+                    0.5 * results["avg_crowd_estimate"];
             } else {
-                occupancy =
-                    0.9 * blue_audio +
-                    1.0 * time_hotspot_prediction;
+                occupancy.prediction = time_hotspot_prediction;
             }
 
-            //view hotspots
-            //occupancy = results["distinct_hotspots"];
-
-            if(occupancy > 0.5) {
-                console.log("Calculating Occupancy for ref_name: " + ref_name +  "\n" +
-                    "lat: " + lat + " lng: " + lng + "\n" +
-                    "max_bluetooth: " + results["max_bluetooth"] + "\n" +
-                    "audio_average: " + results["audio_average"] + "\n" +
-                    "distinct_hotspots: " + results["distinct_hotspots"] + "\n" +
-                    "avg_crowd_estimate: " + results["avg_crowd_estimate"] + "\n" +
-                    "time_hotspot_prediction: " + time_hotspot_prediction + "\n" +
-                    "OUTPUT OCCUPANCY: " + occupancy + "\n");
+            if(occupancy.prediction < 5) {
+                occupancy.prediction = 0;
             }
 
-            if(occupancy < 5) {
-                occupancy = 0;
-            }
+            occupancy.crowd_data = crowd_data;
+            occupancy.live_data = live_data;
 
             callback(null, ref_name, occupancy);
         }
