@@ -11,12 +11,45 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.js"></script>
 
 <style>
+    h4 {
+        margin: 0.5em 0em 0.5em 0em;
+        font-family: Georgia;
+    }
+
+    body {
+        background-color: aliceblue;
+    }
+
+    div {
+        background-color: white;
+    }
+
     .result_box {
-        height:20em;
-        width: 50em;
-        border-style: solid;
+        height: 20em;
         padding: 0.5em;
         overflow: hidden;
+    }
+
+    .preset_box {
+        display: inline-block;
+    }
+
+    .preset_query {
+        display: inline-block;
+        width: 12em;
+        background-color: #f6f6f6;
+    }
+
+    .big_width {
+        width: 50em;
+    }
+
+    .small_width {
+        width: 24em;
+    }
+
+    .settings_height {
+        height: 12em;
     }
 
     #result_table {
@@ -28,25 +61,8 @@
         width: 15em;
     }
 
-    #standard_query_settings_container {
-        display: block;
-        width: 20em;
-    }
-
-    .preset_query {
-        width: inherit;
-        height: 3em;
-        margin-bottom: 5px;
-        background-color: aliceblue;
-    }
-
-    .preset_query button {
-        float: right;
-    }
-
     .border_box {
         border: 1px solid lightgray;
-        height: 25em;
     }
 
     #loadingDiv {
@@ -68,32 +84,35 @@
     <title>Title</title>
 </head>
 <body>
-    <div id="loadingDiv">
-        <img id="loadingGif" src="loading.gif" />
-        <span>Loading</span>
-    </div>
-
     <table>
         <tr>
-            <td><h4>Graph</h4></td>
-            <td><span> Estimated Occupancy for this period: <span id="occupancy_estimate">~</span> </span></td>
+            <td>
+                <div id="loadingDiv">
+                    <img id="loadingGif" src="loading.gif" />
+                    <span>Loading</span>
+                </div>
+                <h4>Graph</h4>
+                <div id="c3_graph" class="result_box big_width border_box"></div>
+            </td>
+            <td>
+                <h4> Data </h4>
+                <div id="result_table" class="result_box small_width border_box"></div>
+            </td>
         </tr>
     </table>
-    <div id="c3_graph" class="result_box"></div>
-
-    <h4> Data </h4>
-    <div id="result_table" class="result_box"></div>
 
     <table>
         <tr>
             <td>
-                <div id="query_settings_container" class="border_box">
+                <div id="query_settings_container" class="border_box settings_height">
                     <h4> Query Settings </h4>
 
-                    <p> Start Date </p>
+                    <span> Start Date </span>
+                    <br>
                     <input type="datetime-local" id="start_date">
-
-                    <p> End Date </p>
+                    <br><br>
+                    <span> End Date </span>
+                    <br>
                     <input type="datetime-local" id="end_date">
 
                     <p></p>
@@ -101,41 +120,41 @@
                 </div>
             </td>
             <td>
-                <div id="standard_query_settings_container" class="border_box">
+                <div class="preset_box border_box settings_height">
                     <h4> Standard Query Settings </h4>
 
                     <div class="preset_query">
-                        <span> 13:53 - 14:22 jubilee sports center </span>
-                        <br>
-                        <span> 30 people </span>
+                        <p> 13:53-14:22 </p>
+                        <p> jubilee sports center </p>
+                        <p> 30 people </p>
                         <button onclick="preSet('2017-02-24T13:53','2017-02-24T14:23')"> Graph </button>
                     </div>
 
                     <div class="preset_query">
-                        <span> 13:34 - 14:04 jubilee sports center </span>
-                        <br>
-                        <span> 20 people </span>
+                        <p> 13:34-14:04 </p>
+                        <p> jubilee sports center </p>
+                        <p> 20 people </p>
                         <button onclick="preSet('2017-02-28T13:34','2017-02-28T14:04')"> Graph </button>
                     </div>
 
                     <div class="preset_query">
-                        <span> 15:54-16:51 lecture, 17:05-17:54 gym </span>
-                        <br>
-                        <span> 100 people, 50 people </span>
+                        <p> 15:54-16:51, 17:05-17:54 </p>
+                        <p> lecture, jubilee sports center</p>
+                        <p> 100 people, 50 people </p>
                         <button onclick="preSet('2017-02-27T15:54','2017-02-27T17:54')"> Graph </button>
                     </div>
 
                     <div class="preset_query">
-                        <span> 12:00-14:30 </span>
-                        <br>
-                        <span> 13:17 14:00 in Aspire Cafe 30 people </span>
+                        <p> 13:17-14:00</p>
+                        <p> aspire cafe </p>
+                        <p> 30 people </p>
                         <button onclick="preSet('2017-03-02T12:00','2017-03-02T14:30')"> Graph </button>
                     </div>
 
                     <div class="preset_query">
-                        <span> Last 30 minutes </span>
-                        <br>
-                        <span> unknown </span>
+                        <p> Last 30 minutes </p>
+                        <p> &nbsp; </p>
+                        <p> &nbsp; </p>
                         <button onclick="lastNMinutes(30)"> Graph </button>
                     </div>
 
@@ -203,9 +222,11 @@
 
         var start_date = new Date();
 
-        start_date.setMinutes( start_date.getMinutes() - minute_subtract );
+        start_date.setMinutes( start_date.getMinutes() - minute_subtract + 60 );
 
         var end_date = new Date();
+
+        end_date.setMinutes( end_date.getMinutes() + 60 );
 
         $('#start_date').val(start_date.toISOString().slice(0,16)); //cut to just minute precision
         $('#end_date').val(end_date.toISOString().slice(0,16)); //cut to just minute precision
@@ -272,7 +293,7 @@
         }
 
         //$('#result_table').prepend(Object.keys(json_response.results) + "<br>");
-        $('#result_table').prepend("Got Data " + " (" + Object.keys(json_response.results).length + " timestamps)<br>");
+        $('#result_table').prepend("Got Data (" + Object.keys(json_response.results).length + " timestamps)<br>");
 
         graphData(json_response);
     }
