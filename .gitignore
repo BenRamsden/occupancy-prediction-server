@@ -1,2 +1,4 @@
 .idea/
 node_modules/
+NavigationServer/npm-debug.log
+NavigationServer/navigationserver_nohup.log
